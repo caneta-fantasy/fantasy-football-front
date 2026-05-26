@@ -156,7 +156,6 @@ const PlayersList: React.FC<PlayersListProps> = ({ fantasyLeague, seasonYear, us
 
 
   const { data: slots, isLoading, refetch } = useRoster({ userTeamId, seasonYear });
-  console.log(slots);
 
   const playerIdToSlotId = React.useMemo(() => {
     const m = new Map<number, number>();

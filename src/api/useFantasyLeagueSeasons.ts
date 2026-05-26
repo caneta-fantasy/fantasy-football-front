@@ -19,6 +19,7 @@ export interface FantasyLeagueSeason {
   waiverSystem: 'AUCTION' | 'PRIORITY';
   initialWaiverBudget: number;
   fantasyLeague?: { league?: { externalId?: number } };
+  championTeamId: number | null;
 }
 
 export const useFantasyLeagueSeasons = (leagueId: number) => {
