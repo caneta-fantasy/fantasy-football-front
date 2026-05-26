@@ -11,9 +11,13 @@ export interface FantasyMatchupDto {
   awayTeamName: string | null;
   homeScore: number | null;
   awayScore: number | null;
+  winnerId: number | null;
   status: string;
   matchupType: string;
   isGhost: boolean;
+  playoffStage: number | null;
+  twoLegPairId: string | null;
+  playoffSeed: { homeSeed: number; awaySeed: number } | null;
 }
 
 export interface ScheduleByRoundDto {

@@ -124,7 +124,7 @@ const FantasyLeaguePage = ({ currentUserId }: { currentUserId: number }) => {
         <Box mt={4}>
           {selectedTab === 'draft' && <DraftTab fantasyLeague={fantasyLeague} currentUserId={currentUserId} />}
           {selectedTab === 'team' && <TeamTab seasonYear={seasonYear} seasonId={fantasyLeagueSeason?.id} userTeam={userTeam} fantasyLeague={fantasyLeague} />}
-          {selectedTab === 'schedule' && <ScheduleTab seasonId={fantasyLeagueSeason?.id} userTeamId={userTeam?.id} seasonYear={seasonYear} currentRound={fantasyLeagueSeason?.currentRound ?? null} />}
+          {selectedTab === 'schedule' && <ScheduleTab seasonId={fantasyLeagueSeason?.id} userTeamId={userTeam?.id} seasonYear={seasonYear} currentRound={fantasyLeagueSeason?.currentRound ?? null} playoffStartRound={fantasyLeagueSeason?.playoffStartRound ?? null} numberOfRounds={fantasyLeagueSeason?.numberOfRounds ?? null} />}
           {selectedTab === 'league' && <FantasyLeagueInfo currentUserId={currentUserId} fantasyLeague={fantasyLeague} />}
           {selectedTab === 'players' && (
             <Box display="flex" flexDirection="column" gap={2}>

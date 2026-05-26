@@ -13,6 +13,7 @@ export enum LeagueStatus {
     DRAFT_DONE = 'DRAFT_DONE',
     SCHEDULED = 'SCHEDULED',
     ACTIVE = 'ACTIVE',
+    SEASON_ENDED = 'SEASON_ENDED',
     ARCHIVED = 'ARCHIVED',
   }
   
@@ -22,7 +23,8 @@ export enum LeagueStatus {
     onUpdated?: () => void;
     devEnableForceOpen?: boolean;
     refetchSeason?: () => void;
-    draftSettings?: DraftSettings;  
+    draftSettings?: DraftSettings;
+    championTeamName?: string | null;
   };
   
   function isoToDate(iso: string | null | undefined): Date | null {
@@ -75,6 +77,7 @@ const getErrorMessage = (err: unknown) => {
     | 'pre-temporada'
     | 'draft'
     | 'temporada'
+    | 'playoffs-encerrados'
     | 'pós-temporada';
   
   function computeUiPhase(season: FantasyLeagueSeason): UiPhase {
@@ -95,6 +98,8 @@ const getErrorMessage = (err: unknown) => {
         return now < kickoff ? 'pre-temporada' : 'temporada';
       case LeagueStatus.ACTIVE:
         return 'temporada';
+      case LeagueStatus.SEASON_ENDED:
+        return 'playoffs-encerrados';
       case LeagueStatus.ARCHIVED:
         return 'pós-temporada';
       default:
@@ -114,6 +119,8 @@ const getErrorMessage = (err: unknown) => {
         return 'secondary';
       case 'temporada':
         return 'success';
+      case 'playoffs-encerrados':
+        return 'warning';
       case 'pós-temporada':
         return 'primary';
     }
@@ -132,6 +139,7 @@ const getErrorMessage = (err: unknown) => {
     devEnableForceOpen = true,
     refetchSeason,
     draftSettings,
+    championTeamName,
   }: Props) {
     // Always compute a kickoff & message, even when there's no season
     const kickoff = useMemo<Date>(() => {
@@ -171,9 +179,6 @@ const getErrorMessage = (err: unknown) => {
     }
 
     const hasDraftDate = draftSettings?.draftDate ? new Date(draftSettings.draftDate) : null;
-
-    console.log(draftSettings);
-    console.log(hasDraftDate);
 
     // Helper function to render draft date information
     const renderDraftDateInfo = () => {
@@ -220,6 +225,12 @@ const getErrorMessage = (err: unknown) => {
                 {season.numberOfTeams ? ` • ${season.numberOfTeams} times` : ''}
                 {season.playoffTeams ? ` • ${season.playoffTeams}  se classificam para o mata mata` : ''}
               </Typography>
+
+              {phase === 'playoffs-encerrados' && (
+                <Typography variant="body2" fontWeight={700} color="warning.main">
+                  🏆 Campeão{championTeamName ? `: ${championTeamName}` : ''}
+                </Typography>
+              )}
 
               <Typography variant="caption" color="text.secondary">
                 {/* PT-BR UI */}
