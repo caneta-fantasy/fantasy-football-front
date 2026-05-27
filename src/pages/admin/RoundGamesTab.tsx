@@ -4,6 +4,7 @@ import {
   AccordionDetails,
   AccordionSummary,
   Alert,
+  Autocomplete,
   Box,
   Button,
   Chip,
@@ -25,15 +26,163 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import DeleteIcon from '@mui/icons-material/Delete';
 import AddIcon from '@mui/icons-material/Add';
 import SyncIcon from '@mui/icons-material/Sync';
+import UpdateIcon from '@mui/icons-material/Update';
+import EditIcon from '@mui/icons-material/Edit';
+import CheckIcon from '@mui/icons-material/Check';
+import CloseIcon from '@mui/icons-material/Close';
 import {
   OrphanedMatch,
+  RoundGameMatch,
   useAddMatch,
   useListRoundMatches,
+  useMatchVenues,
   useOrphanedMatches,
+  usePatchMatch,
+  useRefreshRoundMatchInfo,
   useRemoveMatch,
   useSyncAllRounds,
   useSyncRound,
 } from '../../api/fantasyRoundGameQueries';
+
+// ─── Helpers ─────────────────────────────────────────────────────────────────
+
+const TZ = 'America/Sao_Paulo';
+
+function toLocalDatetimeValue(iso: string | null): string {
+  if (!iso) return '';
+  // Render the UTC instant as "YYYY-MM-DDTHH:mm" in São Paulo local time
+  return new Intl.DateTimeFormat('sv-SE', {
+    timeZone: TZ,
+    year: 'numeric', month: '2-digit', day: '2-digit',
+    hour: '2-digit', minute: '2-digit',
+  }).format(new Date(iso)).replace(' ', 'T');
+}
+
+function localDatetimeToISO(value: string): string {
+  // value is "YYYY-MM-DDTHH:mm" treated as São Paulo local time.
+  // Strategy: parse it naively as UTC, then compute how many minutes
+  // São Paulo is offset from UTC at that approximate instant, and subtract.
+  const naiveUtcMs = new Date(value + ':00Z').getTime();
+  const spWallStr = new Intl.DateTimeFormat('sv-SE', {
+    timeZone: TZ,
+    year: 'numeric', month: '2-digit', day: '2-digit',
+    hour: '2-digit', minute: '2-digit', second: '2-digit',
+  }).format(new Date(naiveUtcMs)).replace(' ', 'T');
+  // offsetMs = how far SP wall time is ahead of UTC (negative for UTC-3)
+  const offsetMs = new Date(spWallStr + 'Z').getTime() - naiveUtcMs;
+  return new Date(naiveUtcMs - offsetMs).toISOString();
+}
+
+// ─── Inline edit row ─────────────────────────────────────────────────────────
+
+const EditMatchRow: React.FC<{
+  match: RoundGameMatch;
+  leagueExternalId: number;
+  seasonYear: number;
+  roundNumber: number;
+  venues: string[];
+  cities: string[];
+  onDone: (msg: string) => void;
+  onCancel: () => void;
+}> = ({ match, leagueExternalId, seasonYear, roundNumber, venues, cities, onDone, onCancel }) => {
+  const [date, setDate] = useState(toLocalDatetimeValue(match.date));
+  const [venueName, setVenueName] = useState(match.venueName ?? '');
+  const [venueCity, setVenueCity] = useState(match.venueCity ?? '');
+  const patchMatch = usePatchMatch();
+
+  const handleSave = () => {
+    patchMatch.mutate(
+      {
+        matchId: match.matchId,
+        date: date ? localDatetimeToISO(date) : null,
+        venueName: venueName || null,
+        venueCity: venueCity || null,
+        leagueExternalId,
+        seasonYear,
+        roundNumber,
+      },
+      {
+        onSuccess: () => onDone('Jogo atualizado'),
+        onError: (err) => onDone(`Erro: ${err.message}`),
+      },
+    );
+  };
+
+  return (
+    <TableRow sx={{ bgcolor: 'action.hover' }}>
+      {/* Teams (read-only) */}
+      <TableCell sx={{ color: 'text.secondary', fontStyle: 'italic' }}>
+        {match.homeTeam?.name ?? '—'}
+      </TableCell>
+      <TableCell sx={{ color: 'text.secondary', fontStyle: 'italic' }}>
+        {match.awayTeam?.name ?? '—'}
+      </TableCell>
+
+      {/* Date input */}
+      <TableCell>
+        <TextField
+          type="datetime-local"
+          size="small"
+          value={date}
+          onChange={(e) => setDate(e.target.value)}
+          sx={{ minWidth: 190 }}
+          InputLabelProps={{ shrink: true }}
+        />
+      </TableCell>
+
+      {/* Venue autocomplete */}
+      <TableCell>
+        <Autocomplete
+          freeSolo
+          size="small"
+          options={venues}
+          value={venueName}
+          onInputChange={(_, v) => setVenueName(v)}
+          renderInput={(params) => (
+            <TextField {...params} placeholder="Estádio" sx={{ minWidth: 180 }} />
+          )}
+        />
+      </TableCell>
+
+      {/* City autocomplete */}
+      <TableCell>
+        <Autocomplete
+          freeSolo
+          size="small"
+          options={cities}
+          value={venueCity}
+          onInputChange={(_, v) => setVenueCity(v)}
+          renderInput={(params) => (
+            <TextField {...params} placeholder="Cidade" sx={{ minWidth: 150 }} />
+          )}
+        />
+      </TableCell>
+
+      {/* Actions */}
+      <TableCell align="right">
+        <Stack direction="row" spacing={0.5} justifyContent="flex-end">
+          <Tooltip title="Salvar">
+            <span>
+              <IconButton
+                size="small"
+                color="primary"
+                disabled={patchMatch.isPending}
+                onClick={handleSave}
+              >
+                <CheckIcon fontSize="small" />
+              </IconButton>
+            </span>
+          </Tooltip>
+          <Tooltip title="Cancelar">
+            <IconButton size="small" onClick={onCancel}>
+              <CloseIcon fontSize="small" />
+            </IconButton>
+          </Tooltip>
+        </Stack>
+      </TableCell>
+    </TableRow>
+  );
+};
 
 // ─── Round row (one accordion item) ─────────────────────────────────────────
 
@@ -41,9 +190,12 @@ const RoundRow: React.FC<{
   leagueExternalId: number;
   seasonYear: number;
   roundNumber: number;
+  venues: string[];
+  cities: string[];
   onMessage: (msg: string) => void;
-}> = ({ leagueExternalId, seasonYear, roundNumber, onMessage }) => {
+}> = ({ leagueExternalId, seasonYear, roundNumber, venues, cities, onMessage }) => {
   const [expanded, setExpanded] = useState(false);
+  const [editingMatchId, setEditingMatchId] = useState<number | null>(null);
   const { data: matches = [], isLoading } = useListRoundMatches(
     expanded ? leagueExternalId : undefined,
     expanded ? seasonYear : undefined,
@@ -51,12 +203,21 @@ const RoundRow: React.FC<{
   );
   const syncRound = useSyncRound();
   const removeMatch = useRemoveMatch();
+  const refreshInfo = useRefreshRoundMatchInfo();
 
   const handleSync = (e: React.MouseEvent) => {
     e.stopPropagation();
     syncRound.mutate(
       { leagueExternalId, seasonYear, roundNumber },
       { onSuccess: (d) => onMessage(`Rodada ${roundNumber}: ${d.added} jogo(s) adicionado(s)`) },
+    );
+  };
+
+  const handleRefreshInfo = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    refreshInfo.mutate(
+      { leagueExternalId, seasonYear, roundNumber },
+      { onSuccess: (d) => onMessage(`Rodada ${roundNumber}: info de ${d.updated} jogo(s) atualizada(s)`) },
     );
   };
 
@@ -79,6 +240,17 @@ const RoundRow: React.FC<{
             <Chip size="small" label={`${matches.length} jogo(s)`} />
           )}
           <Box sx={{ flexGrow: 1 }} />
+          <Tooltip title="Atualizar info dos jogos (data/estádio)">
+            <span>
+              <IconButton
+                size="small"
+                disabled={refreshInfo.isPending}
+                onClick={handleRefreshInfo}
+              >
+                <UpdateIcon fontSize="small" />
+              </IconButton>
+            </span>
+          </Tooltip>
           <Tooltip title="Sincronizar esta rodada">
             <span>
               <IconButton
@@ -109,37 +281,61 @@ const RoundRow: React.FC<{
                   <TableCell>Casa</TableCell>
                   <TableCell>Fora</TableCell>
                   <TableCell>Data</TableCell>
-                  <TableCell>Status</TableCell>
+                  <TableCell>Estádio</TableCell>
+                  <TableCell>Cidade</TableCell>
                   <TableCell align="right" />
                 </TableRow>
               </TableHead>
               <TableBody>
-                {matches.map((m) => (
-                  <TableRow key={m.matchId} hover>
-                    <TableCell>{m.homeTeam?.name ?? '—'}</TableCell>
-                    <TableCell>{m.awayTeam?.name ?? '—'}</TableCell>
-                    <TableCell>
-                      {m.date
-                        ? new Date(m.date).toLocaleString('pt-BR', { timeZone: 'America/Sao_Paulo' })
-                        : '—'}
-                    </TableCell>
-                    <TableCell>
-                      <Chip size="small" label={m.status} variant="outlined" />
-                    </TableCell>
-                    <TableCell align="right">
-                      <Tooltip title="Remover da rodada">
-                        <IconButton
-                          size="small"
-                          color="error"
-                          disabled={removeMatch.isPending}
-                          onClick={() => handleRemove(m.matchId)}
-                        >
-                          <DeleteIcon fontSize="small" />
-                        </IconButton>
-                      </Tooltip>
-                    </TableCell>
-                  </TableRow>
-                ))}
+                {matches.map((m) =>
+                  editingMatchId === m.matchId ? (
+                    <EditMatchRow
+                      key={m.matchId}
+                      match={m}
+                      leagueExternalId={leagueExternalId}
+                      seasonYear={seasonYear}
+                      roundNumber={roundNumber}
+                      venues={venues}
+                      cities={cities}
+                      onDone={(msg) => { setEditingMatchId(null); onMessage(msg); }}
+                      onCancel={() => setEditingMatchId(null)}
+                    />
+                  ) : (
+                    <TableRow key={m.matchId} hover>
+                      <TableCell>{m.homeTeam?.name ?? '—'}</TableCell>
+                      <TableCell>{m.awayTeam?.name ?? '—'}</TableCell>
+                      <TableCell>
+                        {m.date
+                          ? new Date(m.date).toLocaleString('pt-BR', { timeZone: 'America/Sao_Paulo' })
+                          : '—'}
+                      </TableCell>
+                      <TableCell>{m.venueName ?? '—'}</TableCell>
+                      <TableCell>{m.venueCity ?? '—'}</TableCell>
+                      <TableCell align="right">
+                        <Stack direction="row" spacing={0.5} justifyContent="flex-end">
+                          <Tooltip title="Editar jogo">
+                            <IconButton
+                              size="small"
+                              onClick={() => setEditingMatchId(m.matchId)}
+                            >
+                              <EditIcon fontSize="small" />
+                            </IconButton>
+                          </Tooltip>
+                          <Tooltip title="Remover da rodada">
+                            <IconButton
+                              size="small"
+                              color="error"
+                              disabled={removeMatch.isPending}
+                              onClick={() => handleRemove(m.matchId)}
+                            >
+                              <DeleteIcon fontSize="small" />
+                            </IconButton>
+                          </Tooltip>
+                        </Stack>
+                      </TableCell>
+                    </TableRow>
+                  ),
+                )}
               </TableBody>
             </Table>
           </TableContainer>
@@ -235,6 +431,10 @@ const RoundGamesTab: React.FC = () => {
     leagueExternalId,
     year,
   );
+  const { data: venueData } = useMatchVenues(leagueExternalId, year);
+  const venues = venueData?.venues ?? [];
+  const cities = venueData?.cities ?? [];
+
   const syncAll = useSyncAllRounds();
 
   const handleSyncAll = () => {
@@ -291,6 +491,8 @@ const RoundGamesTab: React.FC = () => {
             leagueExternalId={leagueExternalId ?? 0}
             seasonYear={year ?? 0}
             roundNumber={n}
+            venues={venues}
+            cities={cities}
             onMessage={setSnack}
           />
         ))}

@@ -14,6 +14,8 @@ export interface RoundGameMatch {
   statusLong: string | null;
   homeGoals: number | null;
   awayGoals: number | null;
+  venueName: string | null;
+  venueCity: string | null;
 }
 
 export interface OrphanedMatch extends RoundGameMatch {
@@ -162,5 +164,61 @@ export const useRemoveMatch = () => {
     },
     onSuccess: (_data, { leagueExternalId, seasonYear }) =>
       invalidateRoundGames(qc, leagueExternalId, seasonYear),
+  });
+};
+
+export const useMatchVenues = (leagueExternalId: number | undefined, seasonYear: number | undefined) =>
+  useQuery<{ venues: string[]; cities: string[] }>({
+    queryKey: ['matchVenues', leagueExternalId, seasonYear],
+    queryFn: async () => {
+      const res = await axios.get(
+        apiConfig.endpoints.matches.venues(leagueExternalId!, seasonYear!),
+        { headers: authHeader() },
+      );
+      return res.data;
+    },
+    enabled: !!leagueExternalId && !!seasonYear,
+    staleTime: 5 * 60 * 1000,
+  });
+
+export const usePatchMatch = () => {
+  const qc = useQueryClient();
+  return useMutation<
+    void,
+    Error,
+    { matchId: number; date?: string | null; venueName?: string | null; venueCity?: string | null; leagueExternalId: number; seasonYear: number; roundNumber: number }
+  >({
+    mutationFn: async ({ matchId, date, venueName, venueCity }) => {
+      await axios.patch(
+        apiConfig.endpoints.matches.patch(matchId),
+        { date, venueName, venueCity },
+        { headers: authHeader() },
+      );
+    },
+    onSuccess: (_data, { leagueExternalId, seasonYear, roundNumber }) => {
+      qc.invalidateQueries({ queryKey: ['roundGameMatches', leagueExternalId, seasonYear, roundNumber] });
+      qc.invalidateQueries({ queryKey: ['matchVenues', leagueExternalId, seasonYear] });
+    },
+  });
+};
+
+export const useRefreshRoundMatchInfo = () => {
+  const qc = useQueryClient();
+  return useMutation<
+    { updated: number },
+    Error,
+    { leagueExternalId: number; seasonYear: number; roundNumber: number }
+  >({
+    mutationFn: async ({ leagueExternalId, seasonYear, roundNumber }) => {
+      const res = await axios.post(
+        apiConfig.endpoints.syncMatchInfo.refreshRound(leagueExternalId, seasonYear, roundNumber),
+        {},
+        { headers: authHeader() },
+      );
+      return res.data;
+    },
+    onSuccess: (_data, { leagueExternalId, seasonYear, roundNumber }) => {
+      qc.invalidateQueries({ queryKey: ['roundGameMatches', leagueExternalId, seasonYear, roundNumber] });
+    },
   });
 };
