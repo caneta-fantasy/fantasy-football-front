@@ -93,6 +93,13 @@ const endpoints = {
   matches: {
     byRound: (seasonYear: number, roundNumber: number) =>
       `${API_BASE_URL}/matches/by-round?seasonYear=${seasonYear}&roundNumber=${roundNumber}`,
+    venues: (leagueExternalId: number, seasonYear: number) =>
+      `${API_BASE_URL}/matches/venues?leagueExternalId=${leagueExternalId}&seasonYear=${seasonYear}`,
+    patch: (matchId: number) => `${API_BASE_URL}/matches/${matchId}`,
+  },
+  syncMatchInfo: {
+    refreshRound: (leagueExternalId: number, seasonYear: number, roundNumber: number) =>
+      `${API_BASE_URL}/sync/matches/league/${leagueExternalId}/season/${seasonYear}/round/${roundNumber}/refresh-info`,
   },
   scoringConfig: {
     getBySeason: (seasonId: string) => `${API_BASE_URL}/scoring-config/season/${seasonId}`,
