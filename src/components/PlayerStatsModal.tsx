@@ -49,14 +49,15 @@ function buildStatRows(row: PlayerHistoryRow) {
     { label: 'Defesas (GK)',       raw: row.saves,            pts: row.savePoints },
     { label: 'Clean Sheet',        raw: row.cleanSheet ? 1 : 0, pts: row.cleanSheetPoints, isBoolean: true },
     { label: 'Gols Sofridos',     raw: row.goalsConceded ?? 0, pts: row.goalConcededPoints },
-    { label: 'Desarmes',          raw: row.tacklesTotal ?? 0, pts: row.tacklePoints },
-    { label: 'Chutes',             raw: null,                 pts: row.shotPoints },
-    { label: 'Faltas',             raw: null,                 pts: row.foulPoints },
-    { label: 'Cart. Amarelo',     raw: row.yellowCards,      pts: null },
-    { label: 'Cart. Vermelho',    raw: row.redCards,         pts: null },
-    { label: 'Cartões (pts)',      raw: null,                 pts: row.cardPoints },
-    { label: 'Gol Contra',        raw: null,                 pts: row.ownGoalPoints },
-    { label: 'Pênalti',           raw: null,                 pts: row.penaltyPoints },
+    { label: 'Desarmes',          raw: row.tacklesTotal ?? 0,      pts: row.tacklePoints },
+    { label: 'Chutes no Gol',     raw: row.shotsSaved ?? null,     pts: row.shotsSavedPoints },
+    { label: 'Chutes pra Fora',   raw: row.shotsOffTarget ?? null, pts: row.shotsOffTargetPoints },
+    { label: 'Faltas Sofridas',   raw: row.foulsDrawn ?? null,     pts: row.foulsDrawnPoints },
+    { label: 'Faltas Cometidas',  raw: row.foulsCommitted ?? null, pts: row.foulsCommittedPoints },
+    { label: 'Cart. Amarelo',     raw: row.yellowCards,            pts: row.yellowCardPoints },
+    { label: 'Cart. Vermelho',    raw: row.redCards,               pts: row.redCardPoints },
+    { label: 'Gol Contra',        raw: null,                       pts: row.ownGoalPoints },
+    { label: 'Pênalti',           raw: null,                       pts: row.penaltyPoints },
   ];
   return all.filter(
     (c) => (c.raw !== null && c.raw !== 0) || (c.pts !== null && c.pts !== 0),
@@ -198,9 +199,14 @@ const PlayerStatsModal: React.FC<Props> = ({
     matchDate: null, homeTeamName: null, awayTeamName: null,
     minutesPlayed: 0, goals: 0, assists: 0, yellowCards: 0, redCards: 0,
     saves: 0, cleanSheet: false, goalsConceded: null, tacklesTotal: null,
+    shotsOffTarget: null, shotsSaved: null, foulsDrawn: null, foulsCommitted: null,
+    penaltyWon: null, penaltyCommitted: null, offsides: null,
     totalPoints: 0, goalPoints: 0, assistPoints: 0, shotPoints: 0,
     foulPoints: 0, cleanSheetPoints: 0, savePoints: 0, cardPoints: 0,
     ownGoalPoints: 0, penaltyPoints: 0, tacklePoints: 0, goalConcededPoints: 0,
+    yellowCardPoints: 0, redCardPoints: 0, foulsDrawnPoints: 0, foulsCommittedPoints: 0,
+    penaltyWonPoints: 0, penaltyCommittedPoints: 0, offsidesPoints: 0,
+    shotsSavedPoints: 0, shotsOffTargetPoints: 0,
   }), [roundFilter]);
 
   const isMatchupMode = roundFilter != null;
