@@ -50,6 +50,7 @@ const endpoints = {
   players: {
     getAll: `${API_BASE_URL}/players`,
     getFilters: `${API_BASE_URL}/players/filters/data`,
+    squad: (teamId: number) => `${API_BASE_URL}/players/squad/${teamId}`,
   },
   drafts: {
     get: (leagueId: number, season: number) => `${API_BASE_URL}/drafts/${leagueId}/${season}`,
@@ -100,6 +101,12 @@ const endpoints = {
   syncMatchInfo: {
     refreshRound: (leagueExternalId: number, seasonYear: number, roundNumber: number) =>
       `${API_BASE_URL}/sync/matches/league/${leagueExternalId}/season/${seasonYear}/round/${roundNumber}/refresh-info`,
+  },
+  syncPlayers: {
+    syncTeam: (teamExternalId: number) =>
+      `${API_BASE_URL}/sync/players/team/${teamExternalId}`,
+    syncAll: (leagueExternalId: number, seasonYear: number) =>
+      `${API_BASE_URL}/sync/players/league/${leagueExternalId}/season/${seasonYear}`,
   },
   scoringConfig: {
     getBySeason: (seasonId: string) => `${API_BASE_URL}/scoring-config/season/${seasonId}`,
