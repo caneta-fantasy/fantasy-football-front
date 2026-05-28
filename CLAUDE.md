@@ -1,3 +1,21 @@
+## Project context
+
+This repo is part of the **caneta-fantasy** fantasy soccer platform. The cross-cutting project documentation lives in the sibling repo `fantasy-docs` at `~/repositories/fantasy/fantasy-docs/`:
+
+- Conventions (commits, branching, PRs apply to this repo too): `../fantasy-docs/CONVENTIONS.md`
+- Glossary (PT ↔ EN domain terms): `../fantasy-docs/GLOSSARY.md`
+- Architecture decisions (ADRs): `../fantasy-docs/decisions/`
+- Work items in progress (design + plan): `../fantasy-docs/work/`
+- Onboarding for new contributors: `../fantasy-docs/ONBOARDING.md`
+
+### Install the project skill
+
+For full project context across all caneta-fantasy repos, install the `caneta-fantasy-workflow` skill: symlink `../fantasy-docs/skills/caneta-fantasy-workflow.md` to `~/.claude/skills/caneta-fantasy-workflow.md`. With the skill installed, Claude has direct pointers to the project's flow (brainstorm → spec → plan → implement), conventions, and topology — for every session in any of the three repos.
+
+If you're new to the project, start with `../fantasy-docs/ONBOARDING.md`.
+
+---
+
 # Fantasy Football Frontend
 
 React 19 application for the fantasy football platform.
