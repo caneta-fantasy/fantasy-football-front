@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { useGetFantasyLeague } from '../api/fantasyLeagueQueries';
 import LeagueSidebar from '../components/FantasyLeaguesSidebar';
@@ -21,6 +21,8 @@ import { useFantasyLeagueSeasons } from '../api/useFantasyLeagueSeasons';
 import { useCurrentSeason } from '../api/currentSeasonQueries';
 import { useWaiverClaims, useWaiverBudgets, useWaiverWindowStatus, useMarketHistory } from '../api/waiverQueries';
 import { useTrades } from '../api/tradeQueries';
+import ScoringConfigForm from '../components/ScoringConfigForm';
+import RodadaTab from '../components/RodadaTab';
 
 const FantasyLeaguePage = ({ currentUserId }: { currentUserId: number }) => {
   const { fantasyLeagueId } = useParams<{ fantasyLeagueId: string }>();
@@ -32,6 +34,7 @@ const FantasyLeaguePage = ({ currentUserId }: { currentUserId: number }) => {
     severity: 'success' as 'success' | 'error',
   });
   const [selectedTab, setSelectedTab] = useState('draft');
+  const [defaultTabSet, setDefaultTabSet] = useState(false);
   const [viewInvitesModalOpen, setViewInvitesModalOpen] = useState(false);
   const [historyOpen, setHistoryOpen] = useState(false);
   const theme = useTheme();
@@ -40,6 +43,17 @@ const FantasyLeaguePage = ({ currentUserId }: { currentUserId: number }) => {
   const { mutate: inviteUserToFantasyLeague, isPending: isInvitingUser, isError: isInvitingUserError, error: invitingUserError } = useInviteUserToFantasyLeague(Number(fantasyLeagueId));
   const { data: userTeam, isLoading: isLoadingUserTeam, isError: isLoadingUserTeamError, error: errorUserTeam } = useFindUserFantasyLeagueTeam(currentUserId, Number(fantasyLeagueId));
   const { data: fantasyLeagueSeason } = useFantasyLeagueSeasons(Number(fantasyLeagueId));
+
+  const POST_DRAFT_STATUSES = ['DRAFT_DONE', 'SCHEDULED', 'ACTIVE', 'SEASON_ENDED', 'ARCHIVED'];
+  useEffect(() => {
+    if (!defaultTabSet && fantasyLeagueSeason?.status) {
+      if (POST_DRAFT_STATUSES.includes(fantasyLeagueSeason.status)) {
+        setSelectedTab('rodada');
+      }
+      setDefaultTabSet(true);
+    }
+  }, [fantasyLeagueSeason?.status, defaultTabSet]);
+
   const { data: currentSeasonData } = useCurrentSeason();
   const seasonYear = fantasyLeagueSeason?.seasonYear ?? currentSeasonData?.year ?? new Date().getFullYear();
 
@@ -125,6 +139,7 @@ const FantasyLeaguePage = ({ currentUserId }: { currentUserId: number }) => {
           {selectedTab === 'draft' && <DraftTab fantasyLeague={fantasyLeague} currentUserId={currentUserId} />}
           {selectedTab === 'team' && <TeamTab seasonYear={seasonYear} seasonId={fantasyLeagueSeason?.id} userTeam={userTeam} fantasyLeague={fantasyLeague} />}
           {selectedTab === 'schedule' && <ScheduleTab seasonId={fantasyLeagueSeason?.id} userTeamId={userTeam?.id} seasonYear={seasonYear} currentRound={fantasyLeagueSeason?.currentRound ?? null} playoffStartRound={fantasyLeagueSeason?.playoffStartRound ?? null} numberOfRounds={fantasyLeagueSeason?.numberOfRounds ?? null} />}
+          {selectedTab === 'rodada' && <RodadaTab seasonId={fantasyLeagueSeason?.id} userTeamId={userTeam?.id} seasonYear={seasonYear} currentRound={fantasyLeagueSeason?.currentRound ?? null} playoffStartRound={fantasyLeagueSeason?.playoffStartRound ?? null} numberOfRounds={fantasyLeagueSeason?.numberOfRounds ?? null} />}
           {selectedTab === 'league' && <FantasyLeagueInfo currentUserId={currentUserId} fantasyLeague={fantasyLeague} />}
           {selectedTab === 'players' && (
             <Box display="flex" flexDirection="column" gap={2}>
@@ -158,7 +173,13 @@ const FantasyLeaguePage = ({ currentUserId }: { currentUserId: number }) => {
               tradeDeadlineRound={fantasyLeagueSeason?.tradeDeadlineRound}
             />
           )}
-          {selectedTab === 'scores' && <div>Scores table</div>}
+          {selectedTab === 'scores' && (
+            <ScoringConfigForm
+              seasonId={fantasyLeagueSeason?.id}
+              seasonStatus={fantasyLeagueSeason?.status}
+              isOwner={false}
+            />
+          )}
         </Box>
       </Box>
 

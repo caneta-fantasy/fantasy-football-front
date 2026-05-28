@@ -1,14 +1,20 @@
 import React, { useState } from 'react';
 import {
+  Alert,
   Box,
-  Typography,
-  TextField,
   Button,
+  Snackbar,
+  TextField,
   ToggleButton,
   ToggleButtonGroup,
+  Typography,
 } from '@mui/material';
 import { RosterSettings, useUpdateRosterSettings } from '../api/useUpdateRosterSettings';
-import { Snackbar, Alert } from '@mui/material';
+
+const ROSTER_LOCKED_STATUSES = [
+  'DRAFT_SCHEDULED', 'DRAFT_LIVE', 'DRAFT_DONE',
+  'SCHEDULED', 'ACTIVE', 'SEASON_ENDED', 'ARCHIVED',
+];
 
 interface Props {
   values: RosterSettings;
@@ -16,10 +22,12 @@ interface Props {
   id: number;
   refetchRosterSettings: () => void;
   refetchDraftSettings: () => void;
+  seasonStatus?: string;
 }
 
-const RosterSettingsForm: React.FC<Props> = ({ values, onChange, id , refetchRosterSettings, refetchDraftSettings }) => {
-const [openSnackbar, setOpenSnackbar] = useState(false);
+const RosterSettingsForm: React.FC<Props> = ({ values, onChange, id, refetchRosterSettings, refetchDraftSettings, seasonStatus }) => {
+  const [openSnackbar, setOpenSnackbar] = useState(false);
+  const isLocked = !!seasonStatus && ROSTER_LOCKED_STATUSES.includes(seasonStatus);
   const updateRoster = useUpdateRosterSettings({
     onSuccess: () => {
       setOpenSnackbar(true);
@@ -36,6 +44,11 @@ const [openSnackbar, setOpenSnackbar] = useState(false);
 
   return (
     <>
+      {isLocked && (
+        <Alert severity="warning" sx={{ mb: 2 }}>
+          Configurações de elenco bloqueadas — o draft já foi agendado.
+        </Alert>
+      )}
       {/* Starter Settings */}
       <Typography fontWeight={600} sx={{ mb: 2, fontSize: '1.2rem' }}>Jogadores Titulares</Typography>
       <Box>
@@ -44,6 +57,7 @@ const [openSnackbar, setOpenSnackbar] = useState(false);
           fullWidth
           type="number"
           inputProps={{ min: 4, max: 8 }}
+          disabled={isLocked}
           value={values.starterSkillSlots}
           onChange={(e) => {
             const value = Number(e.target.value);
@@ -59,6 +73,7 @@ const [openSnackbar, setOpenSnackbar] = useState(false);
         <TextField
           fullWidth
           type="number"
+          disabled={isLocked}
           value={values.minStarterMidfielders}
           onChange={(e) => {
             const value = Number(e.target.value);
@@ -78,6 +93,7 @@ const [openSnackbar, setOpenSnackbar] = useState(false);
         <TextField
           fullWidth
           type="number"
+          disabled={isLocked}
           value={values.minStarterForwards}
           onChange={(e) => {
             const value = Number(e.target.value);
@@ -96,6 +112,7 @@ const [openSnackbar, setOpenSnackbar] = useState(false);
         <TextField
           fullWidth
           type="number"
+          disabled={isLocked}
           value={values.starterDefenseSlots}
           onChange={(e) => {
             const value = Number(e.target.value);
@@ -113,6 +130,7 @@ const [openSnackbar, setOpenSnackbar] = useState(false);
         <TextField
           fullWidth
           type="number"
+          disabled={isLocked}
           value={values.benchSkillSlots}
           onChange={(e) => onChange('benchSkillSlots', Number(e.target.value))}
         />
@@ -123,6 +141,7 @@ const [openSnackbar, setOpenSnackbar] = useState(false);
         <TextField
           fullWidth
           type="number"
+          disabled={isLocked}
           value={values.minBenchMidfielders}
           onChange={(e) => {
             const value = Number(e.target.value);
@@ -142,6 +161,7 @@ const [openSnackbar, setOpenSnackbar] = useState(false);
         <TextField
           fullWidth
           type="number"
+          disabled={isLocked}
           value={values.minBenchForwards}
           onChange={(e) => {
             const value = Number(e.target.value);
@@ -160,6 +180,7 @@ const [openSnackbar, setOpenSnackbar] = useState(false);
         <TextField
           fullWidth
           type="number"
+          disabled={isLocked}
           value={values.benchDefenseSlots}
           onChange={(e) => {
             const value = Number(e.target.value);
@@ -174,7 +195,8 @@ const [openSnackbar, setOpenSnackbar] = useState(false);
         <ToggleButtonGroup
           exclusive
           value={values.defenseType ?? 'CLOSED'}
-          onChange={(_, val) => { if (val) onChange('defenseType', val); }}
+          onChange={(_, val) => { if (val && !isLocked) onChange('defenseType', val); }}
+          disabled={isLocked}
           size="small"
         >
           <ToggleButton value="CLOSED">Defesa Fechada</ToggleButton>
@@ -198,7 +220,7 @@ const [openSnackbar, setOpenSnackbar] = useState(false);
       <Button
         variant="contained"
         onClick={() => updateRoster.mutate({ id, updates: values })}
-        disabled={updateRoster.isPending || isStarterTotalExceeded || isBenchTotalExceeded}
+        disabled={updateRoster.isPending || isStarterTotalExceeded || isBenchTotalExceeded || isLocked}
       >
         Salvar
       </Button>

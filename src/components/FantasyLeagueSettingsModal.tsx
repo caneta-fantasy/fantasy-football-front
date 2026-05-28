@@ -113,6 +113,7 @@ const FantasyLeagueSettingsModal: React.FC<Props> = ({ open, onClose, fantasyLea
             }
             id={fantasyLeagueSeason?.id!}
             refetchFantasyLeagueSeason={refetchFantasyLeagueSeason}
+            seasonStatus={fantasyLeagueSeason?.status}
           />
         );
       case 'roster':
@@ -125,6 +126,7 @@ const FantasyLeagueSettingsModal: React.FC<Props> = ({ open, onClose, fantasyLea
               id={draftSettings?.id!}
               refetchRosterSettings={refetchRosterSettings}
               refetchDraftSettings={refetchDraftSettings}
+              seasonStatus={fantasyLeagueSeason?.status}
             />
           );
       case 'draft':
@@ -136,6 +138,7 @@ const FantasyLeagueSettingsModal: React.FC<Props> = ({ open, onClose, fantasyLea
             }
             id={draftSettings?.id!}
             refetchDraftSettings={refetchDraftSettings}
+            seasonStatus={fantasyLeagueSeason?.status}
           />
         );
       case 'scoring':
