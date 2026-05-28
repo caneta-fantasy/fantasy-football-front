@@ -1,26 +1,34 @@
 import React, { useMemo, useState } from 'react';
 import {
+  Alert,
   Box,
-  Typography,
-  Select,
-  MenuItem,
-  FormControl,
-  RadioGroup,
-  FormControlLabel,
-  Radio,
   Button,
+  FormControl,
+  FormControlLabel,
+  MenuItem,
+  Radio,
+  RadioGroup,
+  Select,
+  Snackbar,
+  Typography,
 } from '@mui/material';
 import { useUpdateFantasyLeagueSeason } from '../api/fantasyLeagueSeasonsMutation';
-import { Snackbar, Alert } from '@mui/material';
+
+const SEASON_LOCKED_STATUSES = [
+  'DRAFT_SCHEDULED', 'DRAFT_LIVE', 'DRAFT_DONE',
+  'SCHEDULED', 'ACTIVE', 'SEASON_ENDED', 'ARCHIVED',
+];
 
 interface Props {
   values: any;
   onChange: (field: string, value: any) => void;
   id: any;
   refetchFantasyLeagueSeason: () => void;
+  seasonStatus?: string;
 }
 
-const FantasyLeagueSeasonForm: React.FC<Props> = ({ values, onChange, id, refetchFantasyLeagueSeason }) => {
+const FantasyLeagueSeasonForm: React.FC<Props> = ({ values, onChange, id, refetchFantasyLeagueSeason, seasonStatus }) => {
+  const isLocked = !!seasonStatus && SEASON_LOCKED_STATUSES.includes(seasonStatus);
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const tradeDeadlineOptions = useMemo(() => {
     const start = Math.max(1, values.numberOfRounds - 8);
@@ -37,6 +45,11 @@ const FantasyLeagueSeasonForm: React.FC<Props> = ({ values, onChange, id, refetc
 
   return (
     <>
+      {isLocked && (
+        <Alert severity="warning" sx={{ mb: 2 }}>
+          Configurações bloqueadas — o draft já foi agendado.
+        </Alert>
+      )}
       {/* Número de Times */}
       <Box>
         <Typography fontWeight={600}>Número de Times</Typography>
@@ -44,6 +57,7 @@ const FantasyLeagueSeasonForm: React.FC<Props> = ({ values, onChange, id, refetc
           <Select
             value={values.numberOfTeams ?? ''}
             onChange={(e) => onChange('numberOfTeams', e.target.value)}
+            disabled={isLocked}
           >
             {Array.from({ length: 13 }, (_, i) => i + 8).map((n) => (
               <MenuItem key={n} value={n}>
@@ -64,6 +78,7 @@ const FantasyLeagueSeasonForm: React.FC<Props> = ({ values, onChange, id, refetc
           <Select
             value={values.tradeReviewDays ?? ''}
             onChange={(e) => onChange('tradeReviewDays', e.target.value)}
+            disabled={isLocked}
           >
             {[0, 1, 2, 3].map((day) => (
               <MenuItem key={day} value={day}>
@@ -81,6 +96,7 @@ const FantasyLeagueSeasonForm: React.FC<Props> = ({ values, onChange, id, refetc
           <Select
             value={values.numberOfRounds ?? ''}
             onChange={(e) => onChange('numberOfRounds', e.target.value)}
+            disabled={isLocked}
           >
             {Array.from({ length: 20 }, (_, i) => 19 + i).map((val) => (
               <MenuItem key={val} value={val}>
@@ -101,6 +117,7 @@ const FantasyLeagueSeasonForm: React.FC<Props> = ({ values, onChange, id, refetc
           <Select
             value={values.tradeDeadlineRound ?? ''}
             onChange={(e) => onChange('tradeDeadlineRound', e.target.value)}
+            disabled={isLocked}
           >
             <MenuItem value="">Sem limite</MenuItem>
             {tradeDeadlineOptions.map((round) => (
@@ -119,6 +136,7 @@ const FantasyLeagueSeasonForm: React.FC<Props> = ({ values, onChange, id, refetc
           <Select
             value={values.playoffTeams ?? ''}
             onChange={(e) => onChange('playoffTeams', e.target.value)}
+            disabled={isLocked}
           >
             {[4, 6, 7, 8].map((n) => (
               <MenuItem key={n} value={n}>
@@ -136,6 +154,7 @@ const FantasyLeagueSeasonForm: React.FC<Props> = ({ values, onChange, id, refetc
           <Select
             value={values.irSlots ?? ''}
             onChange={(e) => onChange('irSlots', e.target.value)}
+            disabled={isLocked}
           >
             {Array.from({ length: 9 }, (_, i) => (
               <MenuItem key={i} value={i}>
@@ -152,6 +171,7 @@ const FantasyLeagueSeasonForm: React.FC<Props> = ({ values, onChange, id, refetc
         <RadioGroup
           value={values.playoffFormat ?? ''}
           onChange={(e) => onChange('playoffFormat', e.target.value)}
+          aria-disabled={isLocked}
         >
           <FormControlLabel
             value="single_game"
@@ -181,7 +201,7 @@ const FantasyLeagueSeasonForm: React.FC<Props> = ({ values, onChange, id, refetc
           <Button
             variant="contained"
             onClick={() => updateFantasyLeagueSeason.mutate({ id, updates: values })}
-            disabled={updateFantasyLeagueSeason.isPending}
+            disabled={updateFantasyLeagueSeason.isPending || isLocked}
           >
             Salvar
           </Button>

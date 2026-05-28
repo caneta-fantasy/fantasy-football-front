@@ -5,6 +5,7 @@ const tabs = [
   { label: 'Draft', key: 'draft' },
   { label: 'Times', key: 'team' },
   { label: 'Tabela', key: 'schedule' },
+  { label: 'Rodada', key: 'rodada' },
   { label: 'Liga', key: 'league' },
   { label: 'Jogadores', key: 'players' },
   { label: 'Trocas', key: 'trades' },

@@ -1,32 +1,38 @@
 import React, { useState } from 'react';
 import {
-  Box,
-  Typography,
-  Select,
-  MenuItem,
-  TextField,
-  FormControl,
-  Button,
-  Snackbar,
   Alert,
+  Box,
+  Button,
+  FormControl,
+  MenuItem,
+  Select,
+  Snackbar,
+  TextField,
+  Typography,
 } from '@mui/material';
-import { DraftSettings, useUpdateDraftSettings } from '../api/useDraftSettingsMutations'; // <- create this hook
+import { DraftSettings, useUpdateDraftSettings } from '../api/useDraftSettingsMutations';
+
+const DRAFT_LOCKED_STATUSES = [
+  'DRAFT_DONE', 'SCHEDULED', 'ACTIVE', 'SEASON_ENDED', 'ARCHIVED',
+];
 
 interface Props {
   values: DraftSettings;
   onChange: (field: string, value: any) => void;
   id: number;
   refetchDraftSettings: () => void;
+  seasonStatus?: string;
 }
-
 
 const DraftSettingsForm: React.FC<Props> = ({
   values,
   onChange,
   id,
   refetchDraftSettings,
+  seasonStatus,
 }) => {
   const [openSnackbar, setOpenSnackbar] = useState(false);
+  const isLocked = !!seasonStatus && DRAFT_LOCKED_STATUSES.includes(seasonStatus);
 
   const updateDraftSettings = useUpdateDraftSettings({
     onSuccess: () => {
@@ -37,6 +43,11 @@ const DraftSettingsForm: React.FC<Props> = ({
 
   return (
     <>
+      {isLocked && (
+        <Alert severity="warning" sx={{ mb: 2 }}>
+          Configurações de draft bloqueadas — o draft já foi realizado.
+        </Alert>
+      )}
       {/* Draft Type */}
       <Box>
         <Typography fontWeight={600}>Tipo de Draft</Typography>
@@ -44,6 +55,7 @@ const DraftSettingsForm: React.FC<Props> = ({
           <Select
             value={values.draftType ?? ''}
             onChange={(e) => onChange('draftType', e.target.value)}
+            disabled={isLocked}
           >
             <MenuItem value="snake">Snake</MenuItem>
             <MenuItem value="linear">Linear</MenuItem>
@@ -58,6 +70,7 @@ const DraftSettingsForm: React.FC<Props> = ({
           <Select
             value={values.pickTimer ?? ''}
             onChange={(e) => onChange('pickTimer', e.target.value)}
+            disabled={isLocked}
           >
             <MenuItem value={30}>30 segundos</MenuItem>
             <MenuItem value={60}>60 segundos</MenuItem>
@@ -104,7 +117,7 @@ const DraftSettingsForm: React.FC<Props> = ({
               updates: values,
             })
           }
-          disabled={updateDraftSettings.isPending}
+          disabled={updateDraftSettings.isPending || isLocked}
         >
           Salvar
         </Button>
