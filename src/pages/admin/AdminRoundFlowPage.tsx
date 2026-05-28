@@ -39,6 +39,7 @@ import {
   useUpdateRoundFlow,
 } from '../../api/roundFlowQueries';
 import RoundGamesTab from './RoundGamesTab';
+import SquadSyncTab from './SquadSyncTab';
 
 const STATUS_COLORS: Record<RoundFlowStatus, 'default' | 'success' | 'info' | 'warning' | 'secondary' | 'error'> = {
   PENDING: 'default',
@@ -73,9 +74,11 @@ const AdminRoundFlowPage: React.FC = () => {
       <Tabs value={tab} onChange={(_, v) => setTab(v)} sx={{ mb: 3, borderBottom: 1, borderColor: 'divider' }}>
         <Tab label="Fluxo de Rodada" />
         <Tab label="Jogos da Rodada" />
+        <Tab label="Elencos" />
       </Tabs>
       {tab === 0 && <RoundFlowTab />}
       {tab === 1 && <RoundGamesTab />}
+      {tab === 2 && <SquadSyncTab />}
     </Box>
   );
 };
