@@ -1,0 +1,55 @@
+/* Radio — the real <input> is overlaid invisibly on the decorative dot so the
+   dot reflects the input's :checked / :focus-visible state via sibling
+   selectors. Transitions neutralized under reduced-motion by the base layer. */
+
+.ds-radio {
+  position: relative;
+}
+
+.ds-radio-input {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 20px;
+  height: 20px;
+  margin: 0;
+  opacity: 0;
+  cursor: inherit;
+}
+
+.ds-radio-dot {
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+  border-radius: var(--radius-full, 999px);
+  border: 1.5px solid var(--color-border-strong);
+  background: var(--color-surface);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: border-color var(--dur-150, 150ms) var(--ease-standard);
+}
+
+/* The inner lime pip appears when checked. */
+.ds-radio-dot::after {
+  content: '';
+  width: 10px;
+  height: 10px;
+  border-radius: var(--radius-full, 999px);
+  background: var(--caneta-lime);
+  box-shadow: 0 0 0 1px var(--caneta-lime-d);
+  transform: scale(0);
+  transition: transform var(--dur-150, 150ms) var(--ease-emphasized);
+}
+
+.ds-radio-input:checked ~ .ds-radio-dot {
+  border-color: var(--caneta-lime-d);
+}
+.ds-radio-input:checked ~ .ds-radio-dot::after {
+  transform: scale(1);
+}
+
+.ds-radio-input:focus-visible ~ .ds-radio-dot {
+  outline: none;
+  box-shadow: var(--focus-ring);
+}

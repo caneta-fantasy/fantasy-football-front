@@ -1,0 +1,50 @@
+/* Switch — a button styled as a track + sliding thumb. State is driven by the
+   data-checked attribute the component sets from aria-checked. Transitions are
+   neutralized under prefers-reduced-motion globally by the DS base layer. */
+
+.ds-switch {
+  position: relative;
+  flex-shrink: 0;
+  width: 38px;
+  height: 22px;
+  padding: 0;
+  border: 1px solid transparent;
+  border-radius: var(--radius-full, 999px);
+  background: var(--ink-200);
+  cursor: pointer;
+  transition: background-color var(--dur-200, 200ms) var(--ease-standard),
+    border-color var(--dur-200, 200ms) var(--ease-standard);
+}
+
+.ds-switch[data-checked] {
+  background: var(--caneta-lime);
+  border-color: var(--caneta-lime-d);
+}
+
+.ds-switch-thumb {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 18px;
+  height: 18px;
+  border-radius: var(--radius-full, 999px);
+  background: var(--color-surface);
+  box-shadow: 0 1px 3px rgba(11, 15, 12, 0.3);
+  transition: left var(--dur-200, 200ms) var(--ease-standard),
+    background-color var(--dur-200, 200ms) var(--ease-standard);
+}
+
+.ds-switch[data-checked] .ds-switch-thumb {
+  left: 18px;
+  background: var(--ink-900);
+}
+
+.ds-switch--disabled {
+  opacity: var(--opacity-disabled);
+  cursor: not-allowed;
+}
+
+.ds-switch:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+}
