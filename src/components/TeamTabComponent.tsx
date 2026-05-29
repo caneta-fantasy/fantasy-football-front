@@ -158,7 +158,7 @@ interface Props {
           <PlayerSelectModal
             open={isModalOpen}
             onClose={() => setIsModalOpen(false)}
-            onSelectPlayer={(player) => {
+            onSelectPlayer={() => {
               setIsModalOpen(false);
             }}
             fantasyLeague={fantasyLeague}

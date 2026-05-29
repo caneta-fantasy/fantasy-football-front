@@ -58,7 +58,6 @@ interface PlayerSelectModalProps {
 const PlayerSelectModal: React.FC<PlayerSelectModalProps> = ({
   open,
   onClose,
-  onSelectPlayer,
   fantasyLeague,
   allowedPositions,
   slot,

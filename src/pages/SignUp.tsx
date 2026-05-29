@@ -48,7 +48,7 @@ const SignUp: React.FC = () => {
   });
 
   const navigate = useNavigate();
-  const { mutate: signUp, isPending, isError, error } = useSignUp();
+  const { mutate: signUp, isPending } = useSignUp();
 
   const signUpMutation = useMutation({
     mutationFn: async (userData: SignUpFormData) => {

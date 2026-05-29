@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import { useMemo } from 'react';
 import { Box, Stack, Typography, Button, Divider } from '@mui/material';
 import { useActivateSeasonMutation } from '../api/fantasyLeagueSeasonsMutation';
 import { FantasyLeagueSeason } from '../api/useFantasyLeagueSeasons';

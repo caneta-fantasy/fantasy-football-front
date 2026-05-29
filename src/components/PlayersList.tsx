@@ -122,7 +122,7 @@ const PlayersList: React.FC<PlayersListProps> = ({ fantasyLeague, seasonYear, us
     setPage(0);
   };
   const [selectedSlotId, setSelectedSlotId] = useState<number | null>(null);
-  const [selectedPlayerName, setSelectedPlayerName] = useState<string>('')
+  const [, setSelectedPlayerName] = useState<string>('')
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [dropError, setDropError] = useState<string | null>(null);
 
