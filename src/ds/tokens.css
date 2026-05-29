@@ -1,0 +1,62 @@
+:root {
+  /* --- primitive: INK scale --- */
+  --ink-900: #0B0F0C; --ink-850: #15191A; --ink-800: #1F2422;
+  --ink-700: #2D3330; --ink-600: #444B47; --ink-500: #5E6661;
+  --ink-400: #8A918C; --ink-300: #A8AFA9; --ink-200: #C5C9C5;
+  --ink-100: #DDDFDB; --ink-50: #EBECE8;
+  /* --- primitive: brand + state --- */
+  --caneta-lime: #D8FF3D; --caneta-lime-d: #B7DA19; --caneta-lime-deep: #7C9603;
+  --clay: #C5532D; --clay-d: #923C1E;
+  --pitch: #1F3A2A; --pitch-d: #10241A; --chalk: #EFEEE3;
+  --red: #E5453A; --red-deep: #B82C22;
+  --yellow: #FFC42E; --yellow-d: #D69B00;
+  --paper: #F3ECDB; --paper-2: #E9DFC5; --paper-ink: #1A1812;
+  --pos-blue: #5BAEFF; /* promoted from off-palette literal (defender pill) */
+  /* --- semantic (light) --- */
+  --color-bg: #FAFAF6;
+  --color-surface: #FFFFFF;
+  --color-surface-inset: #F1F1EC;
+  --color-surface-dark: #0F1411;
+  --color-text: var(--ink-900);
+  --color-text-muted: var(--ink-500);     /* 5.6:1 — small functional text */
+  --color-text-subtle: #8A8C82;            /* ≥18px decorative / disabled ONLY */
+  --color-text-on-dark: #F1ECDF;
+  --color-border: #E4E3DD;
+  --color-border-strong: #9D9C97;
+  --color-border-subtle: #EEEDE7;
+  --color-danger-fg: var(--ink-900);       /* §7 #3: ink900 on red, not white */
+  --color-on-lime: var(--ink-900);
+  /* focus ring — §7 #2: the single source of truth */
+  --focus-ring: 0 0 0 2px var(--caneta-lime), 0 0 0 4px var(--ink-900);
+  /* radius (§7 #12: 2px is the real default, not 0) */
+  --radius-xs: 2px; --radius-sm: 4px; --radius-md: 8px; --radius-lg: 12px; --radius-full: 999px;
+  /* spacing base 4px */
+  --space-1: 4px; --space-2: 8px; --space-3: 12px; --space-4: 16px;
+  --space-6: 24px; --space-8: 32px; --space-12: 48px; --space-16: 64px; --space-24: 96px;
+  /* elevation */
+  --elevation-1: 0 1px 2px rgba(11,15,12,.06), 0 2px 8px rgba(11,15,12,.06);
+  --elevation-2: 0 4px 12px rgba(11,15,12,.10), 0 1px 3px rgba(11,15,12,.08);
+  --elevation-3: 0 12px 32px rgba(11,15,12,.16), 0 2px 8px rgba(11,15,12,.10);
+  --elevation-4: 0 20px 56px rgba(11,15,12,.22), 0 4px 14px rgba(11,15,12,.12);
+  /* motion */
+  --dur-75: 75ms; --dur-150: 150ms; --dur-200: 200ms; --dur-300: 300ms; --dur-500: 500ms;
+  --ease-standard: cubic-bezier(.2,.6,.3,1);
+  --ease-decelerate: cubic-bezier(0,.7,.3,1);
+  --ease-accelerate: cubic-bezier(.5,0,1,.4);
+  --ease-emphasized: cubic-bezier(.3,1.3,.4,1);
+  /* z-index scale (§7 #12: new) */
+  --z-base: 0; --z-dropdown: 1000; --z-sticky: 1100; --z-drawer: 1200;
+  --z-modal: 1300; --z-popover: 1400; --z-toast: 1500;
+  /* opacity scale (§7 #12: incl. ≤0.15 decorative cap) */
+  --opacity-decor-max: 0.15; --opacity-disabled: 0.6;
+  /* border widths */
+  --bw-1: 1px; --bw-2: 2px;
+  /* fonts */
+  --font-display: 'Anton', 'Bebas Neue', Impact, sans-serif;
+  --font-sans: 'Space Grotesk', -apple-system, system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, Menlo, monospace;
+}
+
+[data-theme='dark'] {
+  /* Phase 1: hook present, light-only shipped. Dark map filled in a later phase. */
+}

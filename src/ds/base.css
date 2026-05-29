@@ -1,0 +1,12 @@
+/* Scoped reset: only inside the DS root marker, so MUI screens are untouched. */
+[data-ds] *, [data-ds] *::before, [data-ds] *::after { box-sizing: border-box; }
+[data-ds] { font-family: var(--font-sans); color: var(--color-text); background: var(--color-bg); }
+[data-ds] :focus-visible { outline: none; box-shadow: var(--focus-ring); }
+
+/* §7 #10: robust reduced-motion kill-switch (class/animation agnostic). */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: .001ms !important; animation-iteration-count: 1 !important;
+    transition-duration: .001ms !important; scroll-behavior: auto !important;
+  }
+}
