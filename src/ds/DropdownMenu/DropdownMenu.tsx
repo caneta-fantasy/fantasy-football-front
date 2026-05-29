@@ -91,17 +91,17 @@ export function DropdownMenu({
     [items, close],
   )
 
-  // On open, focus the first enabled item (roving focus origin).
+  // On open, reset the roving-focus origin to the first enabled item.
+  // Focusing is handled by the activeIndex effect below — focusing here too
+  // (previously via requestAnimationFrame) raced with keyboard navigation and
+  // could steal focus back to the first item after the user had moved.
   React.useEffect(() => {
     if (!open) return
-    const first = enabledIndexes[0] ?? 0
-    setActiveIndex(first)
-    // Defer to let the menu mount.
-    const id = requestAnimationFrame(() => itemRefs.current[first]?.focus())
-    return () => cancelAnimationFrame(id)
+    setActiveIndex(enabledIndexes[0] ?? 0)
   }, [open, enabledIndexes])
 
-  // Keep DOM focus in sync with the active index while open.
+  // Keep DOM focus in sync with the active index while open (also drives the
+  // initial focus on open, since `open` is a dependency).
   React.useEffect(() => {
     if (!open) return
     itemRefs.current[activeIndex]?.focus()
