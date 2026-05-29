@@ -1,0 +1,14 @@
+/* Entry animation for a toast surface. Reduced-motion is handled globally by
+   the DS base layer (it neutralizes animation-duration), so under that media
+   query the toast simply appears in place. */
+
+@keyframes ds-toast-in {
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
