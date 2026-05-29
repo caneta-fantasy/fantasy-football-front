@@ -1,0 +1,12 @@
+/* Rotating arc. Reduced-motion is handled globally by the DS base layer,
+   which neutralizes animation-duration under prefers-reduced-motion. */
+@keyframes ds-spinner-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.ds-spinner-svg {
+  transform-origin: center;
+  animation: ds-spinner-spin var(--dur-500, 500ms) linear infinite;
+}
