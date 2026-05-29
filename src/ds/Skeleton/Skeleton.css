@@ -1,0 +1,27 @@
+/* Skeleton shimmer — an ink50 -> ink100 sweep that reads as "loading".
+   Sharp corners by default, on-brand. Reduced-motion is handled globally by
+   the DS base layer (it neutralizes animation-duration under
+   prefers-reduced-motion), which freezes this sweep into a flat solid block. */
+@keyframes ds-skeleton-shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+.ds-skeleton {
+  background-color: var(--ink-50);
+  background-image: linear-gradient(
+    90deg,
+    var(--ink-50) 0%,
+    var(--ink-100) 50%,
+    var(--ink-50) 100%
+  );
+  background-size: 200% 100%;
+  background-repeat: no-repeat;
+  animation: ds-skeleton-shimmer var(--dur-500, 500ms) ease-in-out infinite;
+  /* Doubled the base 500ms feels too quick for a sweep; lengthen tastefully. */
+  animation-duration: 1300ms;
+}
