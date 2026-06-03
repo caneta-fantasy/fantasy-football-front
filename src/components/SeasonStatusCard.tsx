@@ -226,6 +226,14 @@ const getErrorMessage = (err: unknown) => {
                 {season.playoffTeams ? ` • ${season.playoffTeams}  se classificam para o mata mata` : ''}
               </Typography>
 
+              {phase === 'temporada' && season.currentFantasyRound != null && (
+                <Typography variant="body2" color="text.secondary">
+                  {season.currentRealRound != null && season.currentRealRound !== season.currentFantasyRound
+                    ? `Rodada ${season.currentFantasyRound} da Liga • Rodada ${season.currentRealRound} do Campeonato`
+                    : `Rodada ${season.currentFantasyRound}`}
+                </Typography>
+              )}
+
               {phase === 'playoffs-encerrados' && (
                 <Typography variant="body2" fontWeight={700} color="warning.main">
                   🏆 Campeão{championTeamName ? `: ${championTeamName}` : ''}

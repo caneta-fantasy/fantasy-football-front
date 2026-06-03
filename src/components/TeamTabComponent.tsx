@@ -14,7 +14,7 @@ import { UserTeam } from '../api/userTeamsQueries';
 import Loading from './Loading';
 import { useRealMatchesByRound } from '../api/matchesQueries';
 import { getOpponentForTeam } from '../utils/matchUtils';
-import { useLockedTeams } from '../api/fantasyRoundGameQueries';
+import { useLockedTeams } from '../api/fantasyRoundGameQueries';  
 import { useFantasyLeagueSeasons } from '../api/useFantasyLeagueSeasons';
 
 interface Props {
@@ -25,7 +25,6 @@ interface Props {
   }
 
   export const TeamTab: React.FC<Props> = ({ userTeam, fantasyLeague, seasonYear, seasonId }) => {
-    console.log('[TeamTab] seasonYear:', seasonYear);
     const [selectedSlot, setSelectedSlot] = useState<any | null>(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [moveOpen, setMoveOpen] = useState(false);
@@ -37,9 +36,9 @@ interface Props {
 
     const { data: leagueTeams } = useFantasyLeagueTeams(fantasyLeague.id);
     const { data: season } = useFantasyLeagueSeasons(fantasyLeague.id);
-    const currentRound = season?.currentRound ?? undefined;
-    const { data: realMatches } = useRealMatchesByRound(seasonYear, currentRound);
-    const { data: lockedTeamsData } = useLockedTeams(fantasyLeague.league.externalId, seasonYear, currentRound);
+    const currentRealRound = season?.currentRealRound ?? undefined;
+    const { data: realMatches } = useRealMatchesByRound(seasonYear, currentRealRound);
+    const { data: lockedTeamsData } = useLockedTeams(fantasyLeague.league.externalId, seasonYear, currentRealRound);
     const lockedTeamIds = new Set<number>(lockedTeamsData?.lockedTeamIds ?? []);
     const isViewingOwnTeam = selectedTeamId === userTeam.id;
     const viewedTeam = leagueTeams?.find((t: FantasyLeagueTeamsResponse) => t.id === selectedTeamId);

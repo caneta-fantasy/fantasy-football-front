@@ -15,7 +15,8 @@ export interface FantasyLeagueSeason {
   activatedAt: string;
   status: string;
   seasonYear: number;
-  currentRound: number | null;
+  currentFantasyRound: number | null;
+  currentRealRound: number | null;
   waiverSystem: 'AUCTION' | 'PRIORITY';
   initialWaiverBudget: number;
   fantasyLeague?: { league?: { externalId?: number } };
