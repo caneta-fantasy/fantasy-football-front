@@ -71,6 +71,5 @@ export const useGetCurrentUser = () => {
       );
       return response.data;
     },
-    staleTime: 5 * 60 * 1000,
   });
 };
