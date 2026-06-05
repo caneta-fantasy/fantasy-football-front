@@ -71,7 +71,7 @@ interface Props {
         {leagueTeams && leagueTeams.length > 1 && (
           <Box sx={{ overflowX: 'auto', pb: 1 }}>
             <Stack direction="row" spacing={1} sx={{ flexWrap: 'nowrap' }}>
-              {leagueTeams.map((team: FantasyLeagueTeamsResponse) => (
+              {[...leagueTeams].sort((a, b) => (b.id === userTeam.id ? 1 : 0) - (a.id === userTeam.id ? 1 : 0)).map((team: FantasyLeagueTeamsResponse) => (
                 <Chip
                   key={team.id}
                   label={team.id === userTeam.id ? `${team.name} (Meu Time)` : team.name}
