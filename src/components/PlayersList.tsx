@@ -201,7 +201,7 @@ const PlayersList: React.FC<PlayersListProps> = ({ fantasyLeague, seasonYear, us
     limit: rowsPerPage,
     sortBy,
     order,
-    leagueId: fantasyLeague.league.id,
+    leagueId: fantasyLeague.league.externalId,
     fantasyLeagueId: fantasyLeague.id,
     onlyFreeAgents,
   });
@@ -228,7 +228,7 @@ const PlayersList: React.FC<PlayersListProps> = ({ fantasyLeague, seasonYear, us
   };
 
   const { data: filters, isLoading: loadingFilters } = usePlayersFilters({
-    leagueId: fantasyLeague.league.id,
+    leagueId: fantasyLeague.league.externalId,
     seasonYear,
   });
   

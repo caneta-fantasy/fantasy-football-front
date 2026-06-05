@@ -9,10 +9,7 @@ export interface RosterSettings {
     starterSkillSlots: number;
     minStarterMidfielders: number;
     minStarterForwards: number;
-    benchSkillSlots: number;
-    benchDefenseSlots: number;
-    minBenchMidfielders: number;
-    minBenchForwards: number;
+    benchSlots: number;
     starterDefenseSlots: number;
     defenseType: DefenseType;
 }

@@ -16,13 +16,17 @@ import {
   TablePagination,
   IconButton,
   InputAdornment,
+  MenuItem,
+  Select,
+  FormControl,
+  InputLabel,
   useTheme,
   useMediaQuery,
   Snackbar,
   Alert,
 } from '@mui/material';
 import ClearIcon from '@mui/icons-material/Clear';
-import { Player, usePlayers } from '../api/playersQueries';
+import { Player, usePlayers, usePlayersFilters } from '../api/playersQueries';
 import { useAddPlayer } from '../api/userTeamRosterMutations';
 import { FantasyLeague } from '../api/fantasyLeagueQueries';
 import Loading from './Loading';
@@ -35,7 +39,7 @@ export const POSITIONS_TRANSLATION = {
   Defense: 'Defesa',
 };
 
-const POSITIONS_BACKEND_MAP = {
+const POSITIONS_BACKEND_MAP: Record<string, string> = {
   DEF: 'Defense',
   MEI: 'Midfielder',
   ATA: 'Attacker',
@@ -72,6 +76,7 @@ const PlayerSelectModal: React.FC<PlayerSelectModalProps> = ({
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
   const [position, setPosition] = useState<string>('ALL');
+  const [teamId, setTeamId] = useState<number | ''>('');
   const [search, setSearch] = useState<string>('');
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
@@ -81,12 +86,27 @@ const PlayerSelectModal: React.FC<PlayerSelectModalProps> = ({
     type: 'success',
   });
 
+  // Reset filters when modal opens
+  useEffect(() => {
+    if (open) {
+      setPosition('ALL');
+      setTeamId('');
+      setSearch('');
+      setPage(0);
+    }
+  }, [open]);
+
   const { mutate: addPlayer, isPending: isAddingPlayer } = useAddPlayer({
     onSuccess: () => {
-      setSnackbar({ open: true, message: 'Player added to roster!', type: 'success' });
+      setSnackbar({ open: true, message: 'Jogador adicionado ao elenco!', type: 'success' });
       refetch();
       onClose();
     },
+  });
+
+  const { data: filtersData } = usePlayersFilters({
+    leagueId: fantasyLeague.league.externalId,
+    seasonYear,
   });
 
   const handlePlayerClick = (playerId: number) => {
@@ -102,12 +122,14 @@ const PlayerSelectModal: React.FC<PlayerSelectModalProps> = ({
     });
   };
 
-  const backendPosition = allowedPositions.map(
-    (pos) => POSITIONS_BACKEND_MAP[pos as keyof typeof POSITIONS_BACKEND_MAP]
-  );
+  // Resolve which positions to send to the API based on the selected filter
+  const resolvedPositions: string[] =
+    position === 'ALL'
+      ? allowedPositions.map((pos) => POSITIONS_BACKEND_MAP[pos] ?? pos)
+      : [POSITIONS_BACKEND_MAP[position] ?? position];
 
   const { data, isLoading } = usePlayers({
-    position: backendPosition,
+    position: resolvedPositions,
     search,
     page: page + 1,
     limit: rowsPerPage,
@@ -115,10 +137,10 @@ const PlayerSelectModal: React.FC<PlayerSelectModalProps> = ({
     order: 'desc',
     leagueId: fantasyLeague.league.id,
     fantasyLeagueId: fantasyLeague.id,
-    onlyFreeAgents: true, 
+    onlyFreeAgents: true,
+    teamId: teamId !== '' ? teamId : undefined,
   });
 
-  // 🔁 Cache the last successful data to prevent blinking
   const previousDataRef = useRef<Player[]>([]);
   useEffect(() => {
     if (data?.data?.length) {
@@ -136,19 +158,26 @@ const PlayerSelectModal: React.FC<PlayerSelectModalProps> = ({
   };
 
   if (isAddingPlayer) return <Loading message="Adicionando jogador..." />;
-  if (isLoading) return <Loading message="Carregando jogadores..." fullScreen />;
+  if (isLoading && !previousDataRef.current.length) return <Loading message="Carregando jogadores..." fullScreen />;
 
   return (
     <Dialog open={open} onClose={onClose} fullWidth maxWidth="md">
       <DialogTitle>Selecionar Jogador</DialogTitle>
       <DialogContent>
-        <Box display="flex" flexDirection={isMobile ? 'column' : 'row'} gap={2} mb={3}>
+        <Box display="flex" flexDirection={isMobile ? 'column' : 'row'} gap={2} mb={3} flexWrap="wrap">
+          {/* Position filter */}
           <ToggleButtonGroup
             value={position}
             exclusive
-            onChange={(_, newPos) => newPos && setPosition(newPos)}
+            onChange={(_, newPos) => {
+              if (newPos) {
+                setPosition(newPos);
+                setPage(0);
+              }
+            }}
             size="small"
           >
+            <ToggleButton value="ALL">Todos</ToggleButton>
             {allowedPositions.map((pos) => (
               <ToggleButton key={pos} value={pos}>
                 {pos}
@@ -156,6 +185,27 @@ const PlayerSelectModal: React.FC<PlayerSelectModalProps> = ({
             ))}
           </ToggleButtonGroup>
 
+          {/* Team filter */}
+          <FormControl size="small" sx={{ minWidth: 160 }}>
+            <InputLabel>Time</InputLabel>
+            <Select
+              value={teamId}
+              label="Time"
+              onChange={(e) => {
+                setTeamId(e.target.value as number | '');
+                setPage(0);
+              }}
+            >
+              <MenuItem value="">Todos os times</MenuItem>
+              {(filtersData?.teams ?? []).map((t) => (
+                <MenuItem key={t.id} value={t.id}>
+                  {t.name}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+
+          {/* Search */}
           <TextField
             placeholder="Buscar jogador"
             size="small"
@@ -177,12 +227,7 @@ const PlayerSelectModal: React.FC<PlayerSelectModalProps> = ({
           />
         </Box>
 
-        <Box
-          sx={{
-            opacity: isLoading ? 0.6 : 1,
-            transition: 'opacity 300ms ease-in-out',
-          }}
-        >
+        <Box sx={{ opacity: isLoading ? 0.6 : 1, transition: 'opacity 300ms ease-in-out' }}>
           <Table size="small">
             <TableHead>
               <TableRow>
@@ -209,7 +254,7 @@ const PlayerSelectModal: React.FC<PlayerSelectModalProps> = ({
                     </TableCell>
                     <TableCell>{player.team_name}</TableCell>
                     <TableCell>
-                      {POSITIONS_TRANSLATION[player.player_position as keyof typeof POSITIONS_TRANSLATION]}
+                      {POSITIONS_TRANSLATION[player.player_position as keyof typeof POSITIONS_TRANSLATION] ?? player.player_position}
                     </TableCell>
                     <TableCell align="right">{player.goals}</TableCell>
                   </TableRow>

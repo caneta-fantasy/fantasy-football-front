@@ -31,9 +31,11 @@ export enum RosterSlotCard {
   };
 
   export const SlotCard: React.FC<SlotCardProps> = ({ slotType, allowedPositions, player, onRemovePlayer, slot, opponentInfo }) => {
-    const label = allowedPositions.length > 1
-      ? allowedPositions.map((p) => p === 'MEI' ? 'M' : p === 'ATA' ? 'A' : p).join('/')
-      : allowedPositions[0];
+    const label = slotType === 'bench'
+      ? 'BN'
+      : allowedPositions.length > 1
+        ? allowedPositions.map((p) => p === 'MEI' ? 'M' : p === 'ATA' ? 'A' : p).join('/')
+        : allowedPositions[0];
   
     return (
       <Paper

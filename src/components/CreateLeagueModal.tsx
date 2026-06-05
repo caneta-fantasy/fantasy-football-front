@@ -45,7 +45,7 @@ interface CreateLeagueModalProps {
 const draftTypes = [
   {
     value: 'snake',
-    label: 'Cobra',
+    label: 'Vai e Vem',
     description: 'O time que escolher primeiro na primeira rodada escolhe por último na segunda rodada e assim por diante.',
   },
   {
