@@ -1,9 +1,11 @@
 /* Scoped reset: only inside the DS root marker, so MUI screens are untouched. */
 [data-ds] *, [data-ds] *::before, [data-ds] *::after { box-sizing: border-box; }
+/* base body voice — Archivo (modernista); color/bg from the semantic layer */
 [data-ds] { font-family: var(--font-sans); color: var(--color-text); background: var(--color-bg); }
+/* focus ring — cobalt on white (the single source of truth, --focus-ring) */
 [data-ds] :focus-visible { outline: none; box-shadow: var(--focus-ring); }
 
-/* §7 #10: robust reduced-motion kill-switch (class/animation agnostic). */
+/* robust reduced-motion kill-switch (class/animation agnostic). */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation-duration: .001ms !important; animation-iteration-count: 1 !important;

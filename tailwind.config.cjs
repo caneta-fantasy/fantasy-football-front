@@ -1,26 +1,142 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   content: ['./src/**/*.{js,jsx,ts,tsx}', './index.html'],
-  corePlugins: { preflight: false }, // re-enabled scoped via a base layer in Task 5
+  corePlugins: { preflight: false }, // scoped reset lives in src/ds/base.css ([data-ds])
   theme: {
+    // OVERRIDE (not extend): drops Tailwind's default ramps so no neutral gray
+    // ramp and no default blue ring can leak. Only the modernista token set —
+    // plus compat aliases for not-yet-restyled ds components (removed in Part B).
+    colors: {
+      transparent: 'transparent',
+      current: 'currentColor',
+      inherit: 'inherit',
+      white: '#FFFFFF',
+      black: '#000000',
+
+      // ─── modernista flat token set (all var(--…)) ───
+      // surfaces
+      bg: 'var(--bg)',
+      paper: 'var(--paper)',
+      raised: 'var(--raised)',
+      mist: 'var(--mist)',
+      mist2: 'var(--mist2)',
+      veil: 'var(--veil)',
+      // semantic surface aliases (kept for in-use utilities)
+      surface: 'var(--color-surface)',
+      'surface-inset': 'var(--color-surface-inset)',
+      'surface-sunken': 'var(--color-surface-sunken)',
+      'surface-hero': 'var(--color-surface-hero)',
+      // signature (green)
+      signature: {
+        DEFAULT: 'var(--green)',
+        deep: 'var(--green-deep)',
+        raised: 'var(--green-600)',
+        leaf: 'var(--green-500)',
+        line: 'var(--green-line)',
+        pale: 'var(--green-pale)',
+      },
+      // accent (gold)
+      accent: {
+        DEFAULT: 'var(--gold)',
+        deep: 'var(--gold-deep)',
+        light: 'var(--gold-light)',
+        pale: 'var(--gold-pale)',
+      },
+      // interactive (cobalt)
+      cobalt: {
+        DEFAULT: 'var(--cobalt)',
+        deep: 'var(--cobalt-deep)',
+        light: 'var(--cobalt-light)',
+        pale: 'var(--cobalt-pale)',
+      },
+      // ink + on-colors
+      ink: {
+        DEFAULT: 'var(--ink)',
+        muted: 'var(--ink-muted)',
+        subtle: 'var(--ink-subtle)',
+        // compat numeric ramp for not-yet-restyled ds components (Part B):
+        900: 'var(--ink-900)',
+        700: 'var(--ink-700)',
+        600: 'var(--ink-600)',
+        500: 'var(--ink-500)',
+        400: 'var(--ink-400)',
+        300: 'var(--ink-300)',
+        100: 'var(--ink-100)',
+      },
+      'on-green': 'var(--on-green)',
+      'on-green-mute': 'var(--on-green-mute)',
+      'on-gold': 'var(--on-gold)',
+      'on-cobalt': 'var(--on-cobalt)',
+      // borders
+      line: {
+        DEFAULT: 'var(--line)',
+        strong: 'var(--line-strong)',
+        subtle: 'var(--line-subtle)',
+      },
+      // reserved — referee only
+      'card-yellow': 'var(--card-yellow)',
+      'card-red': 'var(--card-red)',
+      // functional (own hues)
+      success: { DEFAULT: 'var(--success)', pale: 'var(--success-pale)' },
+      warning: { DEFAULT: 'var(--warning)', pale: 'var(--warning-pale)' },
+      danger: { DEFAULT: 'var(--danger)', pale: 'var(--danger-pale)' },
+      // pitch
+      pitch: { DEFAULT: 'var(--pitch)', line: 'var(--pitch-line)' },
+
+      // semantic text/border aliases (in-use utility names)
+      text: {
+        DEFAULT: 'var(--color-text)',
+        muted: 'var(--color-text-muted)',
+        subtle: 'var(--color-text-subtle)',
+        'on-dark': 'var(--color-text-on-dark)',
+      },
+      border: {
+        DEFAULT: 'var(--color-border)',
+        strong: 'var(--color-border-strong)',
+        subtle: 'var(--color-border-subtle)',
+      },
+
+      // ─── compat aliases ──────────────────────────────────────────────
+      // ds components are restyled in Part B (plan B1–B10); until then they
+      // emit prior utility names. Map onto modernista vars so the compiled
+      // classes resolve to the new palette (not undefined). Removed in Part B.
+      lime: {
+        DEFAULT: 'var(--green)',
+        d: 'var(--green-600)',
+        deep: 'var(--green-deep)',
+      },
+      clay: 'var(--cobalt)',
+      red: 'var(--danger)',
+      yellow: 'var(--warning)',
+      'surface-dark': 'var(--green)',
+      'on-dark': 'var(--on-green)',
+    },
+    fontFamily: {
+      // same family for sans + display; poster look comes from
+      // fontVariationSettings (disp), not a second face.
+      sans: ['Archivo', 'system-ui', 'sans-serif'],
+      display: ['Archivo', 'system-ui', 'sans-serif'],
+      serif: ['Spectral', 'Georgia', 'serif'],
+      mono: ['Spline Sans Mono', 'ui-monospace', 'Menlo', 'monospace'],
+      logo: ['Anton', 'Impact', 'sans-serif'], // wordmark-only — not a general display utility
+    },
+    borderRadius: {
+      none: '0',
+      DEFAULT: '11px', // `rounded` / `rounded-t` compat (btn radius)
+      btn: '11px',
+      'btn-sm': '9px',
+      'btn-lg': '13px',
+      pill: '4px',
+      chip: '999px',
+      full: '9999px',
+      // cards default to hard edge; Niemeyer arches stay inline 120px 120px 0 0.
+      // compat ramp for not-yet-restyled ds components (removed in Part B):
+      xs: '4px',
+      sm: '4px',
+      md: '11px',
+      lg: '13px',
+    },
     extend: {
-      colors: {
-        bg: 'var(--color-bg)', surface: 'var(--color-surface)',
-        'surface-inset': 'var(--color-surface-inset)',
-        ink: { 900: 'var(--ink-900)', 700: 'var(--ink-700)', 500: 'var(--ink-500)', 100: 'var(--ink-100)' },
-        lime: { DEFAULT: 'var(--caneta-lime)', d: 'var(--caneta-lime-d)', deep: 'var(--caneta-lime-deep)' },
-        clay: 'var(--clay)', pitch: 'var(--pitch)', paper: 'var(--paper)',
-        red: 'var(--red)', yellow: 'var(--yellow)',
-        text: 'var(--color-text)', 'text-muted': 'var(--color-text-muted)',
-        'text-subtle': 'var(--color-text-subtle)', 'text-on-dark': 'var(--color-text-on-dark)',
-        border: 'var(--color-border)', 'border-strong': 'var(--color-border-strong)',
-      },
-      fontFamily: {
-        display: ['Anton', 'Bebas Neue', 'Impact', 'sans-serif'],
-        sans: ['Space Grotesk', 'system-ui', 'sans-serif'],
-        mono: ['JetBrains Mono', 'ui-monospace', 'monospace'],
-      },
-      borderRadius: { xs: '2px', sm: '4px', md: '8px', lg: '12px', full: '999px' },
       boxShadow: {
         e1: 'var(--elevation-1)', e2: 'var(--elevation-2)',
         e3: 'var(--elevation-3)', e4: 'var(--elevation-4)',
