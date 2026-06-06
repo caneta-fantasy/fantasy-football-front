@@ -8,6 +8,11 @@ const Navbar: React.FC = () => {
   const { user, logout } = useAuth();
   const { data: currentSeason } = useCurrentSeason();
 
+  // The top nav is the authenticated app shell — hide it entirely when logged
+  // out so it never renders on the public pages (sign in / sign up / invite).
+  // The login screen carries its own brand wordmark in the hero.
+  if (!user) return null;
+
   return (
     <AppBar 
       position="static" 
