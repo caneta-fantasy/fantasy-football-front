@@ -137,9 +137,9 @@ const FantasyLeaguePage = ({ currentUserId }: { currentUserId: number }) => {
 
         <Box mt={4}>
           {selectedTab === 'draft' && <DraftTab fantasyLeague={fantasyLeague} currentUserId={currentUserId} />}
-          {selectedTab === 'team' && <TeamTab seasonYear={seasonYear} seasonId={fantasyLeagueSeason?.id} userTeam={userTeam} fantasyLeague={fantasyLeague} />}
-          {selectedTab === 'schedule' && <ScheduleTab seasonId={fantasyLeagueSeason?.id} userTeamId={userTeam?.id} seasonYear={seasonYear} currentRound={fantasyLeagueSeason?.currentRound ?? null} playoffStartRound={fantasyLeagueSeason?.playoffStartRound ?? null} numberOfRounds={fantasyLeagueSeason?.numberOfRounds ?? null} />}
-          {selectedTab === 'rodada' && <RodadaTab seasonId={fantasyLeagueSeason?.id} userTeamId={userTeam?.id} seasonYear={seasonYear} currentRound={fantasyLeagueSeason?.currentRound ?? null} playoffStartRound={fantasyLeagueSeason?.playoffStartRound ?? null} numberOfRounds={fantasyLeagueSeason?.numberOfRounds ?? null} />}
+          {selectedTab === 'team' && userTeam && <TeamTab key={userTeam.id} seasonYear={seasonYear} seasonId={fantasyLeagueSeason?.id} userTeam={userTeam} fantasyLeague={fantasyLeague} />}
+          {selectedTab === 'schedule' && <ScheduleTab seasonId={fantasyLeagueSeason?.id} userTeamId={userTeam?.id} seasonYear={seasonYear} currentRound={fantasyLeagueSeason?.currentFantasyRound ?? null} playoffStartRound={fantasyLeagueSeason?.playoffStartRound ?? null} numberOfRounds={fantasyLeagueSeason?.numberOfRounds ?? null} />}
+          {selectedTab === 'rodada' && <RodadaTab seasonId={fantasyLeagueSeason?.id} userTeamId={userTeam?.id} seasonYear={seasonYear} currentRound={fantasyLeagueSeason?.currentFantasyRound ?? null} playoffStartRound={fantasyLeagueSeason?.playoffStartRound ?? null} numberOfRounds={fantasyLeagueSeason?.numberOfRounds ?? null} />}
           {selectedTab === 'league' && <FantasyLeagueInfo currentUserId={currentUserId} fantasyLeague={fantasyLeague} />}
           {selectedTab === 'players' && (
             <Box display="flex" flexDirection="column" gap={2}>
@@ -169,7 +169,7 @@ const FantasyLeaguePage = ({ currentUserId }: { currentUserId: number }) => {
               userTeam={userTeam}
               fantasyLeague={fantasyLeague}
               currentUserId={currentUserId}
-              currentRound={fantasyLeagueSeason?.currentRound}
+              currentFantasyRound={fantasyLeagueSeason?.currentFantasyRound}
               tradeDeadlineRound={fantasyLeagueSeason?.tradeDeadlineRound}
             />
           )}

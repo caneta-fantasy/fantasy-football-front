@@ -30,7 +30,7 @@ interface Props {
   userTeam: { id: number; name: string } | null | undefined;
   fantasyLeague: FantasyLeague;
   currentUserId: number;
-  currentRound?: number | null;
+  currentFantasyRound?: number | null;
   tradeDeadlineRound?: number | null;
 }
 
@@ -227,7 +227,7 @@ const TradesTab: React.FC<Props> = ({
   userTeam,
   fantasyLeague,
   currentUserId,
-  currentRound,
+  currentFantasyRound,
   tradeDeadlineRound,
 }) => {
   const { data: trades = [], isLoading } = useTrades(seasonId);
@@ -237,8 +237,8 @@ const TradesTab: React.FC<Props> = ({
   const isOwner = fantasyLeague.owner?.id === currentUserId;
   const deadlinePassed =
     tradeDeadlineRound != null &&
-    currentRound != null &&
-    currentRound > tradeDeadlineRound;
+    currentFantasyRound != null &&
+    currentFantasyRound > tradeDeadlineRound;
 
   if (!seasonId) {
     return <Typography color="text.secondary">Temporada ainda não ativada.</Typography>;

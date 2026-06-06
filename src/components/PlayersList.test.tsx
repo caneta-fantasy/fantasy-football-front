@@ -109,7 +109,8 @@ beforeEach(() => {
 
   useFantasyLeagueSeasons.mockReturnValue({
     data: {
-      currentRound: 12,
+      currentFantasyRound: 12,
+      currentRealRound: 12,
       numberOfRounds: 38,
       status: LeagueStatus.ACTIVE,
       initialWaiverBudget: 100,
@@ -167,7 +168,7 @@ describe('PlayersList (Jogadores)', () => {
         sortBy: 'totalPoints',
         order: 'desc',
         onlyFreeAgents: false,
-        leagueId: 5,
+        leagueId: 555,
         fantasyLeagueId: 99,
       }),
     )
@@ -229,7 +230,7 @@ describe('PlayersList (Jogadores)', () => {
   it('ActionCell shows Draft pendente before the draft', () => {
     useFantasyLeagueSeasons.mockReturnValue({
       data: {
-        currentRound: 12, numberOfRounds: 38, status: LeagueStatus.DRAFT_SCHEDULED,
+        currentFantasyRound: 12, currentRealRound: 12, numberOfRounds: 38, status: LeagueStatus.DRAFT_SCHEDULED,
         initialWaiverBudget: 100, fantasyLeague: { league: { externalId: 555 } }, seasonYear: 2024,
       },
     })

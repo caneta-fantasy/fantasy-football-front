@@ -14,9 +14,8 @@ import './ds/tokens.css'
 import './ds/base.css'
 import './index.css';
 import App from './App';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-
-const queryClient = new QueryClient();
+import { QueryClientProvider } from '@tanstack/react-query';
+import { queryClient } from './queryClient';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement

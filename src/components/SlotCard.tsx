@@ -62,16 +62,30 @@ const POS_NEUTRAL = {
   label: 'Posição',
 }
 
-function RosterPosPill({ positions }: { positions: RosterSlotCard[] }) {
-  // Combo slot → "M/A"; single slot → its code.
+function RosterPosPill({
+  positions,
+  slotType,
+}: {
+  positions: RosterSlotCard[]
+  slotType: string
+}) {
+  // Bench slots always read "BN" regardless of allowedPositions (main's
+  // bench-slot fix); otherwise: combo slot → "M/A"; single slot → its code.
   const label =
-    positions.length > 1
-      ? positions
-          .map((p) => (p === 'MEI' ? 'M' : p === 'ATA' ? 'A' : p))
-          .join('/')
-      : positions[0] ?? ''
+    slotType === 'bench'
+      ? 'BN'
+      : positions.length > 1
+        ? positions
+            .map((p) => (p === 'MEI' ? 'M' : p === 'ATA' ? 'A' : p))
+            .join('/')
+        : positions[0] ?? ''
 
-  const key = positions.length > 1 ? 'M/A' : String(label).toUpperCase()
+  const key =
+    slotType === 'bench'
+      ? 'BN'
+      : positions.length > 1
+        ? 'M/A'
+        : String(label).toUpperCase()
   const tone = POS_TONE[key] ?? POS_NEUTRAL
   const accessibleName = POS_TONE[key]?.label ?? `Posição ${label || 'desconhecida'}`
 
@@ -88,6 +102,7 @@ function RosterPosPill({ positions }: { positions: RosterSlotCard[] }) {
 }
 
 export const SlotCard: React.FC<SlotCardProps> = ({
+  slotType,
   allowedPositions,
   player,
   onRemovePlayer,
@@ -122,7 +137,7 @@ export const SlotCard: React.FC<SlotCardProps> = ({
       }`}
     >
       <div className="flex min-w-0 items-center gap-3.5">
-        <RosterPosPill positions={allowedPositions} />
+        <RosterPosPill positions={allowedPositions} slotType={slotType} />
         {player ? (
           <>
             <Avatar name={player.name} src={player.photo} size={38} />

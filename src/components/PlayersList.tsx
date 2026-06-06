@@ -117,12 +117,12 @@ const PlayersList: React.FC<PlayersListProps> = ({ fantasyLeague, seasonYear, us
   const isMobile = bp === 'm';
 
   const { data: season } = useFantasyLeagueSeasons(fantasyLeague.id);
-  const activeRound = currentRound ?? season?.currentRound ?? null;
+  const activeRealRound = currentRound ?? season?.currentRealRound ?? null;
   const { data: realMatches } = useRealMatchesByRound(
-    activeRound ? seasonYear : undefined,
-    activeRound ?? undefined,
+    activeRealRound ? seasonYear : undefined,
+    activeRealRound ?? undefined,
   );
-  const { data: lockedTeamsData } = useLockedTeams(fantasyLeague.league.externalId, seasonYear, activeRound);
+  const { data: lockedTeamsData } = useLockedTeams(fantasyLeague.league.externalId, seasonYear, activeRealRound);
   const lockedTeamIds = new Set<number>(lockedTeamsData?.lockedTeamIds ?? []);
   const draftCompleted = season ? POST_DRAFT_STATUSES.includes(season.status as LeagueStatus) : false;
 
@@ -233,7 +233,7 @@ const PlayersList: React.FC<PlayersListProps> = ({ fantasyLeague, seasonYear, us
     limit: rowsPerPage,
     sortBy,
     order,
-    leagueId: fantasyLeague.league.id,
+    leagueId: fantasyLeague.league.externalId,
     fantasyLeagueId: fantasyLeague.id,
     onlyFreeAgents,
   });
@@ -260,7 +260,7 @@ const PlayersList: React.FC<PlayersListProps> = ({ fantasyLeague, seasonYear, us
   };
 
   const { data: filters, isLoading: loadingFilters } = usePlayersFilters({
-    leagueId: fantasyLeague.league.id,
+    leagueId: fantasyLeague.league.externalId,
     seasonYear,
   });
 

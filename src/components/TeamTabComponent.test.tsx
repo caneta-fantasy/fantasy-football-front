@@ -105,7 +105,7 @@ beforeEach(() => {
   vi.clearAllMocks()
   // Sensible defaults; tests override useRoster as needed.
   useFantasyLeagueTeams.mockReturnValue({ data: [{ id: 1, name: 'Galácticos do Bar', user: { firstName: 'Gus', lastName: 'T' } }] })
-  useFantasyLeagueSeasons.mockReturnValue({ data: { currentRound: 12, numberOfRounds: 38 } })
+  useFantasyLeagueSeasons.mockReturnValue({ data: { currentFantasyRound: 12, currentRealRound: 12, numberOfRounds: 38 } })
   useRealMatchesByRound.mockReturnValue({ data: [] })
   useLockedTeams.mockReturnValue({ data: { lockedTeamIds: [] } })
   useRoster.mockReturnValue({

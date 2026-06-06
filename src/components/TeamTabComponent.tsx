@@ -85,12 +85,12 @@ export const TeamTab: React.FC<Props> = ({ userTeam, fantasyLeague, seasonYear, 
 
   const { data: leagueTeams } = useFantasyLeagueTeams(fantasyLeague.id)
   const { data: season } = useFantasyLeagueSeasons(fantasyLeague.id)
-  const currentRound = season?.currentRound ?? undefined
-  const { data: realMatches } = useRealMatchesByRound(seasonYear, currentRound)
+  const currentRealRound = season?.currentRealRound ?? undefined
+  const { data: realMatches } = useRealMatchesByRound(seasonYear, currentRealRound)
   const { data: lockedTeamsData } = useLockedTeams(
     fantasyLeague.league.externalId,
     seasonYear,
-    currentRound,
+    currentRealRound,
   )
   const lockedTeamIds = new Set<number>(lockedTeamsData?.lockedTeamIds ?? [])
   const isViewingOwnTeam = selectedTeamId === userTeam.id
@@ -148,7 +148,12 @@ export const TeamTab: React.FC<Props> = ({ userTeam, fantasyLeague, seasonYear, 
     <div data-ds className="flex flex-col gap-6">
       {leagueTeams && leagueTeams.length > 1 && (
         <div className="-mx-1 flex gap-2 overflow-x-auto px-1 pb-1.5">
-          {leagueTeams.map((team: FantasyLeagueTeamsResponse) => {
+          {[...leagueTeams]
+            .sort(
+              (a, b) =>
+                (b.id === userTeam.id ? 1 : 0) - (a.id === userTeam.id ? 1 : 0),
+            )
+            .map((team: FantasyLeagueTeamsResponse) => {
             const active = team.id === selectedTeamId
             return (
               <button
