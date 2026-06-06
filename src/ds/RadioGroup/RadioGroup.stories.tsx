@@ -71,7 +71,7 @@ export const Selected: S = {
   },
 }
 
-/** Required: a lime asterisk on the label + `aria-required` on the group. */
+/** Required: a signature-green asterisk on the label + `aria-required` on the group. */
 export const Required: S = {
   render: () => {
     const [value, setValue] = useState('')

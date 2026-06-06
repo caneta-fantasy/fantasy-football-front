@@ -4,21 +4,22 @@ export interface LabelProps
   extends React.LabelHTMLAttributes<HTMLLabelElement> {
   /** The id of the control this label is associated with. */
   htmlFor: string
-  /** When true, appends a lime asterisk and is announced as required by the field. */
+  /** When true, appends a gold asterisk and is announced as required by the field. */
   required?: boolean
   children: React.ReactNode
 }
 
 // Editorial overline: uppercase, heavy tracking, muted (functional-contrast)
-// color — never textSubtle for this functional label (DS §7 #4).
+// color — never textSubtle for this functional label (DS §7 #4). Archivo carries
+// both sans + the overline display voice in modernista (no separate face).
 const BASE =
   'block font-sans font-bold text-[11px] uppercase tracking-[2px] text-text-muted mb-2'
 
 /**
- * Field label — a real `<label htmlFor>`. The required marker is a lime `*`
- * that is `aria-hidden` so screen readers do not announce a bare asterisk;
- * the requiredness is conveyed on the control itself via `aria-required`
- * (see FieldGroup).
+ * Field label — a real `<label htmlFor>`. The required marker is a gold `*`
+ * (the modernista accent) that is `aria-hidden` so screen readers do not
+ * announce a bare asterisk; the requiredness is conveyed on the control itself
+ * via `aria-required` (see FieldGroup).
  */
 export function Label({
   htmlFor,
@@ -35,7 +36,7 @@ export function Label({
     >
       {children}
       {required && (
-        <span className="text-lime-deep ml-[3px]" aria-hidden="true">
+        <span className="text-accent-deep ml-[3px]" aria-hidden="true">
           *
         </span>
       )}

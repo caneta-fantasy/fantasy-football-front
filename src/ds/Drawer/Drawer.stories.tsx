@@ -2,6 +2,7 @@ import React from 'react'
 import type { Meta, StoryObj } from '@storybook/react'
 import { Drawer } from './Drawer'
 import { Btn } from '../Btn/Btn'
+import { Overline } from '../Overline/Overline'
 
 const meta: Meta<typeof Drawer> = {
   title: 'Overlays/Drawer',
@@ -33,11 +34,11 @@ const Stats = () => (
       ['G/A', '12/8'],
       ['MIN%', '92%'],
     ].map(([l, v]) => (
-      <div key={l} className="border border-border px-[10px] py-2">
-        <div className="font-mono text-[10px] uppercase tracking-[1px] text-text-muted">
-          {l}
+      <div key={l} className="rounded-btn border border-line px-[10px] py-2">
+        <Overline>{l}</Overline>
+        <div className="mt-[2px] font-mono text-[17px] font-bold tabular-nums">
+          {v}
         </div>
-        <div className="mt-[2px] font-mono text-[17px] font-bold">{v}</div>
       </div>
     ))}
   </div>

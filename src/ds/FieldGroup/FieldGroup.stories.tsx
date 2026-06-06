@@ -2,8 +2,9 @@ import type { Meta, StoryObj } from '@storybook/react-vite'
 import { FieldGroup } from './FieldGroup'
 
 const inputClass =
-  'w-full h-[40px] px-[13px] font-sans text-[13.5px] text-text bg-surface border border-border-strong rounded-sm box-border ' +
-  'aria-[invalid=true]:border-red'
+  'w-full h-[46px] px-[13px] font-sans text-[13.5px] text-text bg-surface border border-border-strong rounded-btn-sm box-border ' +
+  'focus:border-signature focus:outline-none ' +
+  'aria-[invalid=true]:border-danger aria-[invalid=true]:bg-danger-pale'
 
 const meta: Meta<typeof FieldGroup> = {
   title: 'Forms/FieldGroup',
@@ -13,7 +14,7 @@ const meta: Meta<typeof FieldGroup> = {
     docs: {
       description: {
         component:
-          'Canonical field skeleton: `<label>` → control → helper → error. Real `<label htmlFor>` association; `error` renders with `role="alert"` and is linked via `aria-describedby`; helper AND error can both show (DS §7: the error does not replace the helper); `required` adds a lime `*` plus `aria-required`, and `error` adds `aria-invalid` on the control.',
+          'Canonical field skeleton: `<label>` → control → helper → error. Real `<label htmlFor>` association; `error` renders with `role="alert"` and is linked via `aria-describedby`; helper AND error can both show (DS §7: the error does not replace the helper); `required` adds a gold `*` plus `aria-required`, and `error` adds `aria-invalid` on the control (brick-danger border + faint wash).',
       },
     },
   },
@@ -45,13 +46,13 @@ export const Default: S = {
   ),
 }
 
-/** Required — lime asterisk + aria-required on the control. */
+/** Required — gold asterisk + aria-required on the control. */
 export const Required: S = {
   args: { label: 'E-mail', htmlFor: 'fg-required', required: true, help: 'Campo obrigatório.' },
   render: Default.render,
 }
 
-/** Error — role="alert", aria-invalid, red border. */
+/** Error — role="alert", aria-invalid, brick-danger border + wash. */
 export const WithError: S = {
   args: { label: 'E-mail', htmlFor: 'fg-error', required: true, error: 'Email inválido' },
   render: Default.render,

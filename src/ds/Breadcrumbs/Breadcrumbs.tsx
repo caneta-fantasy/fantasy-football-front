@@ -48,7 +48,7 @@ function collapse(items: BreadcrumbItem[], maxItems: number): Rendered[] {
 
 const LINK_CLS =
   'font-sans text-[12.5px] font-medium text-text-muted no-underline ' +
-  'hover:text-text hover:underline rounded-xs'
+  'hover:text-signature hover:underline rounded-pill'
 
 const CURRENT_CLS =
   'font-sans text-[12.5px] font-bold text-text max-w-[18ch] truncate inline-block align-bottom'
@@ -84,7 +84,7 @@ export function Breadcrumbs({
                   <span
                     data-ds-sep
                     aria-hidden="true"
-                    className="font-sans text-[12.5px] text-[color:var(--ink-400)] select-none"
+                    className="font-sans text-[12.5px] text-text-subtle select-none"
                   >
                     {SEP}
                   </span>
@@ -109,7 +109,7 @@ export function Breadcrumbs({
                 <span
                   data-ds-sep
                   aria-hidden="true"
-                  className="font-sans text-[12.5px] text-[color:var(--ink-400)] select-none"
+                  className="font-sans text-[12.5px] text-text-subtle select-none"
                 >
                   {SEP}
                 </span>

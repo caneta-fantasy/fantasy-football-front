@@ -27,7 +27,7 @@ const SortOptions = () => (
       <button
         key={o}
         type="button"
-        className="block w-full rounded-sm px-2 py-[5px] text-left font-sans text-[12.5px] text-text hover:bg-surface-inset"
+        className="block w-full rounded-pill px-2 py-[5px] text-left font-sans text-[12.5px] text-text hover:bg-surface-inset"
       >
         {o}
       </button>

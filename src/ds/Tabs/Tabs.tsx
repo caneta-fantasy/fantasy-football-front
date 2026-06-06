@@ -139,7 +139,7 @@ export function Tabs({
       <div
         role="tablist"
         aria-label={ariaLabel}
-        className={`${listCls} border-b border-border`}
+        className={`${listCls} border-b border-line`}
       >
         {items.map((item, i) => {
           const isSelected = item.id === selected
@@ -159,18 +159,18 @@ export function Tabs({
               disabled={item.disabled}
               className={`${TAB_BASE} ${
                 isSelected
-                  ? 'font-bold text-text'
+                  ? 'font-bold text-signature'
                   : 'font-semibold text-text-muted hover:text-text'
               }`}
               onClick={() => !item.disabled && select(item.id)}
               onKeyDown={(e) => onKeyDown(e, i)}
             >
               {item.label}
-              {/* CANETA underline marks the active tab (CSS-positioned). */}
+              {/* Modernista gold rule marks the active tab (CSS-positioned). */}
               {isSelected && (
                 <span
                   aria-hidden="true"
-                  className="absolute inset-x-0 -bottom-px h-[3px] bg-lime"
+                  className="absolute inset-x-0 -bottom-px h-[3px] bg-accent"
                 />
               )}
             </button>

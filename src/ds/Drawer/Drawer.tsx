@@ -72,11 +72,18 @@ export function Drawer({
           sideCls,
         ].join(' ')}
       >
-        <header className="flex items-start justify-between gap-4 border-b border-border px-[18px] py-4">
+        <header className="flex items-start justify-between gap-4 border-b border-line px-[18px] py-4">
           {title != null ? (
             <h2
               id={titleId}
-              className="font-display text-[20px] uppercase leading-none tracking-[-0.3px] text-text"
+              // Archivo poster voice (wide + heavy) — sentence-case, not Anton.
+              className="font-display text-[20px] text-text"
+              style={{
+                fontWeight: 800,
+                fontVariationSettings: '"wght" 800, "wdth" 112',
+                lineHeight: 1,
+                letterSpacing: '-0.4px',
+              }}
             >
               {title}
             </h2>
@@ -87,7 +94,7 @@ export function Drawer({
             type="button"
             onClick={onClose}
             aria-label="Fechar"
-            className="-mr-1 inline-flex h-7 w-7 flex-none items-center justify-center rounded-xs text-text-muted hover:bg-surface-inset"
+            className="-mr-1 inline-flex h-7 w-7 flex-none items-center justify-center rounded-pill text-text-muted hover:bg-surface-inset"
           >
             <Icon name="x" size={16} />
           </button>
@@ -96,7 +103,7 @@ export function Drawer({
         <div className="flex-1 overflow-y-auto p-4">{children}</div>
 
         {footer != null && (
-          <footer className="border-t border-border px-4 py-4">{footer}</footer>
+          <footer className="border-t border-line px-4 py-4">{footer}</footer>
         )}
       </div>
     </Scrim>

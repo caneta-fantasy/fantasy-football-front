@@ -9,7 +9,7 @@ const meta: Meta<typeof Checkbox> = {
     docs: {
       description: {
         component:
-          'A real native `<input type="checkbox">` wrapped in a `<label>`, so the whole row toggles it and the label is the accessible name. The lime box is decorative (`aria-hidden`); the input stays focusable so the base-layer focus ring shows. `indeterminate` drives the DOM node’s `.indeterminate` property (it is not a real HTML attribute).',
+          'A real native `<input type="checkbox">` wrapped in a `<label>`, so the whole row toggles it and the label is the accessible name. The signature-green box is decorative (`aria-hidden`); the input stays focusable so the base-layer cobalt focus ring shows. `indeterminate` drives the DOM node’s `.indeterminate` property (it is not a real HTML attribute).',
       },
     },
   },

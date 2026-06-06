@@ -43,16 +43,20 @@ export interface StepperProps {
 }
 
 const GROUP_BASE =
-  'inline-flex items-stretch rounded-sm border border-border-strong overflow-hidden ' +
+  'inline-flex items-stretch rounded-pill border border-border-strong overflow-hidden ' +
   'bg-surface aria-disabled:opacity-60'
 
 const BTN_BASE =
   'flex items-center justify-center w-[38px] h-[40px] bg-surface-inset text-text ' +
   'transition-colors duration-150 cursor-pointer ' +
-  'hover:bg-ink-100 disabled:opacity-40 disabled:cursor-not-allowed ' +
+  'hover:bg-surface-sunken disabled:opacity-40 disabled:cursor-not-allowed ' +
   'disabled:hover:bg-surface-inset'
 
-const INC_EXTRA = 'bg-lime text-ink-900 hover:bg-lime-d border-l border-lime-d'
+// The increment is the primary affordance → the green signature block; the
+// disabled override keeps the green from washing out into a half-tinted state.
+const INC_EXTRA =
+  'bg-signature text-on-green hover:bg-signature-raised border-l border-signature-line ' +
+  'disabled:hover:bg-signature'
 const DEC_EXTRA = 'border-r border-border'
 
 const VALUE_BASE =

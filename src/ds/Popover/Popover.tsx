@@ -150,7 +150,7 @@ export function Popover({
           aria-labelledby={label ? undefined : labelId}
           className={[
             'absolute z-popover min-w-[200px] outline-none',
-            'rounded-md border border-border bg-surface p-[14px] text-text shadow-e3',
+            'rounded-btn-lg border border-line bg-surface p-[14px] text-text shadow-e3',
             'animate-[ds-popover-in_var(--dur-150,150ms)_var(--ease-standard)]',
             place,
           ].join(' ')}

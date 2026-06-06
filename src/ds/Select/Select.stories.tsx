@@ -1,6 +1,12 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
 import { Select, type SelectOption } from './Select'
 
+// The Overline typography (Archivo all-caps tracked label) applied directly to
+// a native <label> so it keeps `htmlFor` association — the canonical modernista
+// replacement for the old mono caption.
+const OVERLINE_LABEL =
+  'mb-2 block font-sans font-bold text-[11px] leading-none uppercase tracking-[2.2px] text-text-muted'
+
 const FORMATIONS: SelectOption[] = [
   { value: '4-3-3', label: '4-3-3' },
   { value: '4-4-2', label: '4-4-2' },
@@ -43,10 +49,7 @@ export const Playground: S = {}
 export const Labelled: S = {
   render: () => (
     <div className="w-72">
-      <label
-        htmlFor="formacao"
-        className="mb-2 block font-sans text-[11px] font-bold uppercase tracking-[2px] text-text-muted"
-      >
+      <label htmlFor="formacao" className={OVERLINE_LABEL}>
         Formação
       </label>
       <Select id="formacao" options={FORMATIONS} defaultValue="4-3-3" />

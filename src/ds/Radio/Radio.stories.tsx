@@ -15,7 +15,7 @@ const meta: Meta<typeof Radio> = {
     docs: {
       description: {
         component:
-          'A single real native `<input type="radio">`. It only works inside a `RadioGroup`. The lime pip is decorative (`aria-hidden`); the input is focusable so the base-layer focus ring shows. See `Forms/RadioGroup` for the full keyboard model.',
+          'A single real native `<input type="radio">`. It only works inside a `RadioGroup`. The signature-green pip is decorative (`aria-hidden`); the input is focusable so the base-layer cobalt focus ring shows. See `Forms/RadioGroup` for the full keyboard model.',
       },
     },
   },

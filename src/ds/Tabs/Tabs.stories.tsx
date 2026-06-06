@@ -1,6 +1,11 @@
 import type { Meta, StoryObj } from '@storybook/react'
 import { Tabs } from './Tabs'
 
+/**
+ * Modernista tabs: a neutral hairline band with a 3px **gold** rule under the
+ * active tab; the selected label reads in signature green Archivo. Roving
+ * tabindex + arrow/Home/End keyboarding carry over unchanged.
+ */
 const meta: Meta<typeof Tabs> = {
   title: 'Navigation/Tabs',
   component: Tabs,
@@ -52,7 +57,7 @@ export const WithDisabledTab: S = {
 
 export const Scrollable: S = {
   render: (args) => (
-    <div style={{ width: 320, border: '1px solid var(--color-border)' }}>
+    <div style={{ width: 320, border: '1px solid var(--line)' }}>
       <Tabs {...args} variant="scrollable" items={MANY} />
     </div>
   ),

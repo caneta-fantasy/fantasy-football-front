@@ -1,8 +1,8 @@
-/* Slider — a real <input type="range"> styled to the editorial look:
-   a 4px track that fills lime up to the value, and an 18px round thumb with a
-   2px ink900 border (echoes the prototype handles). The fill is driven by the
-   --ds-slider-fill custom property the component computes from value/min/max,
-   so the visual position is value-accurate (not decorative).
+/* Slider — a real <input type="range"> styled to the modernista look:
+   a 4px track that fills bottle-green up to the value, and an 18px round thumb
+   with a 2px ink border. The fill is driven by the --ds-slider-fill custom
+   property the component computes from value/min/max, so the visual position is
+   value-accurate (not decorative).
 
    Cross-browser: the track and thumb pseudo-elements have to be declared
    separately for WebKit and Firefox — they cannot be combined in one rule. */
@@ -14,13 +14,13 @@
   height: 18px; /* room for the thumb; the visible track is the gradient below */
   background: transparent;
   cursor: pointer;
-  /* value-driven track fill: lime up to the value, then the inset rail */
+  /* value-driven track fill: green up to the value, then the neutral rail */
   --ds-slider-track: linear-gradient(
     to right,
-    var(--caneta-lime) 0%,
-    var(--caneta-lime) var(--ds-slider-fill, 0%),
-    var(--ink-100) var(--ds-slider-fill, 0%),
-    var(--ink-100) 100%
+    var(--green) 0%,
+    var(--green) var(--ds-slider-fill, 0%),
+    var(--line) var(--ds-slider-fill, 0%),
+    var(--line) 100%
   );
 }
 
@@ -43,26 +43,26 @@
   margin-top: -7px; /* center the 18px thumb on the 4px track */
   border-radius: var(--radius-full, 999px);
   background: var(--color-surface);
-  border: var(--bw-2, 2px) solid var(--ink-900);
-  box-shadow: 0 2px 6px rgba(11, 15, 12, 0.2);
+  border: var(--bw-2, 2px) solid var(--ink);
+  box-shadow: 0 2px 6px rgba(19, 33, 26, 0.2);
 }
 
 /* ── Firefox ── */
 .ds-slider::-moz-range-track {
   height: 4px;
   border-radius: var(--radius-full, 999px);
-  background: var(--ink-100);
+  background: var(--line);
 }
 .ds-slider::-moz-range-progress {
   height: 4px;
   border-radius: var(--radius-full, 999px);
-  background: var(--caneta-lime);
+  background: var(--green);
 }
 .ds-slider::-moz-range-thumb {
   width: 18px;
   height: 18px;
   border-radius: var(--radius-full, 999px);
   background: var(--color-surface);
-  border: var(--bw-2, 2px) solid var(--ink-900);
-  box-shadow: 0 2px 6px rgba(11, 15, 12, 0.2);
+  border: var(--bw-2, 2px) solid var(--ink);
+  box-shadow: 0 2px 6px rgba(19, 33, 26, 0.2);
 }

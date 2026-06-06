@@ -33,9 +33,9 @@ export interface DateInputProps
 }
 
 const SHELL_BASE =
-  'flex items-center gap-2 w-full px-3 bg-surface rounded-sm border ' +
+  'flex items-center gap-2 w-full px-3 bg-surface rounded-pill border ' +
   'border-border-strong font-sans text-text transition-colors duration-150 ' +
-  'hover:border-ink-500 focus-within:border-ink-900 ' +
+  'hover:border-ink-muted focus-within:border-signature ' +
   'focus-within:shadow-[var(--focus-ring)] ' +
   'has-[:disabled]:bg-surface-inset has-[:disabled]:border-border ' +
   'has-[:disabled]:cursor-not-allowed'
@@ -46,7 +46,7 @@ const SIZES: Record<Size, string> = {
 }
 
 const SHELL_INVALID =
-  'border-red focus-within:border-red bg-[color:rgba(229,69,58,0.04)]'
+  'border-danger focus-within:border-danger bg-[color:rgba(178,58,43,0.05)]'
 
 export const DateInput = React.forwardRef<HTMLInputElement, DateInputProps>(
   function DateInput(

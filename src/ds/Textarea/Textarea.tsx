@@ -81,19 +81,20 @@ function counterStateOf(
 const COUNTER_COLOR: Record<CounterState, string> = {
   // text-muted is the 5.6:1 functional token (DS §7 #4) — not text-subtle.
   ok: 'text-text-muted',
-  near: 'text-[color:var(--yellow-d)]',
-  over: 'text-red',
+  // own-hue functional ladder: amber warning (near) → brick danger (over).
+  near: 'text-warning',
+  over: 'text-danger',
 }
 
 const SHELL_BASE =
-  'relative flex w-full bg-surface rounded-sm border border-border-strong ' +
-  'transition-colors duration-150 hover:border-ink-500 ' +
-  'focus-within:border-ink-900 focus-within:shadow-[var(--focus-ring)] ' +
+  'relative flex w-full bg-surface rounded-pill border border-border-strong ' +
+  'transition-colors duration-150 hover:border-ink-muted ' +
+  'focus-within:border-signature focus-within:shadow-[var(--focus-ring)] ' +
   'has-[:disabled]:bg-surface-inset has-[:disabled]:border-border ' +
   'has-[:disabled]:cursor-not-allowed'
 
 const SHELL_INVALID =
-  'border-red focus-within:border-red bg-[color:rgba(229,69,58,0.04)]'
+  'border-danger focus-within:border-danger bg-[color:rgba(178,58,43,0.05)]'
 
 const CONTROL_CLS =
   'min-w-0 flex-1 resize-y bg-transparent outline-none border-0 ' +

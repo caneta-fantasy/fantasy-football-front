@@ -40,16 +40,18 @@ function useAffixId(prefix: string): string {
 }
 
 const SHELL_BASE =
-  'flex items-center gap-2 w-full h-[40px] px-3 bg-surface rounded-sm border ' +
+  'flex items-center gap-2 w-full h-[40px] px-3 bg-surface rounded-pill border ' +
   'border-border-strong font-sans text-[13px] text-text transition-colors ' +
-  'duration-150 hover:border-ink-500 focus-within:border-ink-900 ' +
+  'duration-150 hover:border-ink-muted focus-within:border-signature ' +
   'focus-within:shadow-[var(--focus-ring)] ' +
   'has-[:disabled]:bg-surface-inset has-[:disabled]:border-border ' +
   'has-[:disabled]:cursor-not-allowed'
 
 const SHELL_INVALID =
-  'border-red focus-within:border-red bg-[color:rgba(229,69,58,0.04)]'
+  'border-danger focus-within:border-danger bg-[color:rgba(178,58,43,0.05)]'
 
+// Mono is reserved for genuine tabular tech: the prefix/suffix carry a unit
+// (currency "R$" / "mi"), so Spline Sans Mono stays here.
 const AFFIX_CLS =
   'shrink-0 font-mono text-[12px] font-semibold text-text-muted select-none'
 

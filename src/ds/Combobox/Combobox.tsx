@@ -76,14 +76,14 @@ function highlightParts(
 }
 
 const SHELL_BASE =
-  'flex items-center gap-2 w-full h-[40px] px-3 bg-surface rounded-sm border ' +
+  'flex items-center gap-2 w-full h-[40px] px-3 bg-surface rounded-pill border ' +
   'border-border-strong font-sans text-[13px] text-text transition-colors ' +
-  'duration-150 hover:border-ink-500 focus-within:border-ink-900 ' +
+  'duration-150 hover:border-ink-muted focus-within:border-signature ' +
   'focus-within:shadow-[var(--focus-ring)] ' +
   'has-[:disabled]:bg-surface-inset has-[:disabled]:border-border ' +
   'has-[:disabled]:cursor-not-allowed'
 
-const SHELL_INVALID = 'border-red focus-within:border-red'
+const SHELL_INVALID = 'border-danger focus-within:border-danger'
 
 export function Combobox({
   options,
@@ -197,7 +197,7 @@ export function Combobox({
         <Icon
           name="search"
           size={16}
-          className="shrink-0 text-lime-deep"
+          className="shrink-0 text-text-subtle"
         />
         <input
           id={inputId}
@@ -226,7 +226,7 @@ export function Combobox({
           id={listId}
           role="listbox"
           aria-label={ariaLabel}
-          className="absolute left-0 right-0 top-[calc(100%+4px)] z-dropdown m-0 max-h-72 list-none overflow-auto rounded-md border border-border bg-surface p-0 shadow-e3"
+          className="absolute left-0 right-0 top-[calc(100%+4px)] z-dropdown m-0 max-h-72 list-none overflow-auto rounded-pill border border-border bg-surface p-0 shadow-e3"
         >
           {filtered.length === 0 ? (
             <li
@@ -255,7 +255,7 @@ export function Combobox({
                   className={[
                     'flex cursor-pointer items-center px-3 py-[10px] font-sans text-[13.5px] font-bold text-text',
                     'border-b border-border-subtle last:border-b-0',
-                    active ? 'bg-[color:rgba(216,255,61,0.12)]' : '',
+                    active ? 'bg-signature-pale' : '',
                     o.disabled ? 'opacity-60 cursor-not-allowed' : '',
                   ]
                     .filter(Boolean)
@@ -264,7 +264,7 @@ export function Combobox({
                   {parts ? (
                     <span>
                       {parts.before}
-                      <mark className="bg-[color:rgba(216,255,61,0.55)] text-text">
+                      <mark className="bg-accent-pale text-on-gold">
                         {parts.match}
                       </mark>
                       {parts.after}

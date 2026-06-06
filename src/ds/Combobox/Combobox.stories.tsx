@@ -2,6 +2,12 @@ import { useState } from 'react'
 import type { Meta, StoryObj } from '@storybook/react-vite'
 import { Combobox, type ComboboxOption } from './Combobox'
 
+// The Overline typography (Archivo all-caps tracked label) applied directly to
+// a native <label> so it keeps `htmlFor` association — the canonical modernista
+// replacement for the old mono caption.
+const OVERLINE_LABEL =
+  'mb-2 block font-sans font-bold text-[11px] leading-none uppercase tracking-[2.2px] text-text-muted'
+
 const PLAYERS: ComboboxOption[] = [
   { value: 'pedro-henrique', label: 'Pedro Henrique' },
   { value: 'pedro', label: 'Pedro' },
@@ -57,10 +63,7 @@ export const Labelled: S = {
       const [chosen, setChosen] = useState<ComboboxOption | null>(null)
       return (
         <div className="w-96">
-          <label
-            htmlFor="player-search"
-            className="mb-2 block font-sans text-[11px] font-bold uppercase tracking-[2px] text-text-muted"
-          >
+          <label htmlFor="player-search" className={OVERLINE_LABEL}>
             Adicionar ao mercado
           </label>
           <Combobox
@@ -70,7 +73,7 @@ export const Labelled: S = {
             onSelect={setChosen}
           />
           {chosen && (
-            <p className="mt-3 font-mono text-[12px] text-text-muted">
+            <p className="mt-3 font-sans text-[12px] text-text-muted">
               Selecionado: {chosen.label}
             </p>
           )}
@@ -86,7 +89,7 @@ export const EmptyState: S = {
   render: (args) => (
     <div className="w-96">
       <Combobox {...args} emptyMessage="Nenhum jogador encontrado" />
-      <p className="mt-3 font-mono text-[12px] text-text-subtle">
+      <p className="mt-3 font-sans text-[12px] text-text-subtle">
         Try typing "xyz" to trigger the empty state.
       </p>
     </div>

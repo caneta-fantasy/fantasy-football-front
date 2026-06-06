@@ -14,7 +14,7 @@ describe('Label', () => {
     expect(input.tagName).toBe('INPUT')
   })
 
-  it('marks required fields with a lime asterisk that is hidden from AT', () => {
+  it('marks required fields with a gold asterisk that is hidden from AT', () => {
     render(<Label htmlFor="x" required>E-mail</Label>)
     // The accessible name should not include a bare "*" announcement.
     const label = screen.getByText('E-mail').closest('label')!

@@ -1,6 +1,11 @@
 import type { Meta, StoryObj } from '@storybook/react'
 import { Breadcrumbs } from './Breadcrumbs'
 
+/**
+ * Modernista breadcrumbs: muted Archivo crumbs that resolve to signature green
+ * on hover, subtle-ink separators, and a bold ink current crumb. ARIA landmark
+ * + `aria-current="page"` carry over unchanged.
+ */
 const meta: Meta<typeof Breadcrumbs> = {
   title: 'Navigation/Breadcrumbs',
   component: Breadcrumbs,

@@ -44,13 +44,13 @@ const SIZES: Record<Size, string> = {
 }
 
 const BASE =
-  'block w-full appearance-none bg-surface rounded-sm border border-border-strong ' +
+  'block w-full appearance-none bg-surface rounded-pill border border-border-strong ' +
   'font-sans text-text transition-colors duration-150 cursor-pointer ' +
-  'hover:border-ink-500 focus:border-ink-900 focus:outline-none ' +
+  'hover:border-ink-muted focus:border-signature focus:outline-none ' +
   'focus-visible:shadow-[var(--focus-ring)] ' +
   'disabled:bg-surface-inset disabled:border-border disabled:cursor-not-allowed disabled:opacity-60'
 
-const INVALID = 'border-red hover:border-red focus:border-red'
+const INVALID = 'border-danger hover:border-danger focus:border-danger'
 
 export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
   function Select(

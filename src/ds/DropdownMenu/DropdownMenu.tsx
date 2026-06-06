@@ -208,7 +208,7 @@ export function DropdownMenu({
           onKeyDown={onMenuKeyDown}
           className={[
             'absolute z-popover min-w-[220px] p-[5px]',
-            'rounded-md border border-border bg-surface text-text shadow-e3',
+            'rounded-btn-lg border border-line bg-surface text-text shadow-e3',
             'animate-[ds-menu-in_var(--dur-150,150ms)_var(--ease-standard)]',
             place,
           ].join(' ')}
@@ -233,19 +233,19 @@ export function DropdownMenu({
                 onClick={() => activate(i)}
                 onMouseEnter={() => !item.disabled && setActiveIndex(i)}
                 className={[
-                  'flex w-full items-center gap-[10px] rounded-sm px-[10px] py-2 text-left',
+                  'flex w-full items-center gap-[10px] rounded-pill px-[10px] py-2 text-left',
                   'font-sans text-[12.5px] font-semibold outline-none',
                   'disabled:opacity-60 disabled:pointer-events-none',
-                  item.danger ? 'text-[color:var(--red)]' : 'text-text',
+                  item.danger ? 'text-danger' : 'text-text',
                   isActive
-                    ? 'bg-[rgba(216,255,61,0.18)]'
+                    ? 'bg-signature-pale'
                     : 'bg-transparent hover:bg-surface-inset',
                 ].join(' ')}
               >
                 {item.icon && <Icon name={item.icon} size={16} />}
                 <span className="flex-1">{item.label}</span>
                 {glyph && (
-                  <span className="rounded-xs border border-border px-[5px] py-px font-mono text-[10px] text-text-muted">
+                  <span className="rounded-pill border border-line px-[5px] py-px font-mono text-[10px] text-text-muted">
                     {glyph}
                   </span>
                 )}

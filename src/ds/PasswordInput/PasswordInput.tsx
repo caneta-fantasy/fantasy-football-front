@@ -51,7 +51,7 @@ export const PasswordInput = React.forwardRef<
         onClick={() => setVisible((v) => !v)}
         className={
           'absolute right-1 top-1/2 -translate-y-1/2 inline-flex h-8 w-8 ' +
-          'items-center justify-center rounded-sm text-text-muted ' +
+          'items-center justify-center rounded-pill text-text-muted ' +
           'hover:text-text hover:bg-surface-inset transition-colors ' +
           'duration-150 cursor-pointer'
         }

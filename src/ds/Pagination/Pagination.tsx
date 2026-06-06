@@ -62,21 +62,24 @@ function buildSlots(
 }
 
 const ARROW_CLS =
-  'inline-flex items-center justify-center w-8 h-8 rounded-sm bg-surface ' +
-  'border border-border-strong text-text cursor-pointer ' +
+  'inline-flex items-center justify-center w-8 h-8 rounded-pill bg-surface ' +
+  'border border-line-strong text-text cursor-pointer ' +
   'transition-colors duration-150 ease-[var(--ease-standard)] ' +
   'hover:bg-surface-inset ' +
   'disabled:cursor-not-allowed disabled:opacity-[var(--opacity-disabled)] ' +
   'disabled:hover:bg-surface'
 
+// Page numbers are genuine tabular numerics: Archivo (the modernista nav face)
+// with tabular-nums keeps the digits aligned without reaching for mono.
 const PAGE_BASE =
-  'inline-flex items-center justify-center min-w-8 h-8 px-2 rounded-sm ' +
-  'font-mono text-[12.5px] font-bold cursor-pointer ' +
+  'inline-flex items-center justify-center min-w-8 h-8 px-2 rounded-pill ' +
+  'font-sans tabular-nums text-[12.5px] font-bold cursor-pointer ' +
   'transition-colors duration-150 ease-[var(--ease-standard)]'
 
 const PAGE_INACTIVE =
-  'bg-transparent border border-border text-text-muted hover:text-text hover:bg-surface-inset'
-const PAGE_ACTIVE = 'border-0 bg-lime text-ink-900'
+  'bg-transparent border border-line text-text-muted hover:text-signature hover:bg-surface-inset'
+// Modernista active page: gold color-block with near-black on-gold ink.
+const PAGE_ACTIVE = 'border-0 bg-accent text-on-gold'
 
 export function Pagination({
   page,
@@ -124,7 +127,7 @@ export function Pagination({
                 {/* Inert text — never a button, hidden from assistive tech (§7). */}
                 <span
                   aria-hidden="true"
-                  className="inline-flex items-center justify-center min-w-8 h-8 font-mono text-[12.5px] text-text-muted select-none"
+                  className="inline-flex items-center justify-center min-w-8 h-8 font-sans text-[12.5px] text-text-muted select-none"
                 >
                   {ELLIPSIS}
                 </span>

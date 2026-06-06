@@ -2,6 +2,7 @@ import React from 'react'
 import type { Meta, StoryObj } from '@storybook/react'
 import { Modal } from './Modal'
 import { Btn } from '../Btn/Btn'
+import { Overline } from '../Overline/Overline'
 
 const meta: Meta<typeof Modal> = {
   title: 'Overlays/Modal',
@@ -66,7 +67,7 @@ export const Medium: S = {
         Manda o link pros parças. Liga fecha com 6 times.
       </p>
       <div className="flex gap-2">
-        <div className="flex h-10 flex-1 items-center rounded-sm border border-border-strong px-3 font-mono text-[12px] text-text-muted">
+        <div className="flex h-10 flex-1 items-center rounded-btn border border-line-strong px-3 font-mono text-[12px] text-text-muted">
           caneta.fc/j/KHOURI26
         </div>
         <Btn variant="primary">Copiar</Btn>
@@ -98,11 +99,9 @@ export const Large: S = {
         ].map(([l, v]) => (
           <div
             key={l}
-            className="border border-border bg-surface-inset px-3 py-[10px]"
+            className="rounded-btn border border-line bg-surface-inset px-3 py-[10px]"
           >
-            <div className="font-mono text-[10px] uppercase tracking-[1px] text-text-muted">
-              {l}
-            </div>
+            <Overline>{l}</Overline>
             <div className="mt-[3px] font-display text-[20px] text-text">{v}</div>
           </div>
         ))}

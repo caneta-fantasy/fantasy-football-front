@@ -62,7 +62,7 @@ describe('FieldGroup', () => {
     expect(describedby).toContain(alert.id)
   })
 
-  it('sets aria-required and a lime asterisk when required', () => {
+  it('sets aria-required and a gold asterisk when required', () => {
     render(
       <FieldGroup label="E-mail" htmlFor="email" required>
         <input id="email" />

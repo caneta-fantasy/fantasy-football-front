@@ -30,20 +30,20 @@
   transition: border-color var(--dur-150, 150ms) var(--ease-standard);
 }
 
-/* The inner lime pip appears when checked. */
+/* The inner signature-green pip appears when checked. */
 .ds-radio-dot::after {
   content: '';
   width: 10px;
   height: 10px;
   border-radius: var(--radius-full, 999px);
-  background: var(--caneta-lime);
-  box-shadow: 0 0 0 1px var(--caneta-lime-d);
+  background: var(--color-signature);
+  box-shadow: 0 0 0 1px var(--color-signature-line);
   transform: scale(0);
   transition: transform var(--dur-150, 150ms) var(--ease-emphasized);
 }
 
 .ds-radio-input:checked ~ .ds-radio-dot {
-  border-color: var(--caneta-lime-d);
+  border-color: var(--color-signature-line);
 }
 .ds-radio-input:checked ~ .ds-radio-dot::after {
   transform: scale(1);

@@ -2,6 +2,12 @@ import type { Meta, StoryObj } from '@storybook/react'
 import { useState } from 'react'
 import { Pagination } from './Pagination'
 
+/**
+ * Modernista pagination: the current page is a **gold** color-block with
+ * near-black on-gold ink; inactive pages are hairline-bordered Archivo
+ * tabular-nums that hover to signature green. ARIA landmark + `aria-current`
+ * carry over unchanged.
+ */
 const meta: Meta<typeof Pagination> = {
   title: 'Navigation/Pagination',
   component: Pagination,

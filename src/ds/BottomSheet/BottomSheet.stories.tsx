@@ -40,8 +40,8 @@ const ActionList = ({ onClose }: { onClose?: () => void }) => (
           type="button"
           onClick={onClose}
           className={[
-            'flex w-full items-center gap-3 border-b border-border-subtle px-[18px] py-[13px] text-left',
-            a.danger ? 'text-red' : 'text-text',
+            'flex w-full items-center gap-3 border-b border-line-subtle px-[18px] py-[13px] text-left',
+            a.danger ? 'text-danger' : 'text-text',
           ].join(' ')}
         >
           <Icon name={a.icon as never} size={20} />

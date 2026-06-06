@@ -8,7 +8,7 @@ const meta: Meta<typeof Label> = {
     docs: {
       description: {
         component:
-          'Field label — a real `<label htmlFor>`. Editorial overline style (uppercase, 2px tracking, functional-contrast `text-muted`). When `required`, a lime `*` is appended; the asterisk is `aria-hidden`, so requiredness is conveyed on the control via `aria-required` (FieldGroup wires this).',
+          'Field label — a real `<label htmlFor>`. Editorial overline style (Archivo, uppercase, 2px tracking, functional-contrast `text-muted`). When `required`, a gold (`accent-deep`) `*` is appended; the asterisk is `aria-hidden`, so requiredness is conveyed on the control via `aria-required` (FieldGroup wires this).',
       },
     },
   },
@@ -28,18 +28,18 @@ export const Default: S = {
   render: (args) => (
     <div>
       <Label {...args} />
-      <input id={args.htmlFor} className="border border-border-strong rounded-sm h-[40px] px-3" />
+      <input id={args.htmlFor} className="border border-border-strong rounded-btn-sm h-[40px] px-3" />
     </div>
   ),
 }
 
-/** Required label with the lime asterisk. */
+/** Required label with the gold asterisk. */
 export const Required: S = {
   args: { htmlFor: 'demo-required', children: 'Senha', required: true },
   render: (args) => (
     <div>
       <Label {...args} />
-      <input id={args.htmlFor} className="border border-border-strong rounded-sm h-[40px] px-3" />
+      <input id={args.htmlFor} className="border border-border-strong rounded-btn-sm h-[40px] px-3" />
     </div>
   ),
 }
@@ -50,7 +50,7 @@ export const Playground: S = {
   render: (args) => (
     <div>
       <Label {...args} />
-      <input id={args.htmlFor} className="border border-border-strong rounded-sm h-[40px] px-3" />
+      <input id={args.htmlFor} className="border border-border-strong rounded-btn-sm h-[40px] px-3" />
     </div>
   ),
 }

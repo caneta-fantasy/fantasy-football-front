@@ -137,8 +137,8 @@ export function Tooltip({
           id={tipId}
           className={[
             'pointer-events-none absolute z-popover whitespace-nowrap',
-            'rounded-sm bg-ink-900 px-[11px] py-[7px]',
-            'font-mono text-[11px] text-text-on-dark shadow-e3',
+            'rounded-pill bg-ink px-[11px] py-[7px]',
+            'font-sans text-[11px] font-medium text-on-green shadow-e3',
             'animate-[ds-tooltip-in_var(--dur-150,150ms)_var(--ease-standard)]',
             place.panel,
           ].join(' ')}
@@ -147,7 +147,7 @@ export function Tooltip({
           <span
             aria-hidden="true"
             className={[
-              'absolute h-[8px] w-[8px] bg-ink-900 border-ink-900',
+              'absolute h-[8px] w-[8px] bg-ink border-ink',
               place.arrow,
             ].join(' ')}
           />

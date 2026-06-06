@@ -2,6 +2,12 @@ import type { Meta, StoryObj } from '@storybook/react-vite'
 import { useState } from 'react'
 import { Slider } from './Slider'
 
+// The Overline typography (Archivo all-caps tracked label) applied directly to
+// a native <label> so it keeps `htmlFor` association — the canonical modernista
+// replacement for the old mono caption.
+const OVERLINE_LABEL =
+  'mb-2 block font-sans font-bold text-[11px] leading-none uppercase tracking-[2.2px] text-text-muted'
+
 const meta: Meta<typeof Slider> = {
   title: 'Forms/Slider',
   component: Slider,
@@ -10,7 +16,7 @@ const meta: Meta<typeof Slider> = {
     docs: {
       description: {
         component:
-          'A real, styled `<input type="range">`. Carries the implicit `slider` role and the full native keyboard model (arrows, Home/End, PageUp/PageDown). `aria-valuemin`/`aria-valuemax`/`aria-valuenow` are set explicitly from `min`/`max`/`value`. The lime track fill is value-driven via a computed `--ds-slider-fill` custom property, so it always matches the real value. Label it with `aria-label` or an external `<label htmlFor>`.',
+          'A real, styled `<input type="range">`. Carries the implicit `slider` role and the full native keyboard model (arrows, Home/End, PageUp/PageDown). `aria-valuemin`/`aria-valuemax`/`aria-valuenow` are set explicitly from `min`/`max`/`value`. The bottle-green track fill is value-driven via a computed `--ds-slider-fill` custom property, so it always matches the real value. Label it with `aria-label` or an external `<label htmlFor>`.',
       },
     },
   },
@@ -108,10 +114,7 @@ export const WithLabel: S = {
     const [v, setV] = useState(60)
     return (
       <div className="w-[320px]">
-        <label
-          htmlFor="ds-slider-demo"
-          className="mb-2 block font-mono text-[11px] font-bold uppercase tracking-[2px] text-text-muted"
-        >
+        <label htmlFor="ds-slider-demo" className={OVERLINE_LABEL}>
           Intensidade
         </label>
         <Slider

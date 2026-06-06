@@ -7,7 +7,7 @@ export interface FieldGroupProps {
   label: React.ReactNode
   /** id of the control — links the `<label htmlFor>` and is the base for helper/error ids. */
   htmlFor: string
-  /** Marks the field required: lime `*` on the label + `aria-required` on the control. */
+  /** Marks the field required: gold `*` on the label + `aria-required` on the control. */
   required?: boolean
   /** Neutral helper text. Shows together with `error` (DS §7: error does NOT replace it). */
   help?: React.ReactNode
@@ -36,7 +36,7 @@ type ControlProps = {
  *   control through `aria-describedby`.
  * - Helper AND error can both be present — the helper stays and the error is
  *   appended (DS §7 fix: error does not "replace" the helper).
- * - `required` adds a lime `*` and `aria-required` on the control.
+ * - `required` adds a gold `*` and `aria-required` on the control.
  * - `error` adds `aria-invalid` on the control.
  * - Any `aria-describedby` already on the child control is preserved (merged).
  */

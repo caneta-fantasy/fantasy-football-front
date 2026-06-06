@@ -125,7 +125,7 @@ export const SearchInput = React.forwardRef<HTMLInputElement, SearchInputProps>(
               title="limpar"
               onClick={handleClear}
               className={
-                'inline-flex h-8 w-8 items-center justify-center rounded-sm ' +
+                'inline-flex h-8 w-8 items-center justify-center rounded-pill ' +
                 'text-text-muted hover:text-text hover:bg-surface-inset ' +
                 'transition-colors duration-150 cursor-pointer'
               }

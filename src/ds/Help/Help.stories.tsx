@@ -8,7 +8,7 @@ const meta: Meta<typeof Help> = {
     docs: {
       description: {
         component:
-          'Helper / validation message shown beneath a field. The `error` tone renders with `role="alert"` (announced) and a leading alert glyph; `success` shows a check; `neutral` is silent context. Text color uses `text-muted` / `text-red` / `text-lime-deep` — never `text-subtle` for this functional text (DS §7 #4).',
+          'Helper / validation message shown beneath a field. The `error` tone renders with `role="alert"` (announced) and a leading alert glyph; `success` shows a check; `neutral` is silent context. Text color uses the functional own-hues `text-muted` / `text-danger` (brick) / `text-success` (leaf) — never the reserved referee card colors, and never `text-subtle` for this functional text (DS §7 #4).',
       },
     },
   },
@@ -26,12 +26,12 @@ export const Neutral: S = {
   args: { tone: 'neutral', children: 'Usamos só pra recuperar conta.' },
 }
 
-/** Error — role="alert", red text + alert glyph. */
+/** Error — role="alert", brick-danger text + alert glyph. */
 export const Error: S = {
   args: { tone: 'error', children: 'Email inválido' },
 }
 
-/** Success — lime-deep text + check glyph. */
+/** Success — leaf-success text + check glyph. */
 export const Success: S = {
   args: { tone: 'success', children: 'Preenchido e válido.' },
 }

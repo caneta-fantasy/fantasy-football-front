@@ -20,13 +20,15 @@ const TONES: Record<
 > = {
   // textMuted, not textSubtle — small functional text needs the 5.6:1 token (DS §7 #4).
   neutral: { color: 'text-text-muted', icon: null },
-  error: { color: 'text-red', icon: 'alert' },
-  success: { color: 'text-lime-deep', icon: 'success-check' },
+  // Functional own-hues: brick danger for error, leaf success for success — the
+  // referee card-red/card-yellow are reserved and never used for state here.
+  error: { color: 'text-danger', icon: 'alert' },
+  success: { color: 'text-success', icon: 'success-check' },
 }
 
 const ICON_COLOR: Record<'alert' | 'success-check', string> = {
-  alert: 'var(--red)',
-  'success-check': 'var(--caneta-lime-deep)',
+  alert: 'var(--danger)',
+  'success-check': 'var(--success)',
 }
 
 const BASE = 'flex items-center gap-[6px] mt-2 font-sans text-[11.5px]'

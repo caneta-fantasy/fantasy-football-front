@@ -17,7 +17,7 @@ export interface ModalProps {
    * if you render your own heading.
    */
   title?: React.ReactNode
-  /** Mono sub-label under the title (e.g. "MÉDIO · 480 × auto"). */
+  /** Archivo sub-label under the title (e.g. "MÉDIO · 480 × auto"). */
   subtitle?: React.ReactNode
   /** Footer slot, typically action buttons. */
   footer?: React.ReactNode
@@ -78,24 +78,32 @@ export function Modal({
         aria-labelledby={labelId}
         className={[
           'relative z-[1] my-12 w-full bg-surface text-text shadow-e3',
-          'rounded-sm outline-none',
+          'rounded-btn-lg border border-line outline-none',
           'animate-[ds-modal-in_var(--dur-200,200ms)_var(--ease-emphasized)]',
           sizeCls,
         ].join(' ')}
       >
         {(title != null || subtitle != null) && (
-          <header className="flex items-start justify-between gap-4 border-b border-border px-6 py-4">
+          <header className="flex items-start justify-between gap-4 border-b border-line px-6 py-4">
             <div>
               {title != null && (
                 <h2
                   id={titleId}
-                  className="font-display text-[22px] uppercase leading-none tracking-[-0.3px] text-text"
+                  // Archivo poster voice (wide + heavy via the disp() recipe) —
+                  // modernista headings are sentence-case, not Anton uppercase.
+                  className="font-display text-[22px] text-text"
+                  style={{
+                    fontWeight: 800,
+                    fontVariationSettings: '"wght" 800, "wdth" 112',
+                    lineHeight: 1,
+                    letterSpacing: '-0.4px',
+                  }}
                 >
                   {title}
                 </h2>
               )}
               {subtitle != null && (
-                <p className="mt-[5px] font-mono text-[10.5px] text-text-muted">
+                <p className="mt-[5px] font-sans text-[12px] text-text-muted">
                   {subtitle}
                 </p>
               )}
@@ -104,7 +112,7 @@ export function Modal({
               type="button"
               onClick={onClose}
               aria-label="Fechar"
-              className="-mr-2 inline-flex h-7 w-7 flex-none items-center justify-center rounded-xs text-text-muted hover:bg-surface-inset"
+              className="-mr-2 inline-flex h-7 w-7 flex-none items-center justify-center rounded-pill text-text-muted hover:bg-surface-inset"
             >
               <Icon name="x" size={16} />
             </button>
@@ -117,7 +125,7 @@ export function Modal({
             type="button"
             onClick={onClose}
             aria-label="Fechar"
-            className="absolute right-3 top-3 inline-flex h-7 w-7 items-center justify-center rounded-xs text-text-muted hover:bg-surface-inset"
+            className="absolute right-3 top-3 inline-flex h-7 w-7 items-center justify-center rounded-pill text-text-muted hover:bg-surface-inset"
           >
             <Icon name="x" size={16} />
           </button>
@@ -126,7 +134,7 @@ export function Modal({
         <div className="px-6 py-5">{children}</div>
 
         {footer != null && (
-          <footer className="flex justify-end gap-2 border-t border-border px-6 py-4">
+          <footer className="flex justify-end gap-2 border-t border-line px-6 py-4">
             {footer}
           </footer>
         )}

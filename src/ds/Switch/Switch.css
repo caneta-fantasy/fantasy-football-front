@@ -10,15 +10,15 @@
   padding: 0;
   border: 1px solid transparent;
   border-radius: var(--radius-full, 999px);
-  background: var(--ink-200);
+  background: var(--color-border-strong);
   cursor: pointer;
   transition: background-color var(--dur-200, 200ms) var(--ease-standard),
     border-color var(--dur-200, 200ms) var(--ease-standard);
 }
 
 .ds-switch[data-checked] {
-  background: var(--caneta-lime);
-  border-color: var(--caneta-lime-d);
+  background: var(--color-signature);
+  border-color: var(--color-signature-line);
 }
 
 .ds-switch-thumb {
@@ -29,14 +29,15 @@
   height: 18px;
   border-radius: var(--radius-full, 999px);
   background: var(--color-surface);
-  box-shadow: 0 1px 3px rgba(11, 15, 12, 0.3);
+  box-shadow: 0 1px 3px rgba(19, 33, 26, 0.3);
   transition: left var(--dur-200, 200ms) var(--ease-standard),
     background-color var(--dur-200, 200ms) var(--ease-standard);
 }
 
+/* On: the thumb stays white so it reads clearly on the deep-green track. */
 .ds-switch[data-checked] .ds-switch-thumb {
   left: 18px;
-  background: var(--ink-900);
+  background: var(--color-surface);
 }
 
 .ds-switch--disabled {

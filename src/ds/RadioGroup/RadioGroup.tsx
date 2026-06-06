@@ -157,7 +157,7 @@ export function RadioGroup({
       >
         {label}
         {required && (
-          <span className="text-lime-deep ml-[3px]" aria-hidden="true">
+          <span className="text-signature ml-[3px]" aria-hidden="true">
             *
           </span>
         )}

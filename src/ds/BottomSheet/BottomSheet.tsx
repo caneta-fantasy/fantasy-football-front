@@ -102,7 +102,7 @@ export function BottomSheet({
         }}
         className={[
           'relative z-[1] flex max-h-[85vh] w-full max-w-[640px] flex-col',
-          'rounded-t-lg bg-surface text-text shadow-e3 outline-none',
+          'rounded-t-[18px] border border-line bg-surface text-text shadow-e3 outline-none',
           'pt-3',
           dragY
             ? ''
@@ -123,15 +123,22 @@ export function BottomSheet({
         >
           <span
             aria-hidden="true"
-            className="h-1 w-10 rounded-full bg-ink-100"
+            className="h-1 w-10 rounded-full bg-line-strong"
           />
         </button>
 
         {title != null && (
-          <div className="border-b border-border px-[18px] pb-2">
+          <div className="border-b border-line px-[18px] pb-2">
             <h2
               id={titleId}
-              className="font-display text-[18px] uppercase tracking-[-0.2px] text-text"
+              // Archivo poster voice (wide + heavy) — sentence-case, not Anton.
+              className="font-display text-[18px] text-text"
+              style={{
+                fontWeight: 800,
+                fontVariationSettings: '"wght" 800, "wdth" 112',
+                lineHeight: 1.05,
+                letterSpacing: '-0.3px',
+              }}
             >
               {title}
             </h2>

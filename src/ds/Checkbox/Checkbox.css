@@ -23,7 +23,7 @@
   flex-shrink: 0;
   width: 20px;
   height: 20px;
-  border-radius: var(--radius-sm, 4px);
+  border-radius: var(--radius-pill);
   border: 1.5px solid var(--color-border-strong);
   background: var(--color-surface);
   display: inline-flex;
@@ -33,9 +33,10 @@
     border-color var(--dur-150, 150ms) var(--ease-standard);
 }
 
-/* Checkmark + indeterminate dash hidden until the matching state. */
+/* Checkmark + indeterminate dash hidden until the matching state. The glyph
+   sits on the filled signature-green box, so it carries the warm on-green ink. */
 .ds-checkbox-check {
-  color: var(--ink-900);
+  color: var(--color-on-signature);
   opacity: 0;
 }
 
@@ -43,23 +44,23 @@
   position: absolute;
   width: 10px;
   height: 2.5px;
-  background: var(--ink-900);
+  background: var(--color-on-signature);
   opacity: 0;
 }
 
-/* checked → lime fill + visible check */
+/* checked → signature green fill + visible check */
 .ds-checkbox-input:checked ~ .ds-checkbox-box {
-  background: var(--caneta-lime);
-  border-color: var(--caneta-lime-d);
+  background: var(--color-signature);
+  border-color: var(--color-signature-line);
 }
 .ds-checkbox-input:checked ~ .ds-checkbox-box .ds-checkbox-check {
   opacity: 1;
 }
 
-/* indeterminate → lime fill + dash, no check */
+/* indeterminate → signature green fill + dash, no check */
 .ds-checkbox-input:indeterminate ~ .ds-checkbox-box {
-  background: var(--caneta-lime);
-  border-color: var(--caneta-lime-d);
+  background: var(--color-signature);
+  border-color: var(--color-signature-line);
 }
 .ds-checkbox-input:indeterminate ~ .ds-checkbox-box .ds-checkbox-check {
   opacity: 0;

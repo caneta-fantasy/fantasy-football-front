@@ -18,7 +18,7 @@ import './Slider.css'
  *
  * The track fill is value-driven: the component computes the value's position
  * as a percentage and exposes it as the `--ds-slider-fill` custom property the
- * CSS gradient track reads, so the lime fill always matches the real value.
+ * CSS gradient track reads, so the green fill always matches the real value.
  *
  * Defaults to the conventional 0–100 range when `min`/`max` are omitted.
  */
