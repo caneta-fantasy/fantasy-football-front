@@ -5,6 +5,32 @@
 export { tokens } from './tokens'
 export type { Tokens } from './tokens'
 
+// ----- Signature / modernista primitives -----
+export { Overline, SectionLabel } from './Overline/Overline'
+export type { OverlineProps } from './Overline/Overline'
+
+export { Azulejo } from './Azulejo/Azulejo'
+export type { AzulejoProps } from './Azulejo/Azulejo'
+
+export { AzulejoBand } from './AzulejoBand/AzulejoBand'
+export type { AzulejoBandProps } from './AzulejoBand/AzulejoBand'
+
+export { ArchShape } from './ArchShape/ArchShape'
+export type { ArchShapeProps } from './ArchShape/ArchShape'
+
+export { ArchPanel } from './ArchPanel/ArchPanel'
+export type { ArchPanelProps } from './ArchPanel/ArchPanel'
+
+export { TickerBar } from './TickerBar/TickerBar'
+export type { TickerBarProps, TickerItem, TickerTone } from './TickerBar/TickerBar'
+
+export { ArchHeader } from './ArchHeader/ArchHeader'
+export type {
+  ArchHeaderProps,
+  ArchHeaderTone,
+  ArchHeaderPattern,
+} from './ArchHeader/ArchHeader'
+
 // ----- Core primitives -----
 export { Spinner } from './Spinner/Spinner'
 export type { SpinnerProps } from './Spinner/Spinner'
