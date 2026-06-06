@@ -164,34 +164,11 @@
    * build/tests stay green. Removed task-by-task as Part B lands.
    * ───────────────────────────────────────────────────────────────── */
   --caneta-lime: var(--green);
-  --caneta-lime-d: var(--green-600);
   --caneta-lime-deep: var(--green-deep);
   --clay: var(--cobalt);
-  --chalk: var(--pitch-line);
   --red: var(--danger);
-  --red-deep: var(--danger);
-  --yellow: var(--warning);
-  --yellow-d: var(--warning);
-  --paper-2: var(--mist2);
   --paper-ink: var(--ink);
-  --pos-blue: var(--cobalt-light);
-  --ink-900: var(--ink);
   --ink-700: var(--ink-muted);
-  --ink-600: var(--ink-muted);
-  --ink-500: var(--ink-muted);
-  --ink-400: var(--ink-subtle);
-  --ink-300: var(--line-strong);
-  --ink-200: var(--line-strong);
-  --ink-100: var(--line);
-  --ink-50: var(--green-pale);
-  --color-surface-dark: var(--green);
-  --color-text-on-dark: var(--on-green);
-  --color-danger-fg: #FFFFFF;
-  --color-on-lime: var(--on-green);
-  --radius-xs: var(--radius-pill);
-  --radius-sm: var(--radius-pill);
-  --radius-md: var(--radius-btn);
-  --radius-lg: var(--radius-btn-lg);
 }
 
 [data-theme='dark'] {

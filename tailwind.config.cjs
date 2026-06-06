@@ -54,14 +54,6 @@ module.exports = {
         DEFAULT: 'var(--ink)',
         muted: 'var(--ink-muted)',
         subtle: 'var(--ink-subtle)',
-        // compat numeric ramp for not-yet-restyled ds components (Part B):
-        900: 'var(--ink-900)',
-        700: 'var(--ink-700)',
-        600: 'var(--ink-600)',
-        500: 'var(--ink-500)',
-        400: 'var(--ink-400)',
-        300: 'var(--ink-300)',
-        100: 'var(--ink-100)',
       },
       'on-green': 'var(--on-green)',
       'on-green-mute': 'var(--on-green-mute)',
@@ -88,7 +80,6 @@ module.exports = {
         DEFAULT: 'var(--color-text)',
         muted: 'var(--color-text-muted)',
         subtle: 'var(--color-text-subtle)',
-        'on-dark': 'var(--color-text-on-dark)',
       },
       border: {
         DEFAULT: 'var(--color-border)',
@@ -97,19 +88,14 @@ module.exports = {
       },
 
       // ─── compat aliases ──────────────────────────────────────────────
-      // ds components are restyled in Part B (plan B1–B10); until then they
-      // emit prior utility names. Map onto modernista vars so the compiled
-      // classes resolve to the new palette (not undefined). Removed in Part B.
+      // ds components are restyled in Part B (plan B1–B10). Most compat color
+      // names are now retired; `lime` survives only because SignIn still emits
+      // `text-lime-deep` (the wordmark dot) — kept until that page is reworked.
       lime: {
         DEFAULT: 'var(--green)',
         d: 'var(--green-600)',
         deep: 'var(--green-deep)',
       },
-      clay: 'var(--cobalt)',
-      red: 'var(--danger)',
-      yellow: 'var(--warning)',
-      'surface-dark': 'var(--green)',
-      'on-dark': 'var(--on-green)',
     },
     fontFamily: {
       // same family for sans + display; poster look comes from
@@ -130,11 +116,9 @@ module.exports = {
       chip: '999px',
       full: '9999px',
       // cards default to hard edge; Niemeyer arches stay inline 120px 120px 0 0.
-      // compat ramp for not-yet-restyled ds components (removed in Part B):
+      // compat: only `xs` survives — SignIn still emits `rounded-xs` (removed
+      // when that page is reworked).
       xs: '4px',
-      sm: '4px',
-      md: '11px',
-      lg: '13px',
     },
     extend: {
       boxShadow: {
