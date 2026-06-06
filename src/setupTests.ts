@@ -1,5 +1,25 @@
 import '@testing-library/jest-dom'
 
+// jsdom does not implement matchMedia. Breakpoint hooks (e.g. PlayersList's
+// non-MUI useBreakpoint) call it on mount, so provide a deterministic mock:
+// every query reports `matches: false` → the default (desktop) breakpoint.
+if (typeof window !== 'undefined' && typeof window.matchMedia !== 'function') {
+  Object.defineProperty(window, 'matchMedia', {
+    writable: true,
+    configurable: true,
+    value: (query: string): MediaQueryList => ({
+      matches: false,
+      media: query,
+      onchange: null,
+      addListener: () => {},
+      removeListener: () => {},
+      addEventListener: () => {},
+      removeEventListener: () => {},
+      dispatchEvent: () => false,
+    }) as unknown as MediaQueryList,
+  })
+}
+
 // Node 22+ exposes a partial experimental global `localStorage` that lacks the
 // Storage API and shadows jsdom's implementation, so `localStorage.getItem` is
 // undefined under vitest. Install a minimal in-memory Storage when that happens.
