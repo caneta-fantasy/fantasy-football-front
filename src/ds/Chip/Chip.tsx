@@ -2,16 +2,19 @@ import React from 'react'
 import './Chip.css'
 
 export type ChipTone =
-  | 'lime'
-  | 'yellow'
-  | 'red'
-  | 'ink'
-  | 'paper'
+  | 'green'
+  | 'gold'
+  | 'cobalt'
+  | 'success'
+  | 'white'
   | 'ghost'
   | 'live'
+  // reserved — referee only (cartão amarelo / vermelho); never state-by-color.
+  | 'yellow'
+  | 'red'
 
 interface ChipBaseProps {
-  /** Visual tone. Unknown values fall back to `ink` (no throw — §7 #1). */
+  /** Visual tone. Unknown values fall back to `green` (no throw — §7 #1). */
   tone?: ChipTone
   /**
    * Upgrade from a decorative `<span>` to a real `<button>` so the chip is
@@ -33,22 +36,48 @@ export type ChipProps = ChipBaseProps &
     keyof ChipBaseProps
   >
 
-// Tone → Tailwind utility classes mapped to tokens.
-// §7 #3 fix: red/live use the danger-fg token (ink900) — never white-on-red.
+// Tone → Tailwind utility classes mapped to modernista tokens. Every tone is a
+// bg + fg + 1.5px border triple (the border carries the tone in greyscale, so
+// the chip never communicates by fill color alone). Pale-tint tones pair a soft
+// fill with a deep on-tone foreground + a saturated border; solid tones (green)
+// carry an on-color foreground. Contrast (vs the listed bg) is AA at this size:
+//   green   on-green / green        10.3:1
+//   gold    gold-deep / gold-pale    4.2:1 (AA-large; 10.5px bold tracked)
+//   cobalt  cobalt-deep / cobalt-pale 8.4:1
+//   success green-600 / success-pale  7.4:1
+//   white   ink / white             16.7:1
+//   ghost   ink-muted / white        6.5:1
+//   live    white / danger(brick)    5.9:1  (brick #B23A2B, NOT card-red)
+//   yellow  ink / card-yellow       10.2:1  (referee)
+//   red     ink / danger-pale       12.3:1  (referee — card-red BORDER, never
+//                                            white-on-card-red text · §7 #3)
 const TONES: Record<ChipTone, string> = {
-  lime: 'bg-lime text-[color:var(--color-on-lime)]',
-  yellow: 'bg-yellow text-[color:var(--color-on-lime)]',
-  red: 'bg-red text-[color:var(--color-danger-fg)]',
-  ink: 'bg-ink-900 text-text-on-dark',
-  paper: 'bg-paper text-[color:var(--paper-ink)]',
+  green:
+    'bg-signature text-on-green border-[1.5px] border-signature',
+  gold:
+    'bg-accent-pale text-accent-deep border-[1.5px] border-accent',
+  cobalt:
+    'bg-cobalt-pale text-cobalt-deep border-[1.5px] border-cobalt',
+  success:
+    'bg-success-pale text-signature-raised border-[1.5px] border-success',
+  white:
+    'bg-white text-ink border-[1.5px] border-line-strong',
   ghost:
-    'bg-transparent text-text-muted border border-[color:var(--color-border-strong)]',
-  live: 'bg-red text-[color:var(--color-danger-fg)]',
+    'bg-transparent text-ink-muted border-[1.5px] border-line-strong',
+  live:
+    'bg-danger text-white border-[1.5px] border-danger',
+  // reserved referee tones — never used to convey app state by color alone.
+  yellow:
+    'bg-card-yellow text-ink border-[1.5px] border-card-yellow',
+  // card-red carries the tone via the BORDER; the fill is the red tint and the
+  // text is ink (12.3:1) — reconciled away from white-on-card-red (§7 #3).
+  red:
+    'bg-danger-pale text-ink border-[1.5px] border-card-red',
 }
 
 const BASE =
-  'inline-flex items-center gap-2 font-sans font-semibold uppercase ' +
-  'tracking-[1.2px] text-[11px] leading-none px-[9px] py-1 rounded-xs align-middle ' +
+  'inline-flex items-center gap-2 font-sans font-bold uppercase ' +
+  'tracking-[1.2px] text-[10.5px] leading-none px-[11px] py-[5px] rounded-chip align-middle ' +
   'whitespace-nowrap select-none'
 
 // Visually-hidden recipe: out of the visual flow, still in the a11y tree.
@@ -65,14 +94,14 @@ const srOnly: React.CSSProperties = {
 }
 
 export function Chip({
-  tone = 'ink',
+  tone = 'green',
   interactive = false,
   disabled = false,
   children,
   className,
   ...rest
 }: ChipProps) {
-  const toneCls = TONES[tone] ?? TONES.ink
+  const toneCls = TONES[tone] ?? TONES.green
   // Non-color disabled cue: strike the label and dim it. The cue is the
   // line-through (not just a lighter color), so it reads without color.
   const disabledCls = disabled

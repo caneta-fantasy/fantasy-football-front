@@ -52,18 +52,40 @@ describe('Card', () => {
     expect(el).not.toHaveAttribute('aria-selected')
   })
 
-  it('falls back to the surface tone for an unknown tone without throwing (DS §7 #1)', () => {
+  it('falls back to the paper tone for an unknown tone without throwing (DS §7 #1)', () => {
     expect(() =>
       // @ts-expect-error testing the runtime fallback for an unknown tone
       render(<Card tone="nope">x</Card>),
     ).not.toThrow()
-    // The surface tone is the fallback: it uses the surface background utility.
-    expect(screen.getByText('x').className).toContain('bg-surface')
+    // The paper tone is the fallback: it uses the white paper background utility.
+    expect(screen.getByText('x').className).toContain('bg-paper')
   })
 
-  it('applies the requested tone (lime) classes', () => {
-    render(<Card tone="lime">Lima</Card>)
-    expect(screen.getByText('Lima').className).toContain('bg-lime')
+  it('applies the requested tone (gold) classes', () => {
+    render(<Card tone="gold">Ouro</Card>)
+    expect(screen.getByText('Ouro').className).toContain('bg-accent')
+  })
+
+  it('applies the added cobalt and greenPale tones', () => {
+    const { rerender } = render(<Card tone="cobalt">Cobalto</Card>)
+    expect(screen.getByText('Cobalto').className).toContain('bg-cobalt')
+    rerender(<Card tone="greenPale">Verde</Card>)
+    expect(screen.getByText('Verde').className).toContain('bg-signature-pale')
+  })
+
+  it('uses a 2px gold selection border by default but cobalt on the green tone', () => {
+    const { rerender } = render(
+      <Card interactive selected tone="paper">
+        Selecionado
+      </Card>,
+    )
+    expect(screen.getByRole('button').className).toContain('border-accent')
+    rerender(
+      <Card interactive selected tone="green">
+        Selecionado
+      </Card>,
+    )
+    expect(screen.getByRole('button').className).toContain('border-cobalt')
   })
 
   it('applies a custom padding utility when padding is provided', () => {

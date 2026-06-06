@@ -1,12 +1,12 @@
 import React from 'react'
 
 /**
- * Card — a generic editorial surface. Light by default, with a dark variant
- * for "broadcast" moments, a parchment variant, and a lime call-to-action
- * variant.
+ * Card — a structural editorial surface. White-on-line ("paper") by default,
+ * with a broadcast `green` block, a gold call-to-action, a cobalt accent, a
+ * faint `greenPale` tint, and a sunken `mist` variant.
  *
- * a11y / DS §7 #1: the tone map has a `surface` fallback so an unknown tone
- * never throws (`TONES[tone] ?? TONES.surface`).
+ * a11y / DS §7 #1: the tone map has a `paper` fallback so an unknown tone
+ * never throws (`TONES[tone] ?? TONES.paper`).
  *
  * When `interactive` is set the card is a real, focusable `<button>` (never a
  * styled `<div>` with an onClick): it gets `type="button"`, reflects its
@@ -14,20 +14,22 @@ import React from 'react'
  * base layer's `:focus-visible` ring for free. A non-interactive card is a
  * plain `<div>` and carries no button/selection ARIA.
  */
-type Tone = 'surface' | 'dark' | 'paper' | 'lime'
+type Tone = 'paper' | 'green' | 'gold' | 'cobalt' | 'greenPale' | 'mist'
 
-// Tone → Tailwind utility classes mapped to the semantic/brand tokens.
-// `selected` is a separate layer (a lime border) applied on top of the tone.
+// Tone → Tailwind utility classes mapped to the modernista semantic tokens.
+// Modernista cards are structural: hard edge + hairline by default. `selected`
+// is a separate layer (a 2px gold/cobalt border) applied on top of the tone.
 const TONES: Record<Tone, string> = {
-  surface: 'bg-surface text-text border border-border',
-  dark: 'bg-[color:var(--color-surface-dark)] text-text-on-dark border border-ink-700',
-  paper:
-    'bg-paper text-[color:var(--paper-ink)] border border-[color:var(--paper-2)]',
-  lime: 'bg-lime text-ink-900 border border-lime-d',
+  paper: 'bg-paper text-ink border border-line',
+  green: 'bg-signature text-on-green border border-signature-line',
+  gold: 'bg-accent text-on-gold border border-accent',
+  cobalt: 'bg-cobalt text-white border border-cobalt',
+  greenPale: 'bg-signature-pale text-signature border border-signature-pale',
+  mist: 'bg-mist text-ink border border-line',
 }
 
 interface CardOwnProps {
-  /** Visual surface. Falls back to `surface` for any unknown value (never throws). */
+  /** Visual surface. Falls back to `paper` for any unknown value (never throws). */
   tone?: Tone
   /**
    * Upgrades the card to a real focusable `<button>` so the whole surface is
@@ -36,8 +38,9 @@ interface CardOwnProps {
   interactive?: boolean
   /**
    * Selected (pressed) state. On an interactive card this drives
-   * `aria-pressed`/`aria-selected` and a lime selection border. Ignored
-   * visually-only for non-interactive cards (no selection ARIA is emitted).
+   * `aria-pressed`/`aria-selected` and a 2px gold/cobalt selection border.
+   * Ignored visually-only for non-interactive cards (no selection ARIA is
+   * emitted).
    */
   selected?: boolean
   /**
@@ -56,18 +59,21 @@ export type CardProps =
       >)
   | (CardOwnProps & { interactive?: false } & React.HTMLAttributes<HTMLDivElement>)
 
-const BASE = 'rounded-md transition-[transform,box-shadow,border-color] duration-150'
+// Cards default to a hard edge (modernista structural surface).
+const BASE = 'rounded-none transition-[transform,box-shadow,border-color] duration-150'
 // Interactive affordances: hover lift + elevation, focus ring from the base
 // layer, disabled dimming. Motion is pure CSS (reduced-motion handled globally).
 const INTERACTIVE =
   'block w-full text-left cursor-pointer hover:-translate-y-0.5 hover:shadow-e1 ' +
   'active:translate-y-0 disabled:opacity-60 disabled:pointer-events-none'
-// Selection cue: a 2px lime border. Not colour-only — interactive cards also
+// Selection cue: a 2px gold border (cobalt on the green broadcast tone, where
+// gold has too little contrast). Not colour-only — interactive cards also
 // expose aria-pressed/aria-selected for assistive tech.
-const SELECTED = 'border-2 border-lime shadow-none'
+const SELECTED = 'border-2 border-accent shadow-none'
+const SELECTED_ON_GREEN = 'border-2 border-cobalt shadow-none'
 
 export function Card({
-  tone = 'surface',
+  tone = 'paper',
   interactive = false,
   selected = false,
   padding = 'p-4',
@@ -75,10 +81,11 @@ export function Card({
   children,
   ...rest
 }: CardProps) {
-  const toneClasses = TONES[tone] ?? TONES.surface
+  const toneClasses = TONES[tone] ?? TONES.paper
+  const selectedClasses = tone === 'green' ? SELECTED_ON_GREEN : SELECTED
   const cls = [
     BASE,
-    selected ? SELECTED : toneClasses,
+    selected ? selectedClasses : toneClasses,
     // Keep the tone background/text even when selected (selection only swaps
     // the border), so re-append the tone but let SELECTED's border win.
     selected ? toneClasses.replace(/border[^ ]*/g, '').trim() : '',

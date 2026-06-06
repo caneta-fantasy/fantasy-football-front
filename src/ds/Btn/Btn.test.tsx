@@ -76,6 +76,16 @@ describe('Btn', () => {
 
   it('applies the danger variant classes', () => {
     render(<Btn variant="danger">Excluir</Btn>)
-    expect(screen.getByRole('button')).toHaveClass('bg-red')
+    expect(screen.getByRole('button')).toHaveClass('bg-danger')
+  })
+
+  it('applies the gold variant classes', () => {
+    render(<Btn variant="gold">Confirmar</Btn>)
+    expect(screen.getByRole('button')).toHaveClass('bg-accent')
+  })
+
+  it('applies the cobalt variant classes', () => {
+    render(<Btn variant="cobalt">Detalhes</Btn>)
+    expect(screen.getByRole('button')).toHaveClass('bg-cobalt')
   })
 })

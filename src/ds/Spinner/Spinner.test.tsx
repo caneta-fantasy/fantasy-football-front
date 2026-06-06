@@ -32,9 +32,9 @@ describe('Spinner', () => {
     expect(arc).toHaveAttribute('stroke-width', '4')
   })
 
-  it('defaults the arc color to the caneta lime-deep token', () => {
+  it('defaults the arc color to the signature green token', () => {
     const { container } = render(<Spinner />)
-    const arc = container.querySelector('svg [stroke="var(--caneta-lime-deep)"]')
+    const arc = container.querySelector('svg [stroke="var(--green)"]')
     expect(arc).not.toBeNull()
     expect(arc).toHaveAttribute('stroke-width', '2.5')
   })

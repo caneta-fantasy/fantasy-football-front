@@ -74,8 +74,8 @@ export const ColorInheritance: S = {
   render: () => (
     <div className="flex items-center gap-6">
       <span className="text-text"><Icon name="trophy" /></span>
-      <span className="text-[color:var(--caneta-lime-deep)]"><Icon name="fire" /></span>
-      <span className="text-[color:var(--red)]"><Icon name="alert" /></span>
+      <span className="text-signature"><Icon name="fire" /></span>
+      <span className="text-danger"><Icon name="alert" /></span>
     </div>
   ),
 }

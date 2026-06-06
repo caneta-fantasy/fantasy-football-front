@@ -1,7 +1,7 @@
 import React from 'react'
 import { Spinner } from '../Spinner/Spinner'
 
-type Variant = 'primary' | 'secondary' | 'ghost' | 'danger' | 'paper'
+type Variant = 'primary' | 'gold' | 'cobalt' | 'secondary' | 'danger' | 'ghost'
 type Size = 'sm' | 'md' | 'lg'
 
 export interface BtnProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
@@ -16,24 +16,28 @@ export interface BtnProps extends React.ButtonHTMLAttributes<HTMLButtonElement> 
   loading?: boolean
 }
 
+// Modernista variants: green is the signature primary; gold + cobalt are the
+// signature color-block alternates; secondary is a transparent outline on the
+// strong neutral hairline; danger is the brick functional hue (NOT card-red);
+// ghost is bare green text.
 const VARIANTS: Record<Variant, string> = {
-  primary: 'bg-lime text-ink-900 hover:bg-lime-d',
-  secondary: 'bg-ink-900 text-text-on-dark hover:bg-ink-700',
-  ghost:
-    'bg-transparent text-text border border-border-strong hover:bg-surface-inset',
-  danger:
-    'bg-red text-[color:var(--color-danger-fg)] hover:bg-[color:var(--red-deep)]',
-  paper: 'bg-[color:var(--paper-ink)] text-paper hover:opacity-90',
+  primary: 'bg-signature text-on-green hover:bg-signature-raised',
+  gold: 'bg-accent text-on-gold hover:bg-accent-deep',
+  cobalt: 'bg-cobalt text-white hover:bg-cobalt-deep',
+  secondary:
+    'bg-transparent text-ink border-[1.5px] border-line-strong hover:bg-mist',
+  danger: 'bg-danger text-white hover:opacity-90',
+  ghost: 'bg-transparent text-signature hover:bg-signature-pale',
 }
 
 const SIZES: Record<Size, string> = {
-  sm: 'h-[30px] text-[12px] px-3',
-  md: 'h-[40px] text-[13px] px-[18px]',
-  lg: 'h-[52px] text-[15px] px-[26px]',
+  sm: 'h-[36px] text-[12.5px] px-[15px] rounded-btn-sm',
+  md: 'h-[46px] text-[13.5px] px-[22px] rounded-btn',
+  lg: 'h-[56px] text-[15px] px-[30px] rounded-btn-lg',
 }
 
 const BASE =
-  'font-sans font-bold uppercase tracking-[0.6px] rounded-xs inline-flex items-center justify-center gap-2 ' +
+  'font-sans font-bold tracking-[0.3px] inline-flex items-center justify-center gap-2 leading-none ' +
   'transition-[transform,background-color] duration-150 ease-[cubic-bezier(.2,.6,.3,1)] ' +
   'hover:-translate-y-px active:translate-y-px disabled:opacity-60 disabled:pointer-events-none cursor-pointer'
 
@@ -57,7 +61,11 @@ export function Btn({
       disabled={disabled || loading}
       {...rest}
     >
-      {loading && <Spinner size={size === 'lg' ? 20 : 16} />}
+      {/* Inherit the button's foreground so the spinner stays visible on every
+          variant (green/cobalt/danger blocks as well as the light outlines). */}
+      {loading && (
+        <Spinner size={size === 'lg' ? 20 : 16} color="currentColor" />
+      )}
       {children}
     </button>
   )

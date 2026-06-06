@@ -317,9 +317,11 @@ const SIZES: Record<number, number> = { 16: 16, 20: 20, 24: 24 }
 const DEFAULT_SIZE = 24
 
 // The two cartão glyphs are the only filled icons; they read as solid cards.
+// They carry the RESERVED referee tokens (--card-yellow / --card-red) — never
+// the functional warning/danger hues — so the cards stay referee-only.
 const CARD_FILL: Record<string, { fill: string; stroke: string }> = {
-  'card-yellow': { fill: 'var(--yellow)', stroke: 'var(--ink-900)' },
-  'card-red': { fill: 'var(--red)', stroke: 'var(--ink-900)' },
+  'card-yellow': { fill: 'var(--card-yellow)', stroke: 'var(--ink)' },
+  'card-red': { fill: 'var(--card-red)', stroke: 'var(--ink)' },
 }
 
 export interface IconProps extends Omit<React.SVGProps<SVGSVGElement>, 'name'> {

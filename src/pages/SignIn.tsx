@@ -350,7 +350,7 @@ function SignInView() {
 
             <Btn
               type="submit"
-              variant="paper"
+              variant="secondary"
               size="lg"
               loading={isPending}
               className="w-full !justify-between"

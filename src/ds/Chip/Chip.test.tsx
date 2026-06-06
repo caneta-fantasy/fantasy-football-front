@@ -51,13 +51,16 @@ describe('Chip', () => {
     expect(onClick).toHaveBeenCalledTimes(2)
   })
 
-  it('falls back to the ink tone for an unknown tone without throwing', () => {
-    expect(() =>
-      render(
+  it('falls back to the green tone for an unknown tone without throwing', () => {
+    let result!: ReturnType<typeof render>
+    expect(() => {
+      result = render(
         // @ts-expect-error testing runtime fallback for an unknown tone
         <Chip tone="nope">x</Chip>,
-      ),
-    ).not.toThrow()
+      )
+    }).not.toThrow()
+    // the unknown tone resolves to the default `green` tone classes
+    expect(result.getByText('x').className).toContain('bg-signature')
   })
 
   it('renders a CSS-animated live dot for the live tone', () => {
@@ -69,23 +72,44 @@ describe('Chip', () => {
   })
 
   it('does not render a live dot for non-live tones', () => {
-    const { container } = render(<Chip tone="lime">Capitão</Chip>)
+    const { container } = render(<Chip tone="green">Capitão</Chip>)
     expect(container.querySelector('.ds-chip-dot')).toBeNull()
   })
 
-  it('uses the ink900 danger foreground (not white) for the red tone — §7 #3 AA fix', () => {
+  it('reconciles the reserved red tone away from white-on-card-red — §7 #3 AA fix', () => {
     render(
       <Chip tone="red">
         Vermelho
       </Chip>,
     )
     const el = screen.getByText('Vermelho')
-    // foreground is driven by the danger-fg token (ink900), never white-on-red.
+    // The card-red carries the referee tone via the BORDER, not the fill: the
+    // text is ink on the red tint (12.3:1), never white-on-card-red.
     // (Tailwind utilities aren't compiled in jsdom, so we assert the
-    // token-bearing class rather than the resolved color.)
-    expect(el.className).toContain('text-[color:var(--color-danger-fg)]')
-    expect(el.className).not.toContain('#fff')
+    // token-bearing classes rather than the resolved colors.)
+    expect(el.className).toContain('text-ink')
+    expect(el.className).toContain('border-card-red')
+    expect(el.className).not.toContain('bg-card-red')
     expect(el.className).not.toMatch(/text-white/)
+  })
+
+  it('carries a 1.5px border on every tone', () => {
+    const tones = [
+      'green',
+      'gold',
+      'cobalt',
+      'success',
+      'white',
+      'ghost',
+      'live',
+      'yellow',
+      'red',
+    ] as const
+    for (const tone of tones) {
+      const { container, unmount } = render(<Chip tone={tone}>{tone}</Chip>)
+      expect(container.firstElementChild?.className).toContain('border-[1.5px]')
+      unmount()
+    }
   })
 
   it('disabled interactive chip is disabled and carries a non-color cue + sr text', () => {

@@ -14,7 +14,7 @@ const meta: Meta<typeof Btn> = {
   argTypes: {
     variant: {
       control: 'select',
-      options: ['primary', 'secondary', 'ghost', 'danger', 'paper'],
+      options: ['primary', 'gold', 'cobalt', 'secondary', 'danger', 'ghost'],
     },
     size: { control: 'inline-radio', options: ['sm', 'md', 'lg'] },
     loading: { control: 'boolean' },
@@ -25,17 +25,25 @@ export default meta
 
 type S = StoryObj<typeof Btn>
 
-const VARIANTS = ['primary', 'secondary', 'ghost', 'danger', 'paper'] as const
+const VARIANTS = [
+  'primary',
+  'gold',
+  'cobalt',
+  'secondary',
+  'danger',
+  'ghost',
+] as const
 const SIZES = ['sm', 'md', 'lg'] as const
 
 /** Interactive controls — toggle variant/size/loading/disabled in the panel. */
 export const Playground: S = {}
 
 export const Primary: S = { args: { variant: 'primary', children: 'Entrar na liga' } }
+export const Gold: S = { args: { variant: 'gold', children: 'Confirmar oferta' } }
+export const Cobalt: S = { args: { variant: 'cobalt', children: 'Ver detalhes' } }
 export const Secondary: S = { args: { variant: 'secondary', children: 'Voltar' } }
-export const Ghost: S = { args: { variant: 'ghost', children: 'Cancelar' } }
 export const Danger: S = { args: { variant: 'danger', children: 'Excluir liga' } }
-export const Paper: S = { args: { variant: 'paper', children: 'Salvar rascunho' } }
+export const Ghost: S = { args: { variant: 'ghost', children: 'Cancelar' } }
 
 export const AllVariants: S = {
   render: () => (

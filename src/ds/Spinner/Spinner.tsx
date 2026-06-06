@@ -5,7 +5,7 @@ export interface SpinnerProps
   extends Omit<React.HTMLAttributes<HTMLSpanElement>, 'color'> {
   /** Diameter of the spinner in pixels. */
   size?: number
-  /** Stroke color of the rotating arc. Defaults to the caneta lime-deep token. */
+  /** Stroke color of the rotating arc. Defaults to the signature green token. */
   color?: string
   /** Stroke width of the arc in pixels. */
   stroke?: number
@@ -34,7 +34,7 @@ const srOnly: React.CSSProperties = {
 
 export function Spinner({
   size = 20,
-  color = 'var(--caneta-lime-deep)',
+  color = 'var(--green)',
   stroke = 2.5,
   label = 'Carregando',
   className,

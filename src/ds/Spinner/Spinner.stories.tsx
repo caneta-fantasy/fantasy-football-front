@@ -23,7 +23,7 @@ export default meta
 
 type S = StoryObj<typeof Spinner>
 
-/** Default: size 20, lime-deep arc, stroke 2.5. */
+/** Default: size 20, signature green arc, stroke 2.5. */
 export const Default: S = {}
 
 /** Small inline spinner, e.g. for use inside a button. */
@@ -32,14 +32,16 @@ export const Small: S = { args: { size: 16, stroke: 2 } }
 /** Large standalone spinner for full-section loading. */
 export const Large: S = { args: { size: 48, stroke: 4 } }
 
-/** Custom color (clay) — color is configurable per surface. */
-export const ClayColor: S = { args: { size: 32, color: 'var(--clay)', stroke: 3 } }
+/** Custom color (cobalt) — color is configurable per surface. */
+export const CobaltColor: S = {
+  args: { size: 32, color: 'var(--cobalt)', stroke: 3 },
+}
 
-/** On a dark surface: the faint track + bright arc stay legible. */
-export const OnDark: S = {
+/** On the green broadcast surface: the faint track + warm-white arc stay legible. */
+export const OnGreen: S = {
   render: (args) => (
-    <div className="bg-surface-dark p-8 rounded-md">
-      <Spinner {...args} color="var(--caneta-lime)" />
+    <div className="bg-signature p-8 rounded-btn">
+      <Spinner {...args} color="var(--on-green)" />
     </div>
   ),
   args: { size: 32, stroke: 3 },
@@ -50,5 +52,5 @@ export const CustomLabel: S = { args: { size: 24, label: 'Buscando' } }
 
 /** Interactive controls: tweak size, color, stroke and label live. */
 export const Playground: S = {
-  args: { size: 20, color: 'var(--caneta-lime-deep)', stroke: 2.5, label: 'Carregando' },
+  args: { size: 20, color: 'var(--green)', stroke: 2.5, label: 'Carregando' },
 }
