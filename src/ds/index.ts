@@ -231,3 +231,36 @@ export type {
   StandingRow,
   FormResult,
 } from './LeagueStandings/LeagueStandings'
+
+// ----- Part C — screen patterns -----
+export { RoundSelector } from './RoundSelector/RoundSelector'
+export type { RoundSelectorProps } from './RoundSelector/RoundSelector'
+
+export { SubHead } from './SubHead/SubHead'
+export type { SubHeadProps } from './SubHead/SubHead'
+
+export { PlayersFilters } from './PlayersFilters/PlayersFilters'
+export type {
+  PlayersFiltersProps,
+  SegmentedOption,
+} from './PlayersFilters/PlayersFilters'
+
+export { ActionCell } from './ActionCell/ActionCell'
+export type { ActionCellProps, ActionKind } from './ActionCell/ActionCell'
+
+export { PlayersCard } from './PlayersCard/PlayersCard'
+export type { PlayersCardProps } from './PlayersCard/PlayersCard'
+
+export { ResultsBar } from './ResultsBar/ResultsBar'
+export type { ResultsBarProps } from './ResultsBar/ResultsBar'
+
+export { PlayersTableApp } from './PlayersTableApp/PlayersTableApp'
+export type {
+  PlayersTableAppProps,
+  PlayerRow,
+  PlayerRowAction,
+  PosTagCode,
+} from './PlayersTableApp/PlayersTableApp'
+
+export { useBreakpoint } from './PlayersTableApp/useBreakpoint'
+export type { Breakpoint } from './PlayersTableApp/useBreakpoint'

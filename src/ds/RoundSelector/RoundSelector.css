@@ -1,0 +1,8 @@
+/* When the visually-hidden native <select> receives keyboard focus, lift the
+   cobalt focus ring onto the decorative display pill sitting beside it, so the
+   real (transparent) control still shows a visible focus indicator. */
+.ds-round-select:focus-visible + .ds-round-display {
+  box-shadow: var(--focus-ring);
+  border-color: var(--cobalt);
+  outline: none;
+}
