@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, Chip, Typography } from '@mui/material';
+import { Chip } from '@/ds';
 import { FantasyMatchupDto } from '../api/fantasyMatchupQueries';
 
 interface Props {
@@ -8,29 +8,31 @@ interface Props {
   onClick?: () => void;
 }
 
+/**
+ * MatchupCard — modernista `MatchupRow` (Source: app-kit `MatchupRow`). A flat
+ * scoreline row: team names flanking a centered tabular-figure score, the
+ * winner's name + score in signature green. When `highlighted` (the user's
+ * matchup) the row gets a green-pale fill, a green border, and a 4px gold
+ * left-bar. A `bye` matchup renders a muted row with a ghost `BYE` chip.
+ *
+ * The public API is unchanged — `matchup` / `highlighted` / `onClick`, plus the
+ * `isGhost` and `bye` (status) behaviour — so the existing consumers
+ * (RodadaTab, MatchupDetailModal) keep working. When `onClick` is provided the
+ * row upgrades to a real focusable `<button>` (keyboard-operable, focus ring)
+ * instead of a bare clickable div.
+ */
 const MatchupCard: React.FC<Props> = ({ matchup, highlighted = false, onClick }) => {
   const homeName = matchup.homeTeamName ?? 'Ghost';
   const awayName = matchup.awayTeamName ?? 'Ghost';
 
   if (matchup.status === 'bye') {
     return (
-      <Box
-        sx={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          px: 2,
-          py: 1.5,
-          borderRadius: 2,
-          bgcolor: 'action.hover',
-          opacity: 0.6,
-        }}
-      >
-        <Typography fontWeight={600} color="text.secondary">
+      <div className="flex items-center justify-between gap-2 rounded-btn-sm border border-line bg-mist px-4 py-[13px] opacity-70">
+        <span className="font-sans text-[14px] font-bold text-ink-muted">
           {homeName}
-        </Typography>
-        <Chip label="BYE" size="small" variant="outlined" />
-      </Box>
+        </span>
+        <Chip tone="ghost">BYE</Chip>
+      </div>
     );
   }
 
@@ -46,50 +48,57 @@ const MatchupCard: React.FC<Props> = ({ matchup, highlighted = false, onClick })
     matchup.awayScore != null &&
     matchup.awayScore > matchup.homeScore;
 
-  return (
-    <Box
-      onClick={onClick}
-      sx={{
-        display: 'flex',
-        alignItems: 'center',
-        px: 2,
-        py: 1.5,
-        borderRadius: 2,
-        bgcolor: highlighted ? 'primary.50' : 'background.paper',
-        border: highlighted ? '2px solid' : '1px solid',
-        borderColor: highlighted ? 'primary.main' : 'divider',
-        gap: 1,
-        ...(onClick && {
-          cursor: 'pointer',
-          '&:hover': { bgcolor: highlighted ? 'primary.100' : 'action.hover' },
-        }),
-      }}
-    >
-      <Typography
-        fontWeight={homeWon ? 700 : 400}
-        sx={{ flex: 1, textAlign: 'right', color: matchup.isGhost ? 'text.disabled' : 'text.primary' }}
-      >
-        {homeName}
-      </Typography>
+  const ghostHome = matchup.isGhost && matchup.homeTeamName == null;
+  const ghostAway = matchup.isGhost && matchup.awayTeamName == null;
 
-      <Box sx={{ display: 'flex', gap: 0.5, alignItems: 'center', minWidth: 80, justifyContent: 'center' }}>
-        <Typography fontWeight={700} color={homeWon ? 'success.main' : 'text.secondary'}>
+  const shellBase =
+    'flex w-full items-center gap-2 rounded-btn-sm px-4 py-[13px] text-left ' +
+    (highlighted
+      ? 'border border-l-4 border-signature border-l-accent bg-signature-pale'
+      : 'border border-line bg-white');
+  const interactive = onClick
+    ? ' cursor-pointer transition-colors duration-150 ' +
+      (highlighted ? 'hover:brightness-[0.97]' : 'hover:bg-mist')
+    : '';
+
+  const nameCls = (won: boolean, ghost: boolean, side: 'home' | 'away') =>
+    `min-w-0 flex-1 truncate font-sans text-[14px] ${
+      side === 'home' ? 'text-right' : ''
+    } ${won ? 'font-extrabold' : 'font-medium'} ${
+      ghost ? 'text-ink-subtle' : 'text-ink'
+    }`;
+
+  const scoreCls = (won: boolean) =>
+    `font-display text-[20px] leading-none tabular-nums ${
+      won ? 'text-signature' : 'text-ink-muted'
+    }`;
+  const scoreStyle = { fontVariationSettings: '"wght" 800, "wdth" 108' };
+
+  const content = (
+    <>
+      <span className={nameCls(homeWon, ghostHome, 'home')}>{homeName}</span>
+      <span className="flex min-w-[78px] items-center justify-center gap-2">
+        <span className={scoreCls(homeWon)} style={scoreStyle}>
           {homeScore}
-        </Typography>
-        <Typography color="text.disabled">–</Typography>
-        <Typography fontWeight={700} color={awayWon ? 'success.main' : 'text.secondary'}>
+        </span>
+        <span className="text-ink-subtle">–</span>
+        <span className={scoreCls(awayWon)} style={scoreStyle}>
           {awayScore}
-        </Typography>
-      </Box>
-
-      <Typography
-        fontWeight={awayWon ? 700 : 400}
-        sx={{ flex: 1, color: matchup.isGhost ? 'text.disabled' : 'text.primary' }}
-      >
-        {awayName}
-      </Typography>
-    </Box>
+        </span>
+      </span>
+      <span className={nameCls(awayWon, ghostAway, 'away')}>{awayName}</span>
+    </>
   );
+
+  if (onClick) {
+    return (
+      <button type="button" onClick={onClick} className={shellBase + interactive}>
+        {content}
+      </button>
+    );
+  }
+
+  return <div className={shellBase}>{content}</div>;
 };
 
 export default MatchupCard;
