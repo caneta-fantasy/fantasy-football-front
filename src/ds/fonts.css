@@ -1,0 +1,29 @@
+/* ─────────────────────────────────────────────────────────────────────
+ * Modernista self-hosted fonts — family alias.
+ *
+ * @fontsource-variable/archivo ships its full-axis face under the family
+ * name 'Archivo Variable'. The design tokens (--font-display / --font-sans)
+ * reference the canonical 'Archivo' family, and disp() drives BOTH the wght
+ * and wdth axes via font-variation-settings. This alias maps 'Archivo' onto
+ * the same variable woff2 (loaded via standard.css), declaring the full
+ * weight (100–900) and width (62–125%) ranges so wght 800 / wdth 118 render.
+ * ───────────────────────────────────────────────────────────────────── */
+@font-face {
+  font-family: 'Archivo';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 100 900;
+  font-stretch: 62% 125%;
+  src: url('@fontsource-variable/archivo/files/archivo-latin-standard-normal.woff2')
+      format('woff2-variations');
+}
+
+@font-face {
+  font-family: 'Archivo';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 100 900;
+  font-stretch: 62% 125%;
+  src: url('@fontsource-variable/archivo/files/archivo-latin-ext-standard-normal.woff2')
+      format('woff2-variations');
+}
