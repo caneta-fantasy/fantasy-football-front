@@ -75,13 +75,15 @@ interface StatusMeta {
 }
 
 // Each state has an explicit text word + a distinct accent. Color is never the
-// sole cue — the word carries the meaning. §7 #3: the live accent is the red
-// token used as a 3px bar (no text sits on it, so no contrast issue).
+// sole cue — the word carries the meaning. The live accent is the brick danger
+// (#B23A2B, the functional hue — never the referee card-red) used as a 3px bar
+// (no text sits on it, so no contrast issue); finished = the gold accent,
+// postponed = warning amber.
 const STATUS_MAP: Record<FixtureStatus, StatusMeta> = {
   pre: { word: 'A SAIR', accent: 'bg-[color:var(--color-border-strong)]', hasScore: false },
-  live: { word: 'AO VIVO', accent: 'bg-red', hasScore: true },
-  finished: { word: 'ENCERRADO', accent: 'bg-lime', hasScore: true },
-  postponed: { word: 'ADIADO', accent: 'bg-yellow', hasScore: false },
+  live: { word: 'AO VIVO', accent: 'bg-danger', hasScore: true },
+  finished: { word: 'ENCERRADO', accent: 'bg-accent', hasScore: true },
+  postponed: { word: 'ADIADO', accent: 'bg-warning', hasScore: false },
 }
 
 const CREST_SIZE = 28
@@ -116,7 +118,7 @@ function buildLabel(
 }
 
 const SHELL =
-  'relative overflow-hidden rounded-sm bg-surface-dark text-text-on-dark px-4 py-[14px]'
+  'relative overflow-hidden rounded-pill bg-signature text-on-green px-4 py-[14px]'
 
 /** A single side: crest + short code, mirrored so both crests sit innermost. */
 function Side({ team, align }: { team: FixtureTeam; align: 'home' | 'away' }) {
@@ -203,21 +205,23 @@ export function FixtureCard({
       {/* Header: status (left) + venue (right). */}
       <div className="flex items-center justify-between">
         {isLive ? (
-          // Single polite live region carries minute/score updates.
+          // Single polite live region carries minute/score updates. On the green
+          // broadcast block the live chip drops its own fill and shows the gold
+          // accent text so the brick dot still reads as the live cue.
           <LiveChip
             status="live"
             label={liveLabel}
             // LiveChip is its own region here so the announcement is scoped to
             // the changing status; keep it announcing (default asStatus=true).
-            className="!bg-transparent !px-0 !py-0 text-lime"
+            className="!bg-transparent !px-0 !py-0 text-accent-light"
           />
         ) : (
-          <span className="inline-flex items-center gap-[6px] font-mono text-[9.5px] font-bold uppercase tracking-[0.5px] text-lime">
+          <span className="inline-flex items-center gap-[6px] font-sans text-[9.5px] font-bold uppercase tracking-[1.4px] text-accent-light">
             {meta.word}
           </span>
         )}
         {venue ? (
-          <span className="font-mono text-[9.5px] uppercase text-ink-100">
+          <span className="font-sans text-[9.5px] font-bold uppercase tracking-[1px] text-on-green-mute">
             {venue}
           </span>
         ) : null}
@@ -231,7 +235,7 @@ export function FixtureCard({
           {showScore ? (
             <span className="font-display text-[32px] leading-none tracking-[-1px] [font-variant-numeric:tabular-nums]">
               <span>{homeScore}</span>{' '}
-              <span aria-hidden="true" className="text-ink-500">
+              <span aria-hidden="true" className="text-on-green-mute">
                 ×
               </span>{' '}
               <span>{awayScore}</span>
@@ -246,7 +250,7 @@ export function FixtureCard({
             // word already conveys the meaning in the accessible name.
             <span
               aria-hidden="true"
-              className="font-display text-[26px] leading-none text-ink-500"
+              className="font-display text-[26px] leading-none text-on-green-mute"
             >
               —
             </span>

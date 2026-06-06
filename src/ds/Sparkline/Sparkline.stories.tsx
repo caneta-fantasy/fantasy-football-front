@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react'
 import { Sparkline } from './Sparkline'
+import { Overline } from '../Overline/Overline'
 
 const meta: Meta<typeof Sparkline> = {
   title: 'Data Display/Sparkline',
@@ -25,10 +26,10 @@ type S = StoryObj<typeof Sparkline>
 /** Interactive controls — edit the `data` array and toggle trend/size. */
 export const Playground: S = {}
 
-/** Rising series, lime line (the default trend). */
+/** Rising series, signature-green line (the default trend). */
 export const Up: S = { args: { data: [80, 92, 70, 110, 98, 116], trend: 'up' } }
 
-/** Falling series, red line. */
+/** Falling series, brick-danger line. */
 export const Down: S = {
   args: { data: [130, 132, 131, 129, 130, 128], trend: 'down' },
 }
@@ -62,23 +63,23 @@ export const States: S = {
   render: () => (
     <div className="flex flex-col gap-4">
       <div className="flex items-center gap-3">
-        <span className="font-mono text-[11px] text-text-muted w-24">Em alta</span>
+        <Overline as="span" className="w-24">Em alta</Overline>
         <Sparkline data={[6, 9, 4, 12, 8, 16, 22, 18]} trend="up" />
       </div>
       <div className="flex items-center gap-3">
-        <span className="font-mono text-[11px] text-text-muted w-24">Em queda</span>
+        <Overline as="span" className="w-24">Em queda</Overline>
         <Sparkline data={[22, 18, 19, 12, 9, 6]} trend="down" />
       </div>
       <div className="flex items-center gap-3">
-        <span className="font-mono text-[11px] text-text-muted w-24">Estável</span>
+        <Overline as="span" className="w-24">Estável</Overline>
         <Sparkline data={[10, 10, 10, 10]} trend="neutral" />
       </div>
       <div className="flex items-center gap-3">
-        <span className="font-mono text-[11px] text-text-muted w-24">1 ponto</span>
+        <Overline as="span" className="w-24">1 ponto</Overline>
         <Sparkline data={[12]} />
       </div>
       <div className="flex items-center gap-3">
-        <span className="font-mono text-[11px] text-text-muted w-24">Sem dados</span>
+        <Overline as="span" className="w-24">Sem dados</Overline>
         <Sparkline data={[]} />
       </div>
     </div>

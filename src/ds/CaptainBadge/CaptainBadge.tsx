@@ -37,19 +37,21 @@ interface RoleStyle {
 
 /**
  * Captain and vice are deliberately inverse treatments so they read apart at a
- * glance even at 24px: captain is a solid lime pip with dark ink text; vice is
- * a dark ink pip with a lime glyph + lime ring (echoes the source `CapBadge`).
+ * glance even at 24px (the difference survives greyscale — a light gold disc vs
+ * a dark green disc, not colour alone): captain is a solid heritage-gold pip
+ * with near-black on-gold text; vice is a solid bottle-green pip with a
+ * warm-white on-green glyph + a gold ring that echoes the captain's hue.
  */
 const ROLES: Record<CaptainRole, RoleStyle> = {
   C: {
-    cls: 'bg-lime text-[color:var(--color-on-lime)]',
+    cls: 'bg-accent text-on-gold',
     glyph: 'C',
     label: 'Capitão',
   },
   V: {
     cls:
-      'bg-ink-900 text-lime ' +
-      'ring-[1.5px] ring-inset ring-[color:var(--caneta-lime)]',
+      'bg-signature text-on-green ' +
+      'ring-[1.5px] ring-inset ring-accent',
     glyph: 'V',
     label: 'Vice-capitão',
   },
@@ -91,7 +93,8 @@ export function CaptainBadge({
       style={{
         width: `${px}px`,
         height: `${px}px`,
-        // Glyph scales with the pip (Anton reads well at ~58% of the diameter).
+        // Glyph scales with the pip (the Archivo display face reads well at
+        // ~58% of the diameter).
         fontSize: `${Math.round(px * 0.58)}px`,
         ...style,
       }}

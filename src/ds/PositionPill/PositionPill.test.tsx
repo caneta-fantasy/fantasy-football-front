@@ -25,6 +25,20 @@ describe('PositionPill', () => {
     ).toBeInTheDocument()
   })
 
+  it('handles the roster taxonomy codes DEF and BN (known, not neutral)', () => {
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
+    const { rerender } = render(<PositionPill code="DEF" />)
+    expect(screen.getByText('DEF')).toBeInTheDocument()
+    expect(screen.getByRole('img', { name: /defensor/i })).toBeInTheDocument()
+
+    rerender(<PositionPill code="BN" />)
+    expect(screen.getByText('BN')).toBeInTheDocument()
+    expect(screen.getByRole('img', { name: /reserva/i })).toBeInTheDocument()
+
+    // DEF and BN are recognised codes — no unknown-code warning.
+    expect(warn).not.toHaveBeenCalled()
+  })
+
   it('differentiates ZAG from LAT (different classes / pattern, not identical)', () => {
     const { container: zagC } = render(<PositionPill code="ZAG" />)
     const { container: latC } = render(<PositionPill code="LAT" />)

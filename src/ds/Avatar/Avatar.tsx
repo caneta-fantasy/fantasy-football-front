@@ -7,7 +7,7 @@ export interface AvatarProps
   /** Optional image URL. When it loads, the avatar shows the photo; on error
    *  it falls back to the seeded initials box. */
   src?: string
-  /** Edge length in px. Square by design — no rounded corners. Defaults to 36. */
+  /** Edge length in px. Round roundel by design (border-radius: 50%). Defaults to 36. */
   size?: number
   /**
    * Deterministic palette seed. When omitted, the seed is derived from `name`
@@ -17,18 +17,18 @@ export interface AvatarProps
 }
 
 /**
- * Seeded background/foreground palette, sourced from the design tokens
+ * Seeded background/foreground palette — the modernista green/gold/cobalt set
  * (no hardcoded hex — every entry is a CSS variable). The seed indexes into
  * this list with a modulo wrap, so any integer is safe (no throw, §7 #1).
+ * Each fg is the matching on-color so initials always clear 4.5:1.
  */
 const PALETTE: ReadonlyArray<{ bg: string; fg: string }> = [
-  { bg: 'var(--caneta-lime)', fg: 'var(--ink-900)' },
-  { bg: 'var(--yellow)', fg: 'var(--ink-900)' },
-  { bg: 'var(--red)', fg: 'var(--color-text-on-dark)' },
-  { bg: 'var(--clay)', fg: 'var(--color-text-on-dark)' },
-  { bg: 'var(--pos-blue)', fg: 'var(--ink-900)' },
-  { bg: 'var(--pitch)', fg: 'var(--color-text-on-dark)' },
-  { bg: 'var(--ink-600)', fg: 'var(--ink-100)' },
+  { bg: 'var(--green)', fg: 'var(--on-green)' },
+  { bg: 'var(--gold)', fg: 'var(--on-gold)' },
+  { bg: 'var(--cobalt)', fg: '#fff' },
+  { bg: 'var(--green-600)', fg: 'var(--on-green)' },
+  { bg: 'var(--cobalt-deep)', fg: '#fff' },
+  { bg: 'var(--gold-deep)', fg: '#fff' },
 ]
 
 /** Stable, non-negative string hash so a name maps to a deterministic seed. */
@@ -58,7 +58,7 @@ function initialsOf(name: string): string {
 
 const BASE =
   'inline-flex items-center justify-center align-middle select-none overflow-hidden ' +
-  'font-display leading-none tracking-[-0.5px] rounded-none'
+  'font-display font-extrabold leading-none tracking-[-0.5px] rounded-full'
 
 export function Avatar({
   name,
@@ -86,7 +86,7 @@ export function Avatar({
     height: size,
     background: swatch.bg,
     color: swatch.fg,
-    fontSize: size * 0.5,
+    fontSize: size * 0.42,
     ...style,
   }
 

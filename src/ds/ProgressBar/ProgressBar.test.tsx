@@ -39,23 +39,23 @@ describe('ProgressBar', () => {
     expect(fill.style.width).toBe('0%')
   })
 
-  it('applies a threshold color: lime under warning, red over the danger cutoff', () => {
+  it('applies a threshold color: success under warning, danger over the cutoff', () => {
     const { container: low } = render(<ProgressBar value={10} />)
     const lowFill = low.querySelector('[data-ds-progress-fill]') as HTMLElement
-    expect(lowFill.className).toContain('bg-lime')
+    expect(lowFill.className).toContain('bg-success')
 
     const { container: high } = render(<ProgressBar value={95} />)
     const highFill = high.querySelector('[data-ds-progress-fill]') as HTMLElement
-    expect(highFill.className).toContain('bg-red')
+    expect(highFill.className).toContain('bg-danger')
   })
 
   it('uses an explicit tone over the threshold heuristic when given', () => {
-    const { container } = render(<ProgressBar value={95} tone="lime" />)
+    const { container } = render(<ProgressBar value={95} tone="success" />)
     const fill = container.querySelector('[data-ds-progress-fill]') as HTMLElement
-    expect(fill.className).toContain('bg-lime')
+    expect(fill.className).toContain('bg-success')
   })
 
-  it('falls back to the lime tone for an unknown tone without throwing', () => {
+  it('falls back to the success tone for an unknown tone without throwing', () => {
     expect(() =>
       // @ts-expect-error testing runtime fallback
       render(<ProgressBar value={50} tone="nope" />),

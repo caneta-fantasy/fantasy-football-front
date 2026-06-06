@@ -11,8 +11,8 @@ export interface SparklineProps
   /** SVG height in px. */
   h?: number
   /**
-   * Line colour intent. `up` → lime (default), `down` → red, `neutral` → ink.
-   * Unknown values fall back to `up` (no throw — §7 #1).
+   * Line colour intent. `up` → signature green (default), `down` → brick danger,
+   * `neutral` → ink. Unknown values fall back to `up` (no throw — §7 #1).
    */
   trend?: Trend
   /**
@@ -22,11 +22,13 @@ export interface SparklineProps
   label?: string
 }
 
-// Trend → stroke colour, mapped to the token CSS variables (no hardcoded hex).
+// Trend → stroke colour, mapped to the modernista token CSS variables (no
+// hardcoded hex). up = signature green, down = brick danger (#B23A2B, the
+// functional hue — never the referee card-red), neutral = muted ink.
 const TRENDS: Record<Trend, string> = {
-  up: 'var(--caneta-lime-deep)',
-  down: 'var(--red)',
-  neutral: 'var(--ink-700)',
+  up: 'var(--green)',
+  down: 'var(--danger)',
+  neutral: 'var(--ink-muted)',
 }
 
 // Vertical padding so the stroke + endpoint dot never clip at the top/bottom.

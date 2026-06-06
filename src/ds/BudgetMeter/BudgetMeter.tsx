@@ -1,6 +1,6 @@
 import React from 'react'
 
-type Threshold = 'lime' | 'yellow' | 'red'
+type Threshold = 'green' | 'warning' | 'danger'
 
 export interface BudgetMeterProps
   extends Omit<React.HTMLAttributes<HTMLDivElement>, 'role'> {
@@ -25,22 +25,24 @@ export interface BudgetMeterProps
   hint?: string
 }
 
-// Threshold (fill) → background utility mapped to tokens.
+// Threshold (fill) → background utility mapped to modernista tokens. The states
+// use their OWN functional hues (never the referee card colours): healthy =
+// signature green, running-low = warning amber, near/over cap = brick danger.
 const FILLS: Record<Threshold, string> = {
-  lime: 'bg-lime',
-  yellow: 'bg-yellow',
-  red: 'bg-red',
+  green: 'bg-signature',
+  warning: 'bg-warning',
+  danger: 'bg-danger',
 }
 
 /**
  * Spend fraction → threshold colour.
- * Healthy under 0.75 → lime; 0.75–0.95 → yellow (running low); near/at/over the
- * cap (>=0.95, incl. over-budget) → red. Over-budget (>1) always reads red.
+ * Healthy under 0.75 → green; 0.75–0.95 → warning (running low); near/at/over the
+ * cap (>=0.95, incl. over-budget) → danger. Over-budget (>1) always reads danger.
  */
 function thresholdFor(fraction: number): Threshold {
-  if (fraction >= 0.95) return 'red'
-  if (fraction >= 0.75) return 'yellow'
-  return 'lime'
+  if (fraction >= 0.95) return 'danger'
+  if (fraction >= 0.75) return 'warning'
+  return 'green'
 }
 
 /**
@@ -57,9 +59,10 @@ function fmt(n: number): string {
  * Budget spend meter for fantasy patterns.
  *
  * DS §7 #6 fix: the fill WIDTH is driven by `value/max` (never always-full).
- * Threshold colour shifts lime → yellow → red as spend approaches the cap, and
- * an over-budget spend (value > max) gets a clear treatment: the drawn fill is
- * clamped to 100%, the bar turns red, and `data-over-budget` is exposed.
+ * Threshold colour shifts green → warning → danger as spend approaches the cap,
+ * and an over-budget spend (value > max) gets a clear treatment: the drawn fill
+ * is clamped to 100%, the bar turns brick danger, and `data-over-budget` is
+ * exposed (the functional brick #B23A2B, never the referee card-red).
  *
  * a11y contract: `role="progressbar"` with `aria-valuenow` (the real spend,
  * even past max), `aria-valuemin=0`, `aria-valuemax=max`. The over-budget state
@@ -84,9 +87,9 @@ export function BudgetMeter({
   const clamped = Math.min(1, Math.max(0, fraction))
   const widthPct = `${clamped * 100}%`
 
-  // Over-budget always reads red; otherwise the threshold heuristic decides.
-  const threshold: Threshold = overBudget ? 'red' : thresholdFor(fraction)
-  const fill = FILLS[threshold] ?? FILLS.lime
+  // Over-budget always reads danger; otherwise the threshold heuristic decides.
+  const threshold: Threshold = overBudget ? 'danger' : thresholdFor(fraction)
+  const fill = FILLS[threshold] ?? FILLS.green
 
   const unitSuffix = unit ? ` ${unit}` : ''
   const showCaption = !hideCaption && (currency != null || unit != null)
@@ -107,7 +110,7 @@ export function BudgetMeter({
         aria-valuemin={0}
         aria-valuemax={safeMax}
         data-over-budget={overBudget || undefined}
-        className="relative overflow-hidden rounded-xs bg-ink-100"
+        className="relative overflow-hidden rounded-pill bg-surface-inset"
         style={{ height }}
       >
         <div
@@ -128,7 +131,7 @@ export function BudgetMeter({
       {(showCaption || hint) && (
         <div className="mt-2 flex items-center justify-between font-mono text-[10.5px] font-bold">
           {showCaption && (
-            <span className={overBudget ? 'text-red' : 'text-text-muted'}>
+            <span className={overBudget ? 'text-danger' : 'text-text-muted'}>
               {spentText} / {capText}
               {overBudget ? ' — estourando' : ''}
             </span>

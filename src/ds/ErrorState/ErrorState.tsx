@@ -4,8 +4,8 @@ import { Btn } from '../Btn/Btn'
 
 /**
  * ErrorState — the full-surface failure screen in the house voice. Three
- * variants: `404` (not found), `500` (server fault, dark "broadcast" tone) and
- * `offline` (no connection). Sources: DS `screens/09-navigation.jsx`
+ * variants: `404` (not found), `500` (server fault, green "broadcast" block)
+ * and `offline` (no connection). Sources: DS `screens/09-navigation.jsx`
  * (E · Estados de erro).
  *
  * DS §7 fixes applied:
@@ -59,9 +59,11 @@ const VARIANTS: Record<Variant, VariantSpec> = {
   },
 }
 
+// Modernista: the "broadcast" failure (500) is the bottle-green color-block,
+// not a near-black slab; the light variants stay white-on-line paper.
 const BASE = 'relative overflow-hidden h-full px-6 py-7 border'
-const LIGHT = 'bg-bg text-text border-border'
-const DARK = 'bg-ink-900 text-text-on-dark border-ink-700'
+const LIGHT = 'bg-paper text-text border-line'
+const DARK = 'bg-signature text-on-green border-signature-line'
 
 export interface ErrorStateProps
   extends Omit<React.HTMLAttributes<HTMLElement>, 'title'> {
@@ -90,46 +92,50 @@ export function ErrorState({
       className={`${BASE} ${surface}${className ? ` ${className}` : ''}`}
       {...rest}
     >
-      {/* Top accent stripe — pure decoration. */}
+      {/* Top accent stripe — pure decoration. Gold pops on the green broadcast
+          block; green anchors the light variants. */}
       <span
         aria-hidden="true"
-        className={`pointer-events-none absolute inset-x-0 top-0 h-[5px] ${spec.dark ? 'bg-red' : 'bg-lime'}`}
+        className={`pointer-events-none absolute inset-x-0 top-0 h-[5px] ${spec.dark ? 'bg-accent' : 'bg-signature'}`}
       />
 
       <div className="relative">
         {spec.glyph ? (
-          // Offline: a meaningful, labelled glyph (DS §7).
+          // Offline: a meaningful, labelled glyph (DS §7). Brick danger hue —
+          // a functional state colour, never the reserved referee card-red.
           <Icon
             name={spec.glyph.name}
             size={24}
             title={spec.glyph.label}
-            className="text-red"
+            className="text-danger"
           />
         ) : (
-          // 404 / 500: an oversized decorative code numeral.
+          // 404 / 500: an oversized decorative code numeral. Gold on the green
+          // block, signature green on the light paper.
           <span
             aria-hidden="true"
-            className={`block font-display leading-[0.8] tracking-[-3px] text-[88px] ${spec.dark ? 'text-lime' : 'text-ink-900'}`}
+            className={`block font-display leading-[0.8] tracking-[-3px] text-[88px] ${spec.dark ? 'text-accent' : 'text-signature'}`}
           >
             {spec.code}
           </span>
         )}
 
         <h2
-          className={`mt-2 font-display uppercase tracking-[-0.3px] text-[24px] ${spec.dark ? 'text-text-on-dark' : 'text-text'}`}
+          className={`mt-2 font-display uppercase tracking-[-0.3px] text-[24px] ${spec.dark ? 'text-on-green' : 'text-text'}`}
         >
           {spec.title}
         </h2>
 
         <p
-          className={`mt-2 max-w-[250px] font-sans text-[12.5px] leading-[1.5] ${spec.dark ? 'text-[color:var(--ink-300)]' : 'text-text-muted'}`}
+          className={`mt-2 max-w-[250px] font-sans text-[12.5px] leading-[1.5] ${spec.dark ? 'text-on-green-mute' : 'text-text-muted'}`}
         >
           {spec.body}
         </p>
 
         <div className="mt-5">
+          {/* Gold CTA reads on the green block; outline secondary on light paper. */}
           <Btn
-            variant={spec.dark ? 'primary' : 'secondary'}
+            variant={spec.dark ? 'gold' : 'secondary'}
             size="sm"
             onClick={onRetry}
           >

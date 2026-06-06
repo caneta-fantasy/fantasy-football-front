@@ -161,7 +161,7 @@ function Demo({ position }: { position?: ToastPosition }) {
       >
         Persistente
       </Btn>
-      <span className="self-center font-mono text-[11px] text-text-muted">
+      <span className="self-center font-sans text-[11px] text-text-muted">
         posição: {position ?? 'top-right'}
       </span>
     </div>

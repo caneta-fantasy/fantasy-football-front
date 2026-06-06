@@ -19,7 +19,7 @@ export interface SkeletonProps
 
 // Variant → corner-radius utility. The shimmer/colour comes from `ds-skeleton`.
 const VARIANTS: Record<Variant, string> = {
-  text: 'rounded-xs',
+  text: 'rounded-pill',
   rect: 'rounded-none',
   circle: 'rounded-full',
 }

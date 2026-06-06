@@ -4,9 +4,11 @@ import './DeadlineCountdown.css'
 
 /**
  * DeadlineCountdown — the one piece in the system that changes color by
- * urgency (design principle #2): lime/`caneta` while there is time, `yellow`
- * in the final stretch, pulsing `red` in the last seconds, then a neutral
- * `locked` state once the deadline has passed.
+ * urgency (design principle #2): signature green (`caneta`) while there is
+ * time, `warning` amber (`yellow`) in the final stretch, pulsing brick `danger`
+ * (`red`) in the last seconds, then a neutral `locked` state once the deadline
+ * has passed. The `red` tone is the functional brick (#B23A2B), NOT the referee
+ * card-red — urgency is a functional state, never a referee signal.
  *
  * a11y contract:
  * - Rendered as `role="timer"` with `aria-live="polite"`, so assistive tech
@@ -58,12 +60,17 @@ const DEFAULT_LABELS: Record<Exclude<DeadlineTone, 'locked'>, string> = {
   red: 'FECHANDO',
 }
 
-// Tone → Tailwind utility classes mapped to tokens. §7 #3: red uses the danger
-// foreground (ink900), never white-on-red.
+// Tone → Tailwind utility classes mapped to modernista tokens.
+//   caneta → signature green block, warm-white on-green text (10.3:1)
+//   yellow → warning amber, near-black on-gold text (the amber clears AA only
+//            with the dark foreground, never white-on-amber)
+//   red    → brick danger (the functional hue, NOT referee card-red), white
+//            text (5.9:1 on #B23A2B — the brick is dark enough for white)
+//   locked → neutral inset surface, muted ink
 const TONE_CLS: Record<DeadlineTone, string> = {
-  caneta: 'bg-lime text-[color:var(--color-on-lime)]',
-  yellow: 'bg-yellow text-[color:var(--color-on-lime)]',
-  red: 'bg-red text-[color:var(--color-danger-fg)]',
+  caneta: 'bg-signature text-on-green',
+  yellow: 'bg-warning text-on-gold',
+  red: 'bg-danger text-white',
   locked: 'bg-surface-inset text-text-muted',
 }
 
@@ -98,7 +105,7 @@ function toneFor(
 }
 
 const BASE =
-  'relative overflow-hidden inline-flex flex-col rounded-xs px-4 py-3 ' +
+  'relative overflow-hidden inline-flex flex-col rounded-pill px-4 py-3 ' +
   'font-sans min-w-[150px]'
 
 // Visually-hidden recipe (matches Spinner/Chip): out of the visual flow, still
@@ -191,7 +198,10 @@ export function DeadlineCountdown({
           className="shrink-0"
           aria-hidden
         />
-        <span className="font-mono text-[9.5px] font-bold uppercase tracking-[1px]">
+        {/* Overline-anatomy label in Archivo (font-sans), not mono — it inherits
+            the tone's foreground via currentColor, so it is styled inline rather
+            than via the <Overline> component (which would force its own color). */}
+        <span className="font-sans text-[10px] font-bold uppercase tracking-[1.6px]">
           {displayLabel}
         </span>
       </span>

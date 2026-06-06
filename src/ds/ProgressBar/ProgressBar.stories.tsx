@@ -13,7 +13,10 @@ const meta: Meta<typeof ProgressBar> = {
   argTypes: {
     value: { control: { type: 'range', min: -20, max: 140, step: 1 } },
     max: { control: 'number' },
-    tone: { control: 'inline-radio', options: [undefined, 'lime', 'yellow', 'red'] },
+    tone: {
+      control: 'inline-radio',
+      options: [undefined, 'success', 'warning', 'danger'],
+    },
     height: { control: 'number' },
     label: { control: 'text' },
   },
@@ -36,16 +39,16 @@ export const Empty: S = { args: { value: 0 } }
 
 export const Healthy: S = { args: { value: 40 } }
 
-/** 75–90% of max trips the yellow warning threshold. */
+/** 75–90% of max trips the amber warning threshold. */
 export const Warning: S = { args: { value: 82 } }
 
-/** Above 90% of max trips the red danger threshold. */
+/** Above 90% of max trips the brick danger threshold. */
 export const Danger: S = { args: { value: 96 } }
 
 /** Over max — fill is clamped to 100% but aria-valuenow keeps the real value. */
 export const OverMax: S = { args: { value: 150, max: 100 } }
 
-export const ForcedTone: S = { args: { value: 96, tone: 'lime' } }
+export const ForcedTone: S = { args: { value: 96, tone: 'success' } }
 
 export const Thresholds: S = {
   render: () => (
@@ -63,7 +66,7 @@ export const Budget: S = {
     <div style={{ width: 280 }}>
       <ProgressBar value={98.4} max={120} label="Orçamento usado" />
       <div className="mt-2 flex justify-between font-mono text-[10.5px] font-bold">
-        <span className="text-lime-deep">R$ 98,4 mi usados</span>
+        <span className="text-signature">R$ 98,4 mi usados</span>
         <span className="text-text-muted">120,0 mi</span>
       </div>
     </div>

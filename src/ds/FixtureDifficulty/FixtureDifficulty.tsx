@@ -1,4 +1,5 @@
 import React from 'react'
+import { Overline } from '../Overline/Overline'
 
 /**
  * The five difficulty steps, easiest (1) → hardest (5). This is the canonical
@@ -31,10 +32,10 @@ interface StepStyle {
   /** Background utility mapped to a token. */
   bg: string
   /**
-   * Foreground utility. Chosen per-step from the measured WCAG contrast of
-   * ink900 vs white on each background (see below) — colour is NEVER the only
-   * cue because the numeric level is always printed, but the printed number
-   * must itself clear AA (≥4.5:1 for the small mono text).
+   * Foreground utility. Chosen per-step from the measured WCAG contrast on each
+   * background (see below) — colour is NEVER the only cue because the numeric
+   * level is always printed, but the printed number must itself clear AA
+   * (≥4.5:1 for the small label).
    */
   fg: string
   /** One-word difficulty label for the accessible name. */
@@ -42,28 +43,29 @@ interface StepStyle {
 }
 
 /**
- * Per-step visual + spoken treatment.
+ * Per-step visual + spoken treatment — a modernista FDR heat ramp built from the
+ * functional + signature hues (own hues, never the referee card colours), with
+ * the hardest fixture anchored on the deepest bottle-green rather than on a
+ * second red, so the five steps stay distinct.
  *
- * §7 / spec fix — contrast-validated foregrounds (ink900 #0B0F0C vs white):
- *   1 lime    #D8FF3D → ink900 16.81:1  ✓  (white 1.15 ✗)
- *   2 yellow  #FFC42E → ink900 12.12:1  ✓  (white 1.59 ✗)
- *   3 clay    #C5532D → ink900  4.27:1  ✗  → WHITE 4.52:1 ✓  (spec: flip to white)
- *   4 red     #E5453A → ink900  4.82:1  ✓  (white 4.00 ✗; matches §7 #3 ink-on-red)
- *   5 redDeep #B82C22 → ink900  3.15:1  ✗  → WHITE 6.14:1 ✓
- * Every retained foreground clears AA (≥4.5) for the small numeric label.
+ * Contrast-validated foregrounds for the small numeric label (vs the listed bg):
+ *   1 green-pale  #E4EDE7 → green   #14402C  9.76:1  ✓  (calm green = easy)
+ *   2 gold-pale   #F4EACB → on-gold #1B1505 15.12:1  ✓
+ *   3 warning     #C98A28 → on-gold #1B1505  6.18:1  ✓  (amber)
+ *   4 danger      #B23A2B → white   #FFFFFF  5.94:1  ✓  (brick — the functional
+ *                                                         hue, NOT card-red)
+ *   5 green-deep  #0C2A1D → on-green #F2F1E8 13.57:1  ✓  (deepest anchor = hardest)
+ * Every foreground clears AA (≥4.5) for the small numeric label, and colour is
+ * never the only cue — the numeric level (1–5) is always printed on the swatch.
  */
 const STEPS: Record<DifficultyLevel, StepStyle> = {
-  1: { bg: 'bg-lime', fg: 'text-ink-900', word: 'muito fácil' },
-  2: { bg: 'bg-yellow', fg: 'text-ink-900', word: 'fácil' },
-  3: {
-    bg: 'bg-clay',
-    fg: 'text-[color:var(--color-text-on-dark)]',
-    word: 'médio',
-  },
-  4: { bg: 'bg-red', fg: 'text-ink-900', word: 'difícil' },
+  1: { bg: 'bg-signature-pale', fg: 'text-signature', word: 'muito fácil' },
+  2: { bg: 'bg-accent-pale', fg: 'text-on-gold', word: 'fácil' },
+  3: { bg: 'bg-warning', fg: 'text-on-gold', word: 'médio' },
+  4: { bg: 'bg-danger', fg: 'text-white', word: 'difícil' },
   5: {
-    bg: 'bg-[color:var(--red-deep)]',
-    fg: 'text-[color:var(--color-text-on-dark)]',
+    bg: 'bg-signature-deep',
+    fg: 'text-on-green',
     word: 'muito difícil',
   },
 }
@@ -131,7 +133,7 @@ export function FixtureDifficulty({
             >
               <div
                 data-difficulty={f.level}
-                className={`flex flex-col items-center justify-center gap-px rounded-xs px-1 font-mono font-bold leading-none ${style.bg} ${style.fg}`}
+                className={`flex flex-col items-center justify-center gap-px rounded-pill px-1 font-sans font-bold leading-none ${style.bg} ${style.fg}`}
                 style={{ minHeight: height }}
               >
                 {/* Both cues are aria-hidden — the <li> aria-label is the single
@@ -147,7 +149,7 @@ export function FixtureDifficulty({
               {f.venue && (
                 <span
                   aria-hidden="true"
-                  className="mt-1 block font-mono text-[8px] text-text-muted"
+                  className="mt-1 block font-sans text-[8px] font-bold text-text-muted"
                 >
                   {f.venue}
                 </span>
@@ -159,12 +161,12 @@ export function FixtureDifficulty({
 
       {showLegend && (
         <div className="mt-2 flex items-center gap-2">
-          <span className="font-mono text-[8.5px] uppercase tracking-[0.4px] text-text-muted">
+          <Overline as="span" className="!text-[8.5px] !tracking-[1.4px]">
             Fácil
-          </span>
+          </Overline>
           <div
             aria-hidden="true"
-            className="flex flex-1 overflow-hidden rounded-xs"
+            className="flex flex-1 overflow-hidden rounded-pill"
           >
             {([1, 2, 3, 4, 5] as DifficultyLevel[]).map((l) => (
               <span
@@ -173,9 +175,9 @@ export function FixtureDifficulty({
               />
             ))}
           </div>
-          <span className="font-mono text-[8.5px] uppercase tracking-[0.4px] text-text-muted">
+          <Overline as="span" className="!text-[8.5px] !tracking-[1.4px]">
             Difícil
-          </span>
+          </Overline>
         </div>
       )}
     </div>

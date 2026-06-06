@@ -46,12 +46,30 @@ export const Empty: S = {
   args: { empty: true, size: 48 },
 }
 
-/** The seeded palette: same seed → same crest, deterministic per club. */
+/**
+ * The seeded roundel palette: each seed is a flat two-colour geometric mark
+ * with its own division device (bar / diag / chevron / ring / vert).
+ * Same seed → same crest, deterministic per club.
+ */
 export const SeededPalette: S = {
   render: () => (
     <div className="flex flex-wrap gap-3">
       {Array.from({ length: 8 }).map((_, i) => (
         <Crest key={i} seed={i} club={`Clube ${i}`} size={48} />
+      ))}
+    </div>
+  ),
+}
+
+/** The five division devices, one per roundel. */
+export const Devices: S = {
+  render: () => (
+    <div className="flex flex-wrap items-center gap-3">
+      {(['bar', 'diag', 'chevron', 'ring', 'vert'] as const).map((d, i) => (
+        <div key={d} className="flex flex-col items-center gap-1">
+          <Crest seed={i} club={`Device ${d}`} size={56} />
+          <span className="text-xs text-ink-muted">{d}</span>
+        </div>
       ))}
     </div>
   ),

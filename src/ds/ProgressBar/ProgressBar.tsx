@@ -1,6 +1,6 @@
 import React from 'react'
 
-type Tone = 'lime' | 'yellow' | 'red'
+type Tone = 'success' | 'warning' | 'danger'
 
 export interface ProgressBarProps
   extends Omit<React.HTMLAttributes<HTMLDivElement>, 'role'> {
@@ -10,7 +10,8 @@ export interface ProgressBarProps
   max?: number
   /**
    * Force a fill colour. Omit to let the value drive a threshold colour
-   * (lime → yellow → red). Unknown values fall back to `lime` (no throw — §7 #1).
+   * (success → warning → danger). Unknown values fall back to `success`
+   * (no throw — §7 #1).
    */
   tone?: Tone
   /** Accessible name for the bar (maps to `aria-label`). */
@@ -19,21 +20,22 @@ export interface ProgressBarProps
   height?: number
 }
 
-// Tone → fill utility class mapped to tokens.
-// §7: red bars carry the danger-fg contract elsewhere; the bar itself is a
-// solid fill, so plain token backgrounds are correct here.
+// Tone → fill utility class mapped to the modernista FUNCTIONAL hues (own
+// colours, never the referee card colours): leaf-green success, amber warning,
+// brick danger. §7: never communicate state by colour alone — the value is also
+// reported verbatim to AT via aria-valuenow.
 const TONES: Record<Tone, string> = {
-  lime: 'bg-lime',
-  yellow: 'bg-yellow',
-  red: 'bg-red',
+  success: 'bg-success',
+  warning: 'bg-warning',
+  danger: 'bg-danger',
 }
 
 // Value-driven threshold (as a fraction of max): used when `tone` is omitted.
-// Below 0.75 → lime (healthy), 0.75–0.9 → yellow (warning), above → red.
+// Below 0.75 → success (healthy), 0.75–0.9 → warning, above → danger.
 function thresholdTone(fraction: number): Tone {
-  if (fraction >= 0.9) return 'red'
-  if (fraction >= 0.75) return 'yellow'
-  return 'lime'
+  if (fraction >= 0.9) return 'danger'
+  if (fraction >= 0.75) return 'warning'
+  return 'success'
 }
 
 /**
@@ -60,7 +62,7 @@ export function ProgressBar({
   const widthPct = `${clamped * 100}%`
 
   const resolvedTone = tone
-    ? (TONES[tone] ?? TONES.lime)
+    ? (TONES[tone] ?? TONES.success)
     : TONES[thresholdTone(fraction)]
 
   return (
@@ -70,7 +72,7 @@ export function ProgressBar({
       aria-valuenow={value}
       aria-valuemin={0}
       aria-valuemax={safeMax}
-      className={`relative overflow-hidden rounded-xs bg-ink-100${className ? ` ${className}` : ''}`}
+      className={`relative overflow-hidden rounded-pill bg-mist${className ? ` ${className}` : ''}`}
       style={{ height }}
       {...rest}
     >

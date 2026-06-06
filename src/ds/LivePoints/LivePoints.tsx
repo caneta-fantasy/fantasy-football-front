@@ -27,18 +27,19 @@ interface LivePointsBaseProps {
 export type LivePointsProps = LivePointsBaseProps &
   Omit<React.HTMLAttributes<HTMLDivElement>, keyof LivePointsBaseProps | 'children'>
 
-// Tone of the whole tile per status. Live = the brand lime hero treatment;
-// disconnected/stale dim to a muted surface so the staleness reads without
-// relying on color alone (the LiveChip text carries the actual state).
+// Tone of the whole tile per status. Live = the signature bottle-green broadcast
+// hero treatment (warm-white on-green text); disconnected/stale dim to a muted
+// surface so the staleness reads without relying on color alone (the LiveChip
+// text carries the actual state).
 const TILE: Record<LiveStatus, string> = {
-  live: 'bg-lime text-[color:var(--color-on-lime)]',
+  live: 'bg-signature text-on-green',
   disconnected: 'bg-surface-inset text-text-muted',
   stale: 'bg-surface-inset text-text-muted',
 }
 
 const BASE =
   'relative flex items-center justify-between gap-4 overflow-hidden ' +
-  'px-4 py-[14px] rounded-sm'
+  'px-4 py-[14px] rounded-pill'
 
 function formatValue(value: number | string): string {
   return typeof value === 'number' ? value.toFixed(1) : value
@@ -84,7 +85,9 @@ export function LivePoints({
     >
       <div className="relative flex flex-col gap-[6px]">
         <LiveChip status={status} asStatus={false} />
-        <span className="font-mono font-bold uppercase tracking-[0.5px] text-[10px]">
+        {/* Overline-anatomy caption in Archivo (font-sans), not mono — it
+            inherits the tile's foreground via currentColor. */}
+        <span className="font-sans font-bold uppercase tracking-[1.6px] text-[10px]">
           {label}
         </span>
       </div>

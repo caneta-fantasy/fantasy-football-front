@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
 import { useState } from 'react'
 import { Table, type Column, type SortState } from './Table'
+import { Overline } from '../Overline/Overline'
 
 interface Player {
   id: number
@@ -18,8 +19,10 @@ const PLAYERS: Player[] = [
   { id: 4, pos: 'MEI', name: 'Estevão', club: 'PAL', proj: 12.4, delta: 13 },
 ]
 
+// A short position tag — an uppercase LABEL, so it uses tracked Archivo (no
+// mono): Spline Sans Mono is reserved for the genuine numeric columns below.
 const Pos = ({ code }: { code: string }) => (
-  <span className="font-mono text-[9px] font-bold uppercase tracking-[0.6px] text-text-muted">
+  <span className="font-sans text-[9px] font-bold uppercase tracking-[1.2px] text-ink-muted">
     {code}
   </span>
 )
@@ -31,8 +34,10 @@ const COLUMNS: Column<Player>[] = [
     header: 'Jogador',
     cell: (r) => (
       <span>
-        <span className="font-sans text-[13px] font-bold">{r.name}</span>
-        <span className="ml-2 font-mono text-[10px] text-text-muted">{r.club}</span>
+        <span className="font-sans text-[13px] font-bold text-ink">{r.name}</span>
+        <span className="ml-2 font-sans text-[10px] font-medium uppercase tracking-[0.5px] text-ink-muted">
+          {r.club}
+        </span>
       </span>
     ),
   },
@@ -41,8 +46,11 @@ const COLUMNS: Column<Player>[] = [
     header: 'Proj',
     align: 'right',
     sortable: true,
+    // Genuine tabular numeric — keeps Spline Sans Mono.
     cell: (r) => (
-      <span className="font-mono text-[13px] font-bold">{r.proj.toFixed(1)}</span>
+      <span className="font-mono text-[13px] font-bold text-ink tabular-nums">
+        {r.proj.toFixed(1)}
+      </span>
     ),
     sortValue: (r) => r.proj,
   },
@@ -51,8 +59,11 @@ const COLUMNS: Column<Player>[] = [
     header: '+/-',
     align: 'right',
     sortable: true,
+    // Genuine tabular numeric — keeps Spline Sans Mono; positive delta in leaf.
     cell: (r) => (
-      <span className="font-mono text-[12px] font-bold text-lime-deep">+{r.delta}</span>
+      <span className="font-mono text-[12px] font-bold text-signature-leaf tabular-nums">
+        +{r.delta}
+      </span>
     ),
     sortValue: (r) => r.delta,
   },
@@ -66,10 +77,14 @@ const meta: Meta<typeof Table<Player>> = {
     docs: {
       description: {
         component:
-          'Real `<table>` with a generic, typed columns/rows API. Sticky INK ' +
-          'header, zebra striping, hover/selected/expanded row states. Sortable ' +
-          'headers expose `aria-sort` and a real toggle button cycling ' +
-          'none → ascending → descending → none (DS §7). Empty + loading slots.',
+          'Real `<table>` with a generic, typed columns/rows API. Sticky ' +
+          'bottle-green header band (labels `on-green`, active sort tints gold), ' +
+          'faint `mist` zebra striping, hover/selected/expanded row states ' +
+          '(selected = cobalt-pale band + 3px gold side-bar). Header + caption ' +
+          'labels use the `Overline` (tracked Archivo); numeric columns keep ' +
+          'Spline Sans Mono. Sortable headers expose `aria-sort` and a real ' +
+          'toggle button cycling none → ascending → descending → none (DS §7). ' +
+          'Empty + loading slots.',
       },
     },
   },
@@ -98,7 +113,7 @@ const base = {
 /** Default — uncontrolled sort, zebra striping, sticky header. */
 export const Default: S = { args: base }
 
-/** A selected row (lime band + side bar + `aria-selected`). */
+/** A selected row (cobalt-pale band + 3px gold side bar + `aria-selected`). */
 export const SelectedRow: S = { args: { ...base, selectedRowKey: 1 } }
 
 /** An expanded row with a drawer panel of extra stats. */
@@ -114,10 +129,12 @@ export const ExpandedRow: S = {
           ['ÚLT 5', `+${r.delta}`],
         ].map(([label, value]) => (
           <div key={label}>
-            <div className="font-mono text-[9px] font-bold uppercase tracking-[0.6px] text-text-muted">
+            <div className="font-sans text-[9px] font-bold uppercase tracking-[1.2px] text-ink-muted">
               {label}
             </div>
-            <div className="font-mono text-[14px] font-bold">{value}</div>
+            <div className="font-mono text-[14px] font-bold text-ink tabular-nums">
+              {value}
+            </div>
           </div>
         ))}
       </div>
@@ -133,11 +150,7 @@ export const Empty: S = {
   args: {
     ...base,
     rows: [],
-    empty: (
-      <span className="font-mono text-[11px] font-bold uppercase tracking-[0.6px]">
-        Nenhum jogador encontrado
-      </span>
-    ),
+    empty: <Overline as="span">Nenhum jogador encontrado</Overline>,
   },
 }
 

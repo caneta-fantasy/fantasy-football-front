@@ -2,64 +2,94 @@ import React from 'react'
 import './PositionPill.css'
 
 /**
- * Outfield/position codes the league recognises. Anything outside this set is
- * rendered with a NEUTRAL style (never silently coerced to MEI — §7 #9).
+ * Position codes the league recognises. The set spans two taxonomies:
+ *  - the broadcast/lineup codes (GOL / ZAG / LAT / MEI / ATA / TEC), and
+ *  - the roster codes (GOL / DEF / MEI / ATA / BN).
+ * Anything outside this set is rendered with a NEUTRAL style (never silently
+ * coerced to MEI — §7 #9).
  */
-export type PositionCode = 'GOL' | 'ZAG' | 'LAT' | 'MEI' | 'ATA' | 'TEC'
+export type PositionCode =
+  | 'GOL'
+  | 'ZAG'
+  | 'LAT'
+  | 'MEI'
+  | 'ATA'
+  | 'TEC'
+  | 'DEF'
+  | 'BN'
 
 export interface PositionPillProps
   extends Omit<React.HTMLAttributes<HTMLSpanElement>, 'children'> {
-  /** Position abbreviation, e.g. `GOL`, `ZAG`, `LAT`, `MEI`, `ATA`, `TEC`. */
+  /** Position abbreviation, e.g. `GOL`, `ZAG`, `LAT`, `MEI`, `ATA`, `TEC`, `DEF`, `BN`. */
   code: string
 }
 
 interface PosStyle {
-  /** Tailwind classes mapped to tokens. */
+  /** Tailwind classes mapped to modernista tokens. */
   cls: string
   /** Spelled-out accessible name. */
   label: string
 }
 
 /**
- * Each known code gets its own visual treatment AND its own spoken label.
+ * Each known code gets its own modernista treatment AND its own spoken label.
+ *
+ * Modernista palette (Plan B5):
+ *  - GOL = card-yellow / ink (keeper — yellow allowed here as a position-hue
+ *    echo; this is the ONE sanctioned non-referee use of card-yellow).
+ *  - ZAG = cobalt (SOLID) / white.
+ *  - LAT = cobalt-light family, OUTLINED + diagonal-stripe (`ds-pos-lat`).
+ *  - MEI = green / on-green.
+ *  - ATA = gold / on-gold.
+ *  - TEC = ink-muted / white.
+ *  - DEF = green / on-green (roster defenders — same green family as MEI; the
+ *    3-letter glyph + spelled label keep them distinguishable).
+ *  - BN  = ink-muted / white (bench — same neutral family as TEC).
  *
  * §7 #9 fixes baked in here:
- *  - ZAG vs LAT no longer share an identical look. Both are blue-family
- *    (`--pos-blue`), but ZAG is a SOLID fill while LAT is OUTLINED with a
- *    diagonal-stripe pattern (`ds-pos-lat`) — a structural cue, not a hue.
- *  - ATA uses the danger-fg token (ink900) rather than white-on-red (§7 #3).
- *  - The blue is the `--pos-blue` token, not an off-palette literal.
- *  - The 3-letter code is always the visible glyph, so colour is never the
- *    only cue; an `aria-label` additionally spells the role out.
+ *  - ZAG vs LAT do NOT share an identical look. Both are cobalt-family, but ZAG
+ *    is a SOLID fill while LAT is OUTLINED with a diagonal-stripe pattern
+ *    (`ds-pos-lat`) — a structural cue that survives greyscale, not a hue alone.
+ *  - The 3-letter code is always the visible glyph, so colour is never the only
+ *    cue; an `aria-label` additionally spells the role out.
  */
 const POSITIONS: Record<PositionCode, PosStyle> = {
   GOL: {
-    cls: 'bg-yellow text-[color:var(--color-on-lime)]',
+    cls: 'bg-card-yellow text-ink',
     label: 'Goleiro',
   },
   ZAG: {
-    cls: 'bg-[color:var(--pos-blue)] text-ink-900',
+    // Solid cobalt fill — the structural counterpart to LAT's outline.
+    cls: 'bg-cobalt text-white',
     label: 'Zagueiro',
   },
   LAT: {
-    // Outlined + striped: same blue family as ZAG, deliberately NOT identical.
-    cls:
-      'ds-pos-lat bg-transparent text-ink-900 ' +
-      'border border-[color:var(--pos-blue)]',
+    // Outlined + striped: same cobalt family as ZAG, deliberately NOT identical.
+    cls: 'ds-pos-lat bg-transparent text-cobalt-deep border border-cobalt-light',
     label: 'Lateral',
   },
   MEI: {
-    cls: 'bg-lime text-[color:var(--color-on-lime)]',
+    cls: 'bg-signature text-on-green',
     label: 'Meia',
   },
   ATA: {
-    // §7 #3: ink900 on red, never white-on-red.
-    cls: 'bg-red text-[color:var(--color-danger-fg)]',
+    cls: 'bg-accent text-on-gold',
     label: 'Atacante',
   },
   TEC: {
-    cls: 'bg-ink-900 text-text-on-dark',
+    cls: 'bg-ink-muted text-white',
     label: 'Técnico',
+  },
+  DEF: {
+    // Roster defenders — green family (shares the hue with MEI; the glyph +
+    // spelled label carry the distinction).
+    cls: 'bg-signature text-on-green',
+    label: 'Defensor',
+  },
+  BN: {
+    // Bench — neutral ink-muted (shares the hue with TEC).
+    cls: 'bg-ink-muted text-white',
+    label: 'Reserva',
   },
 }
 
@@ -69,16 +99,14 @@ const POSITIONS: Record<PositionCode, PosStyle> = {
  * an unrecognised code reads as "unknown", not as a mislabelled MEI.
  */
 const NEUTRAL: PosStyle = {
-  cls:
-    'bg-surface-inset text-text-muted ' +
-    'border border-[color:var(--color-border-strong)]',
+  cls: 'bg-mist text-ink-muted border border-line-strong',
   label: 'Posição',
 }
 
 const BASE =
   'inline-flex items-center justify-center align-middle select-none ' +
-  'w-[30px] h-[18px] rounded-xs font-sans font-bold ' +
-  'text-[10px] leading-none tracking-[0.8px] whitespace-nowrap overflow-hidden'
+  'w-[30px] h-[18px] rounded-pill font-sans font-extrabold ' +
+  'text-[10px] leading-none tracking-[0.6px] whitespace-nowrap overflow-hidden'
 
 export function PositionPill({
   code,

@@ -48,46 +48,48 @@ interface ToneSpec {
   live: 'polite' | 'assertive'
 }
 
-// §7 #3: never white-on-red for text-bearing surfaces. Error/warning glyphs
-// sit on ink900 so they stay legible; the accent itself is only a 5px bar +
-// badge background, never a text background.
+// Modernista: the toast is a bottle-green broadcast band. Each tone carries a
+// 5px accent bar + a badge in its own functional hue (own hues, never the
+// referee card colours). §7 #3: the accent hue is never a text background — the
+// glyph sits on the badge in a colour that contrasts with it, and the action
+// label sits on the green surface in a colour that reads there (gold/light).
 const TONES: Record<ToastTone, ToneSpec> = {
   success: {
-    accent: 'bg-lime',
+    accent: 'bg-success',
     icon: 'success-check',
-    iconText: 'text-ink-900',
-    actionText: 'text-lime',
+    iconText: 'text-on-green',
+    actionText: 'text-accent-light',
     role: 'status',
     live: 'polite',
   },
   info: {
-    accent: 'bg-ink-900',
+    accent: 'bg-cobalt',
     icon: 'info',
-    iconText: 'text-lime',
-    actionText: 'text-lime',
+    iconText: 'text-on-cobalt',
+    actionText: 'text-accent-light',
     role: 'status',
     live: 'polite',
   },
   warning: {
-    accent: 'bg-yellow',
+    accent: 'bg-warning',
     icon: 'warning',
-    iconText: 'text-ink-900',
-    actionText: 'text-yellow',
+    iconText: 'text-on-gold',
+    actionText: 'text-accent-light',
     role: 'alert',
     live: 'assertive',
   },
   error: {
-    accent: 'bg-red',
+    accent: 'bg-danger',
     icon: 'alert',
-    iconText: 'text-ink-900',
-    actionText: 'text-red',
+    iconText: 'text-white',
+    actionText: 'text-accent-light',
     role: 'alert',
     live: 'assertive',
   },
 }
 
 /**
- * Presentational toast surface — a dark, elevated snackbar with a tone accent
+ * Presentational toast surface — a green broadcast snackbar with a tone accent
  * bar, an icon badge, title/body, an optional action and a dismiss button.
  *
  * a11y: success/info announce politely via `role="status"`; error/warning
@@ -118,7 +120,7 @@ export function Toast({
       onMouseLeave={onMouseLeave}
       className={[
         'pointer-events-auto relative flex min-w-[320px] max-w-[420px] items-stretch',
-        'overflow-hidden bg-ink-900 text-text-on-dark shadow-e4',
+        'overflow-hidden bg-signature text-on-green shadow-e4',
         'animate-[ds-toast-in_var(--dur-200,200ms)_var(--ease-emphasized)]',
       ].join(' ')}
       {...rest}
@@ -137,11 +139,11 @@ export function Toast({
 
       {/* Copy. */}
       <div className="flex-1 py-3 pr-[14px]">
-        <div className="font-sans text-[13px] font-bold leading-tight text-white">
+        <div className="font-sans text-[13px] font-bold leading-tight text-on-green">
           {title}
         </div>
         {body != null && (
-          <div className="mt-[2px] font-sans text-[12px] leading-snug text-ink-300">
+          <div className="mt-[2px] font-sans text-[12px] leading-snug text-on-green-mute">
             {body}
           </div>
         )}
@@ -153,9 +155,9 @@ export function Toast({
           type="button"
           onClick={action.onClick}
           className={[
-            'm-3 self-center whitespace-nowrap rounded-xs border border-ink-600 px-[11px] py-[7px]',
+            'm-3 self-center whitespace-nowrap rounded-btn-sm border border-signature-line px-[11px] py-[7px]',
             'font-sans text-[11px] font-bold uppercase tracking-[0.6px]',
-            'transition-colors duration-150 hover:bg-ink-700',
+            'transition-colors duration-150 hover:bg-signature-raised',
             t.actionText,
           ].join(' ')}
         >
@@ -168,7 +170,7 @@ export function Toast({
         type="button"
         onClick={onDismiss}
         aria-label="Fechar"
-        className="flex-none self-start p-2 text-ink-300 transition-colors duration-150 hover:text-white"
+        className="flex-none self-start p-2 text-on-green-mute transition-colors duration-150 hover:text-on-green"
       >
         <Icon name="x" size={16} />
       </button>

@@ -13,10 +13,10 @@ export default meta
 
 type S = StoryObj<typeof CaptainBadge>
 
-/** Captain — solid lime pip with dark ink glyph. */
+/** Captain — solid heritage-gold pip with near-black on-gold glyph. */
 export const Captain: S = { args: { role: 'C' } }
 
-/** Vice-captain — dark ink pip with a lime glyph and lime ring. */
+/** Vice-captain — solid bottle-green pip with a warm-white glyph and gold ring. */
 export const Vice: S = { args: { role: 'V' } }
 
 /** Captain and vice side-by-side — inverse treatments read apart at a glance. */
@@ -51,7 +51,7 @@ export const AllSizes: S = {
 export const PinnedToChip: S = {
   render: () => (
     <div className="relative inline-block">
-      <div className="h-16 w-16 rounded-md bg-surface-inset" />
+      <div className="h-16 w-16 rounded-pill bg-surface-inset" />
       <div className="absolute -right-2 -top-2">
         <CaptainBadge role="C" />
       </div>

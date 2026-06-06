@@ -71,10 +71,10 @@ describe('Sparkline', () => {
     ).not.toThrow()
   })
 
-  it('honors an explicit down trend color', () => {
+  it('honors an explicit down trend color (brick danger, not card-red)', () => {
     const { container } = render(<Sparkline data={[9, 7, 5]} trend="down" />)
     const line = container.querySelector('polyline') as SVGPolylineElement
-    expect(line.getAttribute('stroke')).toContain('--red')
+    expect(line.getAttribute('stroke')).toContain('--danger')
   })
 
   it('respects custom width and height on the svg', () => {

@@ -40,16 +40,16 @@ export const Playground: S = {}
 /** Empty budget — fill is 0% (DS §7 #6: width is value-driven, never always-full). */
 export const Empty: S = { args: { value: 0 } }
 
-/** Healthy spend, well under the cap → lime. */
+/** Healthy spend, well under the cap → signature green. */
 export const Healthy: S = { args: { value: 50 } }
 
-/** Running low (75–95% of cap) → yellow. */
+/** Running low (75–95% of cap) → warning amber. */
 export const Warning: S = { args: { value: 100 } }
 
-/** Near the cap (>=95%) → red, but still within budget. */
+/** Near the cap (>=95%) → brick danger, but still within budget. */
 export const NearCap: S = { args: { value: 116 } }
 
-/** Over budget (value > max): fill clamps to 100%, bar turns red, caption flags "estourando". */
+/** Over budget (value > max): fill clamps to 100%, bar turns brick danger, caption flags "estourando". */
 export const OverBudget: S = {
   args: { value: 130, hint: '+1 transfer = -4 pts' },
 }

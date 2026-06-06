@@ -38,29 +38,29 @@ describe('BudgetMeter', () => {
     expect(fill.style.width).toBe('0%')
   })
 
-  it('applies threshold colors: lime when healthy, yellow on warning, red near the cap', () => {
+  it('applies threshold colors: green when healthy, warning amber on warning, danger near the cap', () => {
     const { container: low } = render(<BudgetMeter value={10} max={120} />)
     expect(
       (low.querySelector('[data-ds-budget-fill]') as HTMLElement).className,
-    ).toContain('bg-lime')
+    ).toContain('bg-signature')
 
     const { container: warn } = render(<BudgetMeter value={100} max={120} />)
     expect(
       (warn.querySelector('[data-ds-budget-fill]') as HTMLElement).className,
-    ).toContain('bg-yellow')
+    ).toContain('bg-warning')
 
     const { container: high } = render(<BudgetMeter value={116} max={120} />)
     expect(
       (high.querySelector('[data-ds-budget-fill]') as HTMLElement).className,
-    ).toContain('bg-red')
+    ).toContain('bg-danger')
   })
 
-  it('gives a clear over-budget treatment past 100% (red fill + over-budget flag)', () => {
+  it('gives a clear over-budget treatment past 100% (brick-danger fill + over-budget flag)', () => {
     const { container } = render(<BudgetMeter value={130} max={120} />)
     const root = screen.getByRole('progressbar')
     expect(root).toHaveAttribute('data-over-budget', 'true')
     const fill = container.querySelector('[data-ds-budget-fill]') as HTMLElement
-    expect(fill.className).toContain('bg-red')
+    expect(fill.className).toContain('bg-danger')
   })
 
   it('does not flag over-budget when exactly at the cap', () => {

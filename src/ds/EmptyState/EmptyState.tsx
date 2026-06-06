@@ -70,8 +70,8 @@ export function EmptyState({
 
       <div className="relative">
         {/* Bordered line-icon illustration (decorative). */}
-        <div className="mx-auto mb-[18px] flex h-16 w-16 items-center justify-center border-2 border-ink-900 bg-bg">
-          <Icon name={icon} size={24} className="text-ink-900" />
+        <div className="mx-auto mb-[18px] flex h-16 w-16 items-center justify-center border-2 border-signature bg-signature-pale">
+          <Icon name={icon} size={24} className="text-signature" />
         </div>
 
         <h3

@@ -1,22 +1,23 @@
 import React from 'react'
 import { Table, type Column } from '../Table/Table'
 import { Crest } from '../Crest/Crest'
+import { Overline } from '../Overline/Overline'
 
 /**
  * LeagueStandings — the league classification table (DS
  * `screens/12-data-display.jsx`, "C · LeagueStandings"). Built on the shared
  * `../Table/Table` so it inherits the real, accessible `<table>`, the sticky
- * INK header, zebra striping, hover, the `aria-selected` lime row band, and the
- * loading + empty slots — this component supplies the columns and the two
+ * bottle-green header, zebra striping, hover, the `aria-selected` row band, and
+ * the loading + empty slots — this component supplies the columns and the two
  * standings-specific highlights:
  *
- * - **Rank-1 highlight:** the leader's rank numeral is featured in lime-deep and
- *   the row carries a visible "LÍDER" badge. The cue is **textual**, not
- *   colour-only (§7 colour-cue rule), so it survives for colour-blind users and
- *   AT.
+ * - **Rank-1 highlight:** the leader's rank numeral is featured in gold (the
+ *   heritage accent) and the row carries a visible "LÍDER" gold badge. The cue
+ *   is **textual**, not colour-only (§7 colour-cue rule), so it survives for
+ *   colour-blind users and AT.
  * - **Current-user row highlight:** the row whose id matches `currentUserRowId`
- *   is passed to Table as `selectedRowKey`, which paints the lime band + side
- *   bar and sets `aria-selected` on the `<tr>`.
+ *   is passed to Table as `selectedRowKey`, which paints the selected band +
+ *   side bar and sets `aria-selected` on the `<tr>`.
  *
  * a11y contract:
  * - Renders a real `<table>` (via Table) with `<th scope="col">` headers and a
@@ -67,10 +68,12 @@ export interface LeagueStandingsProps {
 const DEFAULT_CAPTION = 'Classificação'
 
 // Form-result chip styling. Unknown codes resolve to a neutral chip (no throw).
+// V (win) = signature green, E (draw) = neutral line-strong, D (loss) = brick
+// danger (the functional hue, never the referee card-red) with white text.
 const FORM_STYLE: Record<FormResult, string> = {
-  V: 'bg-lime text-ink-900',
-  E: 'bg-ink-300 text-ink-900',
-  D: 'bg-red text-[color:var(--color-danger-fg)]',
+  V: 'bg-signature text-on-green',
+  E: 'bg-line-strong text-ink',
+  D: 'bg-danger text-white',
 }
 const FORM_NEUTRAL = 'bg-surface-inset text-text-muted'
 
@@ -86,7 +89,7 @@ function FormDot({ result }: { result: FormResult }) {
   const label = FORM_LABEL[result as FormResult]
   return (
     <span
-      className={`inline-flex h-4 w-4 items-center justify-center rounded-xs font-mono text-[9px] font-bold ${style}`}
+      className={`inline-flex h-4 w-4 items-center justify-center rounded-pill font-sans text-[9px] font-bold ${style}`}
       title={label}
     >
       <span aria-hidden="true">{result}</span>
@@ -98,7 +101,7 @@ function FormDot({ result }: { result: FormResult }) {
 /** Recent-form run, rendered as a row of labelled squares. */
 function FormGuide({ form }: { form?: FormResult[] }) {
   if (!form || form.length === 0) {
-    return <span className="font-mono text-[11px] text-text-muted">—</span>
+    return <span className="font-sans text-[11px] text-text-muted">—</span>
   }
   return (
     <span className="inline-flex items-center justify-center gap-1">
@@ -114,7 +117,7 @@ function Movement({ movement }: { movement: number }) {
   if (movement === 0) {
     return (
       <span
-        className="font-mono text-[12px] text-ink-400"
+        className="font-mono text-[12px] text-ink-subtle"
         aria-label="Sem mudança de posição"
       >
         <span aria-hidden="true">━</span>
@@ -126,7 +129,7 @@ function Movement({ movement }: { movement: number }) {
   return (
     <span
       className={`font-mono text-[11px] font-bold ${
-        up ? 'text-lime-deep' : 'text-red'
+        up ? 'text-signature' : 'text-danger'
       }`}
       aria-label={up ? `Subiu ${n}` : `Caiu ${n}`}
     >
@@ -158,14 +161,14 @@ export function LeagueStandings({
           <span className="inline-flex items-center gap-2">
             <span
               className={`font-display text-[22px] leading-none ${
-                leader ? 'text-lime-deep' : 'text-text'
+                leader ? 'text-accent-deep' : 'text-text'
               }`}
               style={{ fontVariantNumeric: 'tabular-nums' }}
             >
               {row.rank}
             </span>
             {leader && (
-              <span className="rounded-xs bg-lime px-1 py-px font-mono text-[8px] font-bold uppercase tracking-[0.6px] text-ink-900">
+              <span className="rounded-pill bg-accent px-1 py-px font-sans text-[8px] font-bold uppercase tracking-[1.2px] text-on-gold">
                 Líder
               </span>
             )}
@@ -225,11 +228,7 @@ export function LeagueStandings({
       onRowClick={onRowClick}
       loading={loading}
       empty={
-        empty ?? (
-          <span className="font-mono text-[11px] font-bold uppercase tracking-[0.6px]">
-            Nenhum time na classificação
-          </span>
-        )
+        empty ?? <Overline as="span">Nenhum time na classificação</Overline>
       }
       className={className}
     />

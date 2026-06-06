@@ -4,7 +4,12 @@ import React from 'react'
  * StencilNum — the big "jersey" display numeral used as a data anchor (hero
  * scores, rank numerals, the SignIn stencil). Screens previously hand-rolled
  * this inline with Anton + tabular figures; this is the exported primitive
- * (DS `tokens.jsx` `StencilNum`).
+ * (DS `tokens-modernist.jsx` `StencilNum`).
+ *
+ * Modernista: no Anton — the poster-display voice is the variable Archivo
+ * `disp()` recipe (heavy + wide): `wght 900 / wdth 110`, line-height 0.82,
+ * tight tabular tracking. The default tint is the faint `--green-pale`
+ * watermark used as a data anchor on white.
  *
  * a11y contract: the numeral is **decorative** — the real value is always
  * conveyed by adjacent functional text/labels, so this renders `aria-hidden`
@@ -36,8 +41,8 @@ export interface StencilNumProps
    */
   size?: SizeToken | number
   /**
-   * Text color. Defaults to the faint `--ink-50` used for the watermark/data
-   * anchor treatment; pass a token like `var(--caneta-lime)` to feature it.
+   * Text color. Defaults to the faint `--green-pale` watermark/data-anchor
+   * tint; pass a token like `var(--signature)` or `var(--accent)` to feature it.
    */
   color?: string
 }
@@ -45,7 +50,7 @@ export interface StencilNumProps
 export function StencilNum({
   value,
   size = 'md',
-  color = 'var(--ink-50)',
+  color = 'var(--green-pale)',
   className,
   style,
   ...rest
@@ -60,9 +65,13 @@ export function StencilNum({
       className={`font-display ${className ?? ''}`.trim()}
       style={{
         fontSize: `${px}px`,
-        lineHeight: 0.85,
-        // Tight, jersey-style tracking scaled to the numeral (DS: -size*0.04).
-        letterSpacing: `${-px * 0.04}px`,
+        // Archivo poster voice — heavy + wide via the `disp()` recipe
+        // (DS `tokens-modernist.jsx`: wght 900 / wdth 110, lh 0.82).
+        fontWeight: 900,
+        fontVariationSettings: '"wght" 900, "wdth" 110',
+        lineHeight: 0.82,
+        // Tight, jersey-style tracking scaled to the numeral (DS: -size*0.03).
+        letterSpacing: `${-px * 0.03}px`,
         fontVariantNumeric: 'tabular-nums',
         color,
         display: 'inline-block',

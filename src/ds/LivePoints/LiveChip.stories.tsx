@@ -10,7 +10,7 @@ const meta: Meta<typeof LiveChip> = {
     docs: {
       description: {
         component:
-          'The "AO VIVO" realtime status chip. A `role="status"` + `aria-live="polite"` region with a CSS-pulsing dot (neutralized under `prefers-reduced-motion` by the DS base layer). The `disconnected` and `stale` states drop the pulse and swap to descriptive text ("SEM CONEXÃO" / "DESATUALIZADO") so the state never relies on color alone. Per §7 #3 the live tone uses the ink900 danger foreground, never white-on-red. Unknown statuses fall back to `live`.',
+          'The "AO VIVO" realtime status chip. A `role="status"` + `aria-live="polite"` region with a CSS-pulsing dot (neutralized under `prefers-reduced-motion` by the DS base layer). The `disconnected` and `stale` states drop the pulse and swap to descriptive text ("SEM CONEXÃO" / "DESATUALIZADO") so the state never relies on color alone. The live tone is the brick danger (#B23A2B, the functional hue) with white text — never the referee card-red. Unknown statuses fall back to `live`.',
       },
     },
   },
@@ -51,10 +51,10 @@ export const AllStates: S = {
   ),
 }
 
-/** On a dark surface the chip stays legible across states. */
-export const OnDark: S = {
+/** On the signature-green surface the chip stays legible across states. */
+export const OnGreen: S = {
   render: () => (
-    <div className="bg-surface-dark p-6 rounded-md flex flex-wrap gap-3">
+    <div className="bg-signature p-6 rounded-pill flex flex-wrap gap-3">
       {STATUSES.map((status) => (
         <LiveChip key={status} status={status} />
       ))}

@@ -7,7 +7,7 @@ const meta: Meta<typeof PositionPill> = {
   argTypes: {
     code: {
       control: 'select',
-      options: ['GOL', 'ZAG', 'LAT', 'MEI', 'ATA', 'TEC', 'XYZ'],
+      options: ['GOL', 'ZAG', 'LAT', 'MEI', 'ATA', 'TEC', 'DEF', 'BN', 'XYZ'],
     },
   },
 }
@@ -22,11 +22,18 @@ export const Midfielder: S = { args: { code: 'MEI' } }
 export const Attacker: S = { args: { code: 'ATA' } }
 export const Coach: S = { args: { code: 'TEC' } }
 
+/** Roster taxonomy adds DEF (green) and BN/bench (ink-muted). */
+export const Defender: S = { args: { code: 'DEF' } }
+export const Bench: S = { args: { code: 'BN' } }
+
 /** §7 #9: unknown codes get a neutral pill (no silent MEI fallback). */
 export const UnknownCode: S = { args: { code: 'XYZ' } }
 
-/** All known positions side-by-side — note ZAG (solid) vs LAT (striped/outlined). */
-export const AllPositions: S = {
+/**
+ * Lineup taxonomy (GOL / ZAG / LAT / MEI / ATA / TEC) side-by-side —
+ * note ZAG (solid cobalt) vs LAT (striped/outlined cobalt-light).
+ */
+export const LineupPositions: S = {
   render: () => (
     <div className="flex flex-wrap items-center gap-2">
       {(['GOL', 'ZAG', 'LAT', 'MEI', 'ATA', 'TEC'] as const).map((code) => (
@@ -36,7 +43,18 @@ export const AllPositions: S = {
   ),
 }
 
-/** ZAG vs LAT comparison — both blue-family, differentiated by fill pattern. */
+/** Roster taxonomy (GOL / DEF / MEI / ATA / BN). */
+export const RosterPositions: S = {
+  render: () => (
+    <div className="flex flex-wrap items-center gap-2">
+      {(['GOL', 'DEF', 'MEI', 'ATA', 'BN'] as const).map((code) => (
+        <PositionPill key={code} code={code} />
+      ))}
+    </div>
+  ),
+}
+
+/** ZAG vs LAT comparison — both cobalt-family, differentiated by fill pattern. */
 export const ZagVsLat: S = {
   render: () => (
     <div className="flex items-center gap-3">

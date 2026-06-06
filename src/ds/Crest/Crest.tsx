@@ -21,24 +21,69 @@ export interface CrestProps
 }
 
 /**
- * Brazilian-style abstract shield palettes [shield, inner/charge], sourced from
- * the design tokens (no hardcoded hex). Seed selects a pair with modulo wrap.
+ * Flat two-colour geometric ROUNDELS — a clean modernist mark, not a
+ * collectible shield. Each entry pairs `[a, b]` (background / device fill)
+ * with a `device` division motif. Colours are sourced from the design tokens
+ * (no hardcoded hex). Seed selects an entry with modulo wrap.
  */
-const PALETTE: ReadonlyArray<[shield: string, charge: string]> = [
-  ['var(--caneta-lime)', 'var(--ink-900)'],
-  ['var(--red)', 'var(--ink-900)'],
-  ['var(--yellow)', 'var(--pitch)'],
-  ['var(--pitch)', 'var(--chalk)'],
-  ['var(--pos-blue)', 'var(--ink-900)'],
-  ['var(--clay)', 'var(--chalk)'],
-  ['var(--ink-900)', 'var(--caneta-lime)'],
-  ['var(--ink-600)', 'var(--ink-100)'],
+type Device = 'bar' | 'diag' | 'chevron' | 'ring' | 'vert'
+
+const PALETTE: ReadonlyArray<[a: string, b: string, device: Device]> = [
+  ['var(--green)', 'var(--gold)', 'bar'],
+  ['var(--cobalt)', 'var(--paper)', 'diag'],
+  ['var(--gold)', 'var(--green)', 'chevron'],
+  ['var(--green-deep)', 'var(--gold-light)', 'ring'],
+  ['var(--cobalt-deep)', 'var(--cobalt-light)', 'vert'],
+  ['var(--danger)', 'var(--gold-pale)', 'bar'],
 ]
 
 const DEFAULT_LABEL = 'Escudo do clube'
 
-/** Shared shield outline path so all variants align on the same silhouette. */
-const SHIELD_PATH = 'M18 1 L33 6 L33 20 Q33 30 18 35 Q3 30 3 20 L3 6 Z'
+/**
+ * Geometry is normalised to a 36-unit viewBox so the rendered `width`/`height`
+ * track `size` while the SVG content stays resolution-independent. `S` is the
+ * viewBox span; all device coordinates are derived from it (mirrors the
+ * size-relative math in the modernista source).
+ */
+const S = 36
+const R = S / 2
+
+/** The flat division device drawn over the roundel, clipped to the circle. */
+function deviceFor(device: Device, b: string): React.ReactElement {
+  switch (device) {
+    case 'bar':
+      return <rect x="0" y={R - S * 0.1} width={S} height={S * 0.2} fill={b} />
+    case 'diag':
+      return (
+        <path
+          d={`M0 ${S} L${S} 0 L${S} ${S * 0.34} L${S * 0.34} ${S} Z`}
+          fill={b}
+        />
+      )
+    case 'chevron':
+      return (
+        <path
+          d={`M${R} ${S * 0.28} L${S * 0.74} ${S * 0.6} L${S * 0.62} ${S * 0.6} L${R} ${S * 0.44} L${S * 0.38} ${S * 0.6} L${S * 0.26} ${S * 0.6} Z`}
+          fill={b}
+        />
+      )
+    case 'ring':
+      return (
+        <circle
+          cx={R}
+          cy={R}
+          r={S * 0.26}
+          fill="none"
+          stroke={b}
+          strokeWidth={S * 0.09}
+        />
+      )
+    case 'vert':
+      return (
+        <rect x={R - S * 0.09} y="0" width={S * 0.18} height={S} fill={b} />
+      )
+  }
+}
 
 export function Crest({
   seed = 0,
@@ -49,6 +94,12 @@ export function Crest({
   className,
   ...rest
 }: CrestProps) {
+  // Clip id derived from the (wrapped) seed so the same seed always yields
+  // byte-identical markup (deterministic per club) while distinct seeds get
+  // distinct ids. Same-seed crests are visually identical, so sharing the id
+  // is harmless.
+  const clipId = `crest-clip-${seed % PALETTE.length}`
+
   // Loading takes priority: announce a busy status, render no crest image.
   if (loading) {
     return (
@@ -64,14 +115,16 @@ export function Crest({
         <svg
           width={size}
           height={size}
-          viewBox="0 0 36 36"
+          viewBox={`0 0 ${S} ${S}`}
           fill="none"
           aria-hidden="true"
           focusable={false}
           className="block animate-pulse"
         >
-          <path
-            d={SHIELD_PATH}
+          <circle
+            cx={R}
+            cy={R}
+            r={R - 1}
             fill="var(--color-surface-inset)"
             stroke="var(--color-border)"
             strokeWidth={1.5}
@@ -81,13 +134,13 @@ export function Crest({
     )
   }
 
-  // Empty: a dashed placeholder shield, labelled so it is not silently blank.
+  // Empty: a dashed placeholder roundel, labelled so it is not silently blank.
   if (empty) {
     return (
       <svg
         width={size}
         height={size}
-        viewBox="0 0 36 36"
+        viewBox={`0 0 ${S} ${S}`}
         role="img"
         aria-label="Sem escudo"
         focusable={false}
@@ -95,8 +148,10 @@ export function Crest({
         {...rest}
       >
         <title>Sem escudo</title>
-        <path
-          d={SHIELD_PATH}
+        <circle
+          cx={R}
+          cy={R}
+          r={R - 1}
           fill="var(--color-surface-inset)"
           stroke="var(--color-border-strong)"
           strokeWidth={1.5}
@@ -112,15 +167,15 @@ export function Crest({
     )
   }
 
-  // Seeded crest. Modulo wrap means any seed resolves to a valid palette.
-  const [shield, charge] = PALETTE[seed % PALETTE.length] ?? PALETTE[0]
+  // Seeded roundel. Modulo wrap means any seed resolves to a valid palette.
+  const [a, b, device] = PALETTE[seed % PALETTE.length] ?? PALETTE[0]
   const label = club && club.trim() ? club : DEFAULT_LABEL
 
   return (
     <svg
       width={size}
       height={size}
-      viewBox="0 0 36 36"
+      viewBox={`0 0 ${S} ${S}`}
       role="img"
       aria-label={label}
       focusable={false}
@@ -128,23 +183,24 @@ export function Crest({
       {...rest}
     >
       <title>{label}</title>
-      <path d={SHIELD_PATH} fill={shield} stroke={charge} strokeWidth={1.5} />
-      <path
-        d="M18 8 L26 11 L26 20 Q26 25 18 28 Q10 25 10 20 L10 11 Z"
-        fill={charge}
-        opacity={0.92}
+      <defs>
+        <clipPath id={clipId}>
+          <circle cx={R} cy={R} r={R} />
+        </clipPath>
+      </defs>
+      <g clipPath={`url(#${clipId})`}>
+        <circle cx={R} cy={R} r={R} fill={a} />
+        {deviceFor(device, b)}
+      </g>
+      <circle
+        cx={R}
+        cy={R}
+        r={R - 1}
+        fill="none"
+        stroke={a}
+        strokeWidth={1.5}
+        opacity={0.25}
       />
-      <text
-        x="18"
-        y="22"
-        textAnchor="middle"
-        fontFamily="Anton, Impact, sans-serif"
-        fontSize="11"
-        fill={shield}
-        letterSpacing="0.5"
-      >
-        FC
-      </text>
     </svg>
   )
 }

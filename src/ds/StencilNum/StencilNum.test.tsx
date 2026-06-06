@@ -22,11 +22,15 @@ describe('StencilNum', () => {
     expect(screen.queryByText('98')).not.toHaveAttribute('role')
   })
 
-  it('uses the Anton display font and tabular figures', () => {
+  it('uses the Archivo display font (heavy + wide) and tabular figures', () => {
     render(<StencilNum value="7" data-testid="num" />)
     const el = screen.getByTestId('num')
     expect(el.className).toContain('font-display')
     expect(el).toHaveStyle({ fontVariantNumeric: 'tabular-nums' })
+    // Modernista poster voice via the `disp()` recipe: wght 900 / wdth 110.
+    expect(el).toHaveStyle({
+      fontVariationSettings: '"wght" 900, "wdth" 110',
+    })
   })
 
   it('maps a semantic size to a pixel font-size', () => {
@@ -50,13 +54,13 @@ describe('StencilNum', () => {
 
   it('derives a tight tabular letter-spacing from the resolved size', () => {
     render(<StencilNum value="7" size={100} data-testid="num" />)
-    // -size * 0.04 => -4px at 100px (matches the DS jersey treatment)
-    expect(screen.getByTestId('num')).toHaveStyle({ letterSpacing: '-4px' })
+    // -size * 0.03 => -3px at 100px (matches the modernista `disp()` jersey ls)
+    expect(screen.getByTestId('num')).toHaveStyle({ letterSpacing: '-3px' })
   })
 
   it('applies the color prop as the text color', () => {
-    render(<StencilNum value="7" color="var(--caneta-lime)" data-testid="num" />)
-    expect(screen.getByTestId('num')).toHaveStyle({ color: 'var(--caneta-lime)' })
+    render(<StencilNum value="7" color="var(--signature)" data-testid="num" />)
+    expect(screen.getByTestId('num')).toHaveStyle({ color: 'var(--signature)' })
   })
 
   it('forwards className and merges inline style overrides', () => {

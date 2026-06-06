@@ -48,14 +48,27 @@ describe('FixtureDifficulty', () => {
     expect(screen.getByText('VFL')).toBeInTheDocument()
   })
 
-  it('uses white text on clay (level 3) to satisfy AA contrast (spec)', () => {
+  it('uses the AA-validated foreground per heat step (médio amber → dark on-gold text)', () => {
     const { container } = render(
       <FixtureDifficulty fixtures={[{ opponent: 'GRE', difficulty: 3 }]} />,
     )
     const swatch = container.querySelector('[data-difficulty="3"]') as HTMLElement
     expect(swatch).not.toBeNull()
-    // clay fails ink900 contrast for small text → white foreground.
-    expect(swatch.className).toMatch(/text-text-on-dark|text-\[color:var\(--color-text-on-dark\)\]/)
+    // Level 3 (médio) is the warning-amber step; the dark near-black on-gold
+    // text clears AA on the amber (6.18:1), where white would fail.
+    expect(swatch.className).toContain('bg-warning')
+    expect(swatch.className).toContain('text-on-gold')
+  })
+
+  it('anchors the hardest step (5) on the deepest bottle-green with warm-white text', () => {
+    const { container } = render(
+      <FixtureDifficulty fixtures={[{ opponent: 'COR', difficulty: 5 }]} />,
+    )
+    const swatch = container.querySelector('[data-difficulty="5"]') as HTMLElement
+    // muito difícil = the deepest signature anchor (distinct from the brick
+    // step 4), warm-white on-green text at 13.57:1.
+    expect(swatch.className).toContain('bg-signature-deep')
+    expect(swatch.className).toContain('text-on-green')
   })
 
   it('exposes data-difficulty for each step so the level is machine-readable', () => {

@@ -38,7 +38,7 @@ export const WithImage: S = {
   args: {
     name: 'João Silva',
     size: 48,
-    src: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48"><rect width="48" height="48" fill="%231F3A2A"/><circle cx="24" cy="24" r="12" fill="%23D8FF3D"/></svg>',
+    src: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48"><rect width="48" height="48" fill="%2314402C"/><circle cx="24" cy="24" r="12" fill="%23C79A2B"/></svg>',
   },
 }
 
@@ -46,7 +46,10 @@ export const BrokenImageFallsBack: S = {
   args: { name: 'João Silva', size: 48, src: '/this-image-does-not-exist.png' },
 }
 
-/** The seeded palette: same seed → same colour, deterministic per person. */
+/**
+ * The seeded green/gold/cobalt roundel palette: same seed → same colour,
+ * deterministic per person.
+ */
 export const SeededPalette: S = {
   render: () => (
     <div className="flex flex-wrap gap-3">

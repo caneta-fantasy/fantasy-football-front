@@ -7,7 +7,7 @@ const meta: Meta<typeof Halftone> = {
   args: {
     opacity: 0.15,
     size: 4,
-    color: 'var(--ink-900)',
+    color: 'var(--ink)',
   },
   argTypes: {
     opacity: { control: { type: 'range', min: 0, max: 0.3, step: 0.01 } },
@@ -25,7 +25,7 @@ type S = StoryObj<typeof Halftone>
  * `relative` + `overflow-hidden`; the texture fills it via `inset: 0`.
  */
 const Frame = ({ children }: { children: React.ReactNode }) => (
-  <div className="relative h-[320px] w-[480px] overflow-hidden rounded-md bg-paper text-[color:var(--paper-ink)]">
+  <div className="relative h-[320px] w-[480px] overflow-hidden border border-line bg-paper text-ink">
     {children}
     <div className="relative flex h-full items-end p-6">
       <span className="font-display text-[40px] uppercase leading-none">Ao Vivo</span>
@@ -42,7 +42,7 @@ export const Playground: S = {
   ),
 }
 
-/** Default: ink dots on paper at the broadcast-print 0.15 opacity. */
+/** Default: ink dots on white paper at the broadcast-print 0.15 opacity. */
 export const OnPaper: S = {
   render: () => (
     <Frame>
@@ -60,11 +60,11 @@ export const CoarseDots: S = {
   ),
 }
 
-/** Light dots over a dark surface. */
-export const OnDarkSurface: S = {
+/** Light dots over the signature-green surface. */
+export const OnGreenSurface: S = {
   render: () => (
-    <div className="relative h-[320px] w-[480px] overflow-hidden rounded-md bg-[color:var(--color-surface-dark)]">
-      <Halftone color="var(--chalk)" />
+    <div className="relative h-[320px] w-[480px] overflow-hidden bg-signature">
+      <Halftone color="var(--on-green)" />
     </div>
   ),
 }

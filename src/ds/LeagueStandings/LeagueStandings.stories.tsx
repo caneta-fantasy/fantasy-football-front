@@ -19,10 +19,10 @@ export default meta
 
 type S = StoryObj<typeof LeagueStandings>
 
-/** Default standings: rank-1 carries the LÍDER badge + lime-deep numeral. */
+/** Default standings: rank-1 carries the gold LÍDER badge + gold numeral. */
 export const Default: S = {}
 
-/** The signed-in manager's row gets the lime band + aria-selected. */
+/** The signed-in manager's row gets the selected band + aria-selected. */
 export const CurrentUserHighlighted: S = {
   args: { currentUserRowId: 3 },
 }

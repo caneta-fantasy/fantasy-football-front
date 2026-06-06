@@ -42,10 +42,10 @@ describe('Avatar', () => {
     expect(screen.getByText('JS')).toBeInTheDocument()
   })
 
-  it('renders a square (no border-radius) box', () => {
+  it('renders a round roundel box', () => {
     render(<Avatar name="João Silva" />)
     const el = screen.getByRole('img', { name: 'João Silva' })
-    expect(el).not.toHaveClass('rounded-full')
+    expect(el).toHaveClass('rounded-full')
   })
 
   it('picks a deterministic background for the same seed', () => {

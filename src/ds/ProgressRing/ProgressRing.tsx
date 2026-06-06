@@ -10,11 +10,11 @@ export interface ProgressRingProps
   size?: number
   /** Arc stroke width in px. */
   stroke?: number
-  /** Arc colour. Defaults to the caneta lime-deep token. */
+  /** Arc colour. Defaults to the signature green token. */
   color?: string
   /** Big numeral shown in the centre (decorative — `aria-hidden`). */
   label?: React.ReactNode
-  /** Small mono caption under the label (decorative — `aria-hidden`). */
+  /** Small all-caps caption under the label (decorative — `aria-hidden`). */
   sub?: React.ReactNode
   /** Accessible name for the ring (maps to `aria-label`). */
   ariaLabel?: string
@@ -34,7 +34,7 @@ export function ProgressRing({
   max = 100,
   size = 88,
   stroke = 6,
-  color = 'var(--caneta-lime-deep)',
+  color = 'var(--green)',
   label,
   sub,
   ariaLabel,
@@ -76,7 +76,7 @@ export function ProgressRing({
           cy={center}
           r={radius}
           fill="none"
-          stroke="var(--ink-100)"
+          stroke="var(--line)"
           strokeWidth={stroke}
         />
         {/* Progress arc */}
@@ -106,7 +106,7 @@ export function ProgressRing({
             </span>
           )}
           {sub != null && (
-            <span className="font-mono text-[8px] tracking-[0.5px] text-text-muted">
+            <span className="font-sans font-bold uppercase text-[8px] tracking-[1.5px] text-text-muted">
               {sub}
             </span>
           )}

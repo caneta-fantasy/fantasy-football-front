@@ -71,7 +71,8 @@ export const WithVenue: S = {
 
 /**
  * Every step, isolated — proof the foreground stays legible at each level.
- * Note clay (3) and redDeep (5) flip to WHITE text for AA contrast.
+ * The modernista heat ramp runs green-pale → gold-pale → warning amber → brick
+ * danger → deepest bottle-green (hardest), each foreground AA-validated.
  */
 export const AllLevels: S = {
   args: {

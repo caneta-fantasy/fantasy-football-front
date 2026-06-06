@@ -40,7 +40,7 @@ export const Draft: S = {
     value: 45,
     label: '45%',
     sub: 'DRAFT',
-    color: 'var(--yellow-d)',
+    color: 'var(--gold)',
     ariaLabel: 'Draft concluído',
   },
 }
@@ -66,7 +66,7 @@ export const Pair: S = {
         value={45}
         label="45%"
         sub="DRAFT"
-        color="var(--yellow-d)"
+        color="var(--gold)"
         ariaLabel="Draft concluído"
       />
     </div>

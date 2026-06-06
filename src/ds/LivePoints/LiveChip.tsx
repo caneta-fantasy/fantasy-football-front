@@ -30,35 +30,38 @@ export type LiveChipProps = LiveChipBaseProps &
   Omit<React.HTMLAttributes<HTMLSpanElement>, keyof LiveChipBaseProps>
 
 // status → { tailwind classes, default label }.
-// §7 #3 fix: the red live tone uses the ink900 danger foreground, never
-// white-on-red. Disconnected/stale use a muted, non-alarming treatment AND a
-// distinct text label, so the state is conveyed by text, not color alone (§7).
+// The live tone is the BRICK danger (#B23A2B — the functional hue), NOT the
+// referee card-red: "live" is an app state, never a referee signal. White text
+// clears AA on the brick (5.9:1). Disconnected/stale use a muted, non-alarming
+// treatment AND a distinct text label, so the state is conveyed by text, not
+// color alone (§7).
 const STATUS: Record<LiveStatus, { cls: string; label: string }> = {
   live: {
-    cls: 'bg-red text-[color:var(--color-danger-fg)]',
+    cls: 'bg-danger text-white',
     label: 'AO VIVO',
   },
   disconnected: {
-    cls: 'bg-surface-inset text-text-muted border border-[color:var(--color-border-strong)]',
+    cls: 'bg-surface-inset text-text-muted border border-line-strong',
     label: 'SEM CONEXÃO',
   },
   stale: {
-    cls: 'bg-surface-inset text-text-muted border border-[color:var(--color-border-strong)]',
+    cls: 'bg-surface-inset text-text-muted border border-line-strong',
     label: 'DESATUALIZADO',
   },
 }
 
 const BASE =
   'inline-flex items-center gap-[5px] font-sans font-bold uppercase ' +
-  'tracking-[1px] text-[10px] leading-none px-[7px] py-[3px] rounded-xs ' +
+  'tracking-[1.2px] text-[10px] leading-none px-[7px] py-[3px] rounded-chip ' +
   'align-middle whitespace-nowrap select-none'
 
 /**
- * Compact "AO VIVO" status chip with a CSS-pulsing dot (reduced-motion safe —
- * the pulse is neutralized globally by the DS base layer). Exposed as a
- * `role="status"` + `aria-live="polite"` region so state changes (live →
- * disconnected/stale) are announced. The disconnected and stale states drop
- * the pulse and swap to descriptive text, so the state never depends on color.
+ * Compact "AO VIVO" status chip — a brick-danger pill (the functional hue, not
+ * the referee card-red) with a CSS-pulsing dot (reduced-motion safe — the pulse
+ * is neutralized globally by the DS base layer). Exposed as a `role="status"` +
+ * `aria-live="polite"` region so state changes (live → disconnected/stale) are
+ * announced. The disconnected and stale states drop the pulse and swap to
+ * descriptive text, so the state never depends on color.
  */
 export function LiveChip({
   status = 'live',

@@ -1,20 +1,28 @@
 import React, { useState } from 'react'
 import { Icon } from '../Icon/Icon'
 import { Spinner } from '../Spinner/Spinner'
+import { Overline } from '../Overline/Overline'
 
 /**
  * Table — a real, accessible `<table>` with a generic, typed columns/rows API.
  *
- * Features (design §3, DS `screens/12-data-display.jsx`):
- * - **Sticky header** (INK bar that pins to the top of a scrolling container).
- * - **Zebra** striping on body rows.
- * - **Row states:** hover (CSS-only), `selected` (lime band + side bar +
- *   `aria-selected`), `expanded` (a drawer row + `aria-expanded` on the owner).
+ * Features (design §3, DS `tokens-modernist.jsx` data display):
+ * - **Sticky header** (bottle-green band that pins to the top of a scrolling
+ *   container; labels render `on-green`).
+ * - **Zebra** striping on body rows (faint `mist` stripe).
+ * - **Row states:** hover (CSS-only), `selected` (cobalt-pale band + 3px gold
+ *   side bar + `aria-selected`), `expanded` (a drawer row + `aria-expanded` on
+ *   the owner).
  * - **Sortable headers** (DS §7): a sortable `<th>` carries `aria-sort` and a
- *   real `<button>` that cycles `none → ascending → descending → none`.
- *   Uncontrolled by default (sorts its own copy of the rows); fully controlled
- *   when `sort`/`onSortChange` are supplied.
+ *   real `<button>` that cycles `none → ascending → descending → none`. The
+ *   active-sort header + chevron tint to **gold** (accent). Uncontrolled by
+ *   default (sorts its own copy of the rows); fully controlled when
+ *   `sort`/`onSortChange` are supplied.
  * - **Empty + loading slots.**
+ *
+ * Typography: header + caption labels use the modernista `Overline` (tracked
+ * all-caps Archivo) — Spline Sans Mono is reserved for genuine tabular numeric
+ * columns (set per-cell by the consumer), never for uppercase labels.
  *
  * a11y contract: native `<table>`/`<thead>`/`<tbody>`/`<th scope>`/`<td>`; an
  * optional `<caption>` names the table; sort controls are buttons inside the
@@ -58,7 +66,7 @@ export interface TableProps<Row> {
   getRowKey: (row: Row, index: number) => React.Key
   /** Names the table for assistive tech (renders a visually-styled caption). */
   caption?: React.ReactNode
-  /** Key of the currently selected row → lime band + `aria-selected`. */
+  /** Key of the currently selected row → cobalt/gold band + `aria-selected`. */
   selectedRowKey?: React.Key
   /** Key of the currently expanded row → drawer + `aria-expanded` on the owner. */
   expandedRowKey?: React.Key
@@ -149,19 +157,19 @@ export function Table<Row>({
 
   return (
     <div
-      className={`overflow-auto rounded-md border border-border bg-surface${
+      className={`overflow-auto rounded-btn border border-line bg-paper${
         className ? ` ${className}` : ''
       }`}
     >
-      <table className="w-full border-collapse font-sans text-[13px]">
+      <table className="w-full border-collapse font-sans text-[13px] text-ink">
         {caption && (
-          <caption className="px-4 py-2 text-left font-mono text-[10px] font-bold uppercase tracking-[0.6px] text-text-muted">
-            {caption}
+          <caption className="px-4 py-2 text-left">
+            <Overline as="span">{caption}</Overline>
           </caption>
         )}
         <thead>
-          {/* Sticky INK header bar (pins inside a scrolling container). */}
-          <tr className="sticky top-0 z-sticky bg-ink-900">
+          {/* Sticky bottle-green header band (pins inside a scrolling container). */}
+          <tr className="sticky top-0 z-sticky bg-signature">
             {columns.map((col) => {
               const isActive = activeSort?.key === col.key
               const ariaSort = col.sortable
@@ -174,19 +182,19 @@ export function Table<Row>({
                   key={col.key}
                   scope="col"
                   aria-sort={ariaSort}
-                  className={`px-3 py-2 font-mono text-[9.5px] font-bold uppercase tracking-[0.6px] ${alignClass(
+                  className={`px-3 py-2 font-sans text-[9.5px] font-bold uppercase tracking-[1.2px] ${alignClass(
                     col.align,
                   )} ${col.width ?? ''} ${
-                    isActive ? 'text-lime' : 'text-ink-100'
+                    isActive ? 'text-accent' : 'text-on-green'
                   }`}
                 >
                   {col.sortable ? (
                     <button
                       type="button"
                       onClick={() => handleSort(col.key)}
-                      className={`inline-flex items-center gap-1 rounded-xs font-mono text-[9.5px] font-bold uppercase tracking-[0.6px] ${
+                      className={`inline-flex items-center gap-1 rounded-pill font-sans text-[9.5px] font-bold uppercase tracking-[1.2px] ${
                         col.align === 'right' ? 'flex-row-reverse' : ''
-                      } ${isActive ? 'text-lime' : 'text-ink-100'} cursor-pointer`}
+                      } ${isActive ? 'text-accent' : 'text-on-green'} cursor-pointer`}
                     >
                       <span>{col.header}</span>
                       <Icon
@@ -197,7 +205,7 @@ export function Table<Row>({
                         }
                         size={16}
                         className={
-                          isActive ? 'text-lime' : 'text-ink-100 opacity-60'
+                          isActive ? 'text-accent' : 'text-on-green opacity-60'
                         }
                         aria-hidden
                       />
@@ -215,22 +223,16 @@ export function Table<Row>({
           {loading ? (
             <tr>
               <td colSpan={colCount} className="px-4 py-12">
-                <div className="flex items-center justify-center gap-3 text-text-muted">
+                <div className="flex items-center justify-center gap-3">
                   <Spinner size={20} />
-                  <span className="font-mono text-[11px] font-bold uppercase tracking-[0.6px]">
-                    Carregando
-                  </span>
+                  <Overline as="span">Carregando</Overline>
                 </div>
               </td>
             </tr>
           ) : visibleRows.length === 0 ? (
             <tr>
-              <td colSpan={colCount} className="px-4 py-12 text-center text-text-muted">
-                {empty ?? (
-                  <span className="font-mono text-[11px] font-bold uppercase tracking-[0.6px]">
-                    Sem dados
-                  </span>
-                )}
+              <td colSpan={colCount} className="px-4 py-12 text-center text-ink-muted">
+                {empty ?? <Overline as="span">Sem dados</Overline>}
               </td>
             </tr>
           ) : (
@@ -248,15 +250,15 @@ export function Table<Row>({
                     }
                     onClick={interactiveRows ? () => onRowClick!(row) : undefined}
                     className={[
-                      'border-b border-border transition-colors duration-150',
-                      // Selected: lime band + 3px lime side-bar (border-left).
+                      'border-b border-line transition-colors duration-150',
+                      // Selected: cobalt-pale band + 3px gold side-bar (border-left).
                       isSelected
-                        ? 'bg-[color:rgba(216,255,61,0.14)] border-l-[3px] border-l-lime'
+                        ? 'bg-cobalt-pale border-l-[3px] border-l-accent'
                         : `border-l-[3px] border-l-transparent ${
-                            zebra ? 'bg-surface-inset' : 'bg-surface'
+                            zebra ? 'bg-mist' : 'bg-paper'
                           }`,
                       // Hover state is CSS-only (reduced-motion handled globally).
-                      'hover:bg-surface-inset',
+                      'hover:bg-mist2',
                       interactiveRows ? 'cursor-pointer' : '',
                     ]
                       .filter(Boolean)
@@ -274,7 +276,7 @@ export function Table<Row>({
                     ))}
                   </tr>
                   {renderExpanded && isExpanded && (
-                    <tr className="border-b border-border bg-surface-inset">
+                    <tr className="border-b border-line bg-mist">
                       <td colSpan={colCount} className="px-4 py-3">
                         {renderExpanded(row)}
                       </td>

@@ -28,7 +28,7 @@ export interface HalftoneProps {
    */
   size?: number
   /**
-   * Dot colour. Defaults to the ink-900 token for the "broadcast print" look;
+   * Dot colour. Defaults to the `--ink` token for the "broadcast print" look;
    * pass a light colour over dark surfaces.
    */
   color?: string
@@ -52,7 +52,7 @@ export interface HalftoneProps {
 export function Halftone({
   opacity = 0.15,
   size = DEFAULT_SIZE,
-  color = 'var(--ink-900)',
+  color = 'var(--ink)',
   style,
   className,
 }: HalftoneProps) {

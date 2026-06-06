@@ -12,7 +12,7 @@ const meta: Meta<typeof DeadlineCountdown> = {
     docs: {
       description: {
         component:
-          'The one piece in the system that changes color by urgency (design principle #2): lime/`caneta` while there is time, `yellow` in the final stretch, a pulsing `red` in the last seconds (reduced-motion safe — the DS base layer disables the pulse), then a neutral `locked` state once the deadline passes. Rendered as a real `role="timer"` with `aria-live="polite"`; the visible HH:MM:SS ticks every second while the screen-reader sentence is throttled to minute granularity so polite announcements do not flood. Color is never the only cue — the urgency label text escalates and the locked state shows a lock icon. The `now` prop pins the clock for these stories; in the app it is omitted and uses the real time.',
+          'The one piece in the system that changes color by urgency (design principle #2): signature green (`caneta`) while there is time, warning amber (`yellow`) in the final stretch, a pulsing brick-danger (`red`) in the last seconds (reduced-motion safe — the DS base layer disables the pulse), then a neutral `locked` state once the deadline passes. The `red` tone is the functional brick (#B23A2B), never the referee card-red. Rendered as a real `role="timer"` with `aria-live="polite"`; the visible HH:MM:SS ticks every second while the screen-reader sentence is throttled to minute granularity so polite announcements do not flood. Color is never the only cue — the urgency label text escalates and the locked state shows a lock icon. The `now` prop pins the clock for these stories; in the app it is omitted and uses the real time.',
       },
     },
   },
@@ -30,17 +30,17 @@ export const Playground: S = {
   args: { deadline: inSeconds(2 * 3600 + 14 * 60 + 8), now: NOW },
 }
 
-/** caneta/lime: plenty of time left. */
+/** caneta: plenty of time left — signature-green block. */
 export const Caneta: S = {
   args: { deadline: inSeconds(2 * 3600 + 14 * 60 + 8), now: NOW },
 }
 
-/** yellow: the final stretch (inside ~10 minutes). */
+/** yellow: the final stretch (inside ~10 minutes) — warning amber. */
 export const Yellow: S = {
   args: { deadline: inSeconds(9 * 60 + 42), now: NOW },
 }
 
-/** red: the last seconds, with a pulsing urgency dot. */
+/** red: the last seconds, brick danger, with a pulsing urgency dot. */
 export const Red: S = {
   args: { deadline: inSeconds(31), now: NOW },
 }
