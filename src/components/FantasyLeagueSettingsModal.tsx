@@ -123,7 +123,7 @@ const FantasyLeagueSettingsModal: React.FC<Props> = ({ open, onClose, fantasyLea
               onChange={(field, value) =>
                 setFormData((prev: any) => ({ ...prev, [field]: value }))
               }
-              id={draftSettings?.id!}
+              id={rosterSettings?.id!}
               refetchRosterSettings={refetchRosterSettings}
               refetchDraftSettings={refetchDraftSettings}
               seasonStatus={fantasyLeagueSeason?.status}
