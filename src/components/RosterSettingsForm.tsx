@@ -161,6 +161,7 @@ const RosterSettingsForm: React.FC<Props> = ({ values, onChange, id, refetchRost
               fullWidth
               type="number"
               inputProps={{ min: 1 }}
+              disabled={isLocked}
               placeholder="Sem limite"
               value={values.maxGk ?? ''}
               onChange={(e) => onChange('maxGk', e.target.value === '' ? null : Number(e.target.value))}
@@ -174,6 +175,7 @@ const RosterSettingsForm: React.FC<Props> = ({ values, onChange, id, refetchRost
               fullWidth
               type="number"
               inputProps={{ min: 1 }}
+              disabled={isLocked}
               placeholder="Sem limite"
               value={values.maxDefenders ?? ''}
               onChange={(e) => onChange('maxDefenders', e.target.value === '' ? null : Number(e.target.value))}
@@ -186,6 +188,7 @@ const RosterSettingsForm: React.FC<Props> = ({ values, onChange, id, refetchRost
               fullWidth
               type="number"
               inputProps={{ min: 1 }}
+              disabled={isLocked}
               placeholder="Sem limite"
               value={values.maxDef ?? ''}
               onChange={(e) => onChange('maxDef', e.target.value === '' ? null : Number(e.target.value))}
@@ -198,6 +201,7 @@ const RosterSettingsForm: React.FC<Props> = ({ values, onChange, id, refetchRost
             fullWidth
             type="number"
             inputProps={{ min: 1 }}
+            disabled={isLocked}
             placeholder="Sem limite"
             value={values.maxMid ?? ''}
             onChange={(e) => onChange('maxMid', e.target.value === '' ? null : Number(e.target.value))}
@@ -209,6 +213,7 @@ const RosterSettingsForm: React.FC<Props> = ({ values, onChange, id, refetchRost
             fullWidth
             type="number"
             inputProps={{ min: 1 }}
+            disabled={isLocked}
             placeholder="Sem limite"
             value={values.maxFwd ?? ''}
             onChange={(e) => onChange('maxFwd', e.target.value === '' ? null : Number(e.target.value))}
@@ -246,7 +251,7 @@ const RosterSettingsForm: React.FC<Props> = ({ values, onChange, id, refetchRost
         <Button
           variant="contained"
           onClick={() => updateRoster.mutate({ id, updates: values })}
-          disabled={updateRoster.isPending || isStarterTotalExceeded}
+          disabled={updateRoster.isPending || isStarterTotalExceeded || isLocked}
         >
           Salvar
         </Button>
