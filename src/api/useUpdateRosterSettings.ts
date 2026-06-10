@@ -11,6 +11,8 @@ export interface RosterSettings {
     minStarterForwards: number;
     benchSlots: number;
     starterDefenseSlots: number;
+    starterGkSlots: number;
+    starterDefenderSlots: number;
     defenseType: DefenseType;
     maxGk: number | null;
     maxDef: number | null;

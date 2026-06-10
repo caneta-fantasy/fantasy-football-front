@@ -54,7 +54,7 @@ const RosterSettingsForm: React.FC<Props> = ({ values, onChange, id, refetchRost
       {/* Starter Settings */}
       <Typography fontWeight={600} sx={{ mb: 2, fontSize: '1.2rem' }}>Jogadores Titulares</Typography>
       <Box>
-        <Typography fontWeight={600}>Total de Jogadores Titulares (não incluindo defesa)</Typography>
+        <Typography fontWeight={600}>Total de Jogadores de Ataque Titulares (Meio Campo + Atacantes)</Typography>
         <TextField
           fullWidth
           type="number"
@@ -110,21 +110,50 @@ const RosterSettingsForm: React.FC<Props> = ({ values, onChange, id, refetchRost
         />
       </Box>
 
-      <Box>
-        <Typography fontWeight={600}>Defesa(s) Titular(es)</Typography>
-        <TextField
-          fullWidth
-          type="number"
-          disabled={isLocked}
-          value={values.starterDefenseSlots}
-          onChange={(e) => {
-            const value = Number(e.target.value);
-            if (value >= 0 && value <= 2) {
-              onChange('starterDefenseSlots', value);
-            }
-          }}
-        />
-      </Box>
+      {values.defenseType === 'CLOSED' ? (
+        <Box>
+          <Typography fontWeight={600}>Defesas Titulares (unidades sintéticas)</Typography>
+          <TextField
+            fullWidth
+            type="number"
+            disabled={isLocked}
+            value={values.starterDefenseSlots}
+            onChange={(e) => {
+              const value = Number(e.target.value);
+              if (value >= 0 && value <= 2) onChange('starterDefenseSlots', value);
+            }}
+          />
+        </Box>
+      ) : (
+        <>
+          <Box>
+            <Typography fontWeight={600}>Goleiros Titulares</Typography>
+            <TextField
+              fullWidth
+              type="number"
+              disabled={isLocked}
+              value={values.starterGkSlots}
+              onChange={(e) => {
+                const value = Number(e.target.value);
+                if (value >= 0 && value <= 2) onChange('starterGkSlots', value);
+              }}
+            />
+          </Box>
+          <Box>
+            <Typography fontWeight={600}>Defensores Titulares</Typography>
+            <TextField
+              fullWidth
+              type="number"
+              disabled={isLocked}
+              value={values.starterDefenderSlots}
+              onChange={(e) => {
+                const value = Number(e.target.value);
+                if (value >= 0 && value <= 6) onChange('starterDefenderSlots', value);
+              }}
+            />
+          </Box>
+        </>
+      )}
 
       {/* Bench Settings */}
       <Typography fontWeight={600} sx={{ my: 2, fontSize: '1.2rem' }}>Jogadores Reserva</Typography>
@@ -226,7 +255,17 @@ const RosterSettingsForm: React.FC<Props> = ({ values, onChange, id, refetchRost
         <ToggleButtonGroup
           exclusive
           value={values.defenseType ?? 'CLOSED'}
-          onChange={(_, val) => { if (val && !isLocked) onChange('defenseType', val); }}
+          onChange={(_, val) => {
+            if (!val || isLocked) return;
+            onChange('defenseType', val);
+            if (val === 'OPEN') {
+              onChange('starterGkSlots', 1);
+              onChange('starterDefenderSlots', 4);
+            } else {
+              onChange('starterGkSlots', 0);
+              onChange('starterDefenderSlots', 0);
+            }
+          }}
           disabled={isLocked}
           size="small"
         >

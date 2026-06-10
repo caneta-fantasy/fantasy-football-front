@@ -98,7 +98,7 @@ const FantasyLeagueSeasonForm: React.FC<Props> = ({ values, onChange, id, refetc
             onChange={(e) => onChange('numberOfRounds', e.target.value)}
             disabled={isLocked}
           >
-            {Array.from({ length: 20 }, (_, i) => 19 + i).map((val) => (
+            {Array.from({ length: 20 }, (_, i) => 12 + i).map((val) => (
               <MenuItem key={val} value={val}>
                 {val}
               </MenuItem>

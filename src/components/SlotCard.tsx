@@ -14,14 +14,16 @@ export interface SlotCardProps {
 }
 
 export enum RosterSlotCard {
+    GK = 'GK',
     GOL = 'GOL',
-    DEF = 'DEF',  
+    DEF = 'DEF',
     MEI = 'MEI',
     ATA = 'ATA',
     BN = 'BN',
   }
 
   const slotColors: Record<string, string> = {
+    GK: '#1565c0',
     GOL: '#2196f3',
     DEF: '#4caf50',
     MEI: '#ffb300',

@@ -86,30 +86,34 @@ const MatchupRow: React.FC<{
           userSelect: 'none',
         }}
       >
-        <Typography
-          variant="body2"
-          fontWeight={isHighlighted ? 700 : 400}
-          sx={{ flex: 1, textAlign: 'right' }}
-          noWrap
-        >
-          {matchup.homeTeamName ?? 'Ghost'}
-        </Typography>
+        <Box sx={{ flex: 1, textAlign: 'right' }}>
+          <Typography variant="body2" fontWeight={isHighlighted ? 700 : 400} noWrap>
+            {matchup.homeTeamName ?? 'Ghost'}
+          </Typography>
+          {matchup.homeOwnerName && (
+            <Typography variant="caption" color="text.secondary" display="block" noWrap>
+              {matchup.homeOwnerName}
+            </Typography>
+          )}
+        </Box>
         <Typography
           variant="body2"
           fontWeight={700}
           color="text.secondary"
-          sx={{ mx: 2, minWidth: 90, textAlign: 'center', fontVariantNumeric: 'tabular-nums' }}
+          sx={{ mx: 2, minWidth: 90, textAlign: 'center', fontVariantNumeric: 'tabular-nums', flexShrink: 0 }}
         >
           {homeScore} – {awayScore}
         </Typography>
-        <Typography
-          variant="body2"
-          fontWeight={isHighlighted ? 700 : 400}
-          sx={{ flex: 1 }}
-          noWrap
-        >
-          {matchup.awayTeamName ?? 'Ghost'}
-        </Typography>
+        <Box sx={{ flex: 1 }}>
+          <Typography variant="body2" fontWeight={isHighlighted ? 700 : 400} noWrap>
+            {matchup.awayTeamName ?? 'Ghost'}
+          </Typography>
+          {matchup.awayOwnerName && (
+            <Typography variant="caption" color="text.secondary" display="block" noWrap>
+              {matchup.awayOwnerName}
+            </Typography>
+          )}
+        </Box>
         <Chip
           label={STATUS_LABELS[matchup.status] ?? matchup.status}
           size="small"

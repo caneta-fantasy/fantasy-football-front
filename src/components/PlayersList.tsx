@@ -37,6 +37,7 @@ import LockIcon from '@mui/icons-material/Lock';
 import PersonAddAlt1Icon from '@mui/icons-material/PersonAddAlt1';
 import GavelIcon from '@mui/icons-material/Gavel';
 import { usePlayers, usePlayersFilters } from '../api/playersQueries';
+import { useRosterSettings } from '../api/useRosterSettings';
 import AddPlayerModal from './AddPlayerModal';
 import PlayerStatsModal from './PlayerStatsModal';
 import WaiverClaimModal from './WaiverClaimModal';
@@ -52,26 +53,41 @@ import { getOpponentForTeam, formatMatchTime } from '../utils/matchUtils';
 import { useLockedTeams } from '../api/fantasyRoundGameQueries';
 
 
-const POSITION_OPTIONS = [
-  { value: 'ALL', label: 'TODOS' },
-  { value: 'DEF', label: 'DEF' },
-  { value: 'MEI', label: 'MEI' },
-  { value: 'ATA', label: 'ATA' },
-];
-
 const POSITIONS_TRANSLATION = {
   'Defender': 'Defensor',
   'Midfielder': 'Meio-Campo',
   'Attacker': 'Atacante',
   'Goalkeeper': 'Goleiro',
   'ALL': 'Todos',
-  'Defense': 'Defesa', // for synthetic team players
+  'Defense': 'Defesa',
 };
 
-const POSITIONS_BACKEND_MAP = {
-  'DEF': 'Defense',
-  'MEI': 'Midfielder',
-  'ATA': 'Attacker',
+const CLOSED_POSITION_OPTIONS = [
+  { value: 'ALL', label: 'TODOS' },
+  { value: 'DEF', label: 'DEF' },
+  { value: 'MEI', label: 'MEI' },
+  { value: 'ATA', label: 'ATA' },
+];
+
+const OPEN_POSITION_OPTIONS = [
+  { value: 'ALL', label: 'TODOS' },
+  { value: 'GK', label: 'GK' },
+  { value: 'DEF', label: 'DEF' },
+  { value: 'MEI', label: 'MEI' },
+  { value: 'ATA', label: 'ATA' },
+];
+
+const CLOSED_POSITIONS_BACKEND_MAP: Record<string, string> = {
+  DEF: 'Defense',
+  MEI: 'Midfielder',
+  ATA: 'Attacker',
+};
+
+const OPEN_POSITIONS_BACKEND_MAP: Record<string, string> = {
+  GK: 'Goalkeeper',
+  DEF: 'Defender',
+  MEI: 'Midfielder',
+  ATA: 'Attacker',
 };
 
 interface PlayersListProps {
@@ -103,6 +119,12 @@ const PlayersList: React.FC<PlayersListProps> = ({ fantasyLeague, seasonYear, us
   const lockedTeamIds = new Set<number>(lockedTeamsData?.lockedTeamIds ?? []);
   const draftCompleted = season ? POST_DRAFT_STATUSES.includes(season.status as LeagueStatus) : false;
 
+  const { data: rosterSettingsData } = useRosterSettings(fantasyLeague.id);
+  const defenseType = rosterSettingsData?.defenseType ?? 'CLOSED';
+  const isOpenDefense = defenseType === 'OPEN';
+  const positionOptions = isOpenDefense ? OPEN_POSITION_OPTIONS : CLOSED_POSITION_OPTIONS;
+  const positionsBackendMap = isOpenDefense ? OPEN_POSITIONS_BACKEND_MAP : CLOSED_POSITIONS_BACKEND_MAP;
+
   const [position, setPosition] = useState<string>('ALL');
   const [search, setSearch] = useState<string>('');
   const [page, setPage] = useState(0);
@@ -128,7 +150,7 @@ const PlayersList: React.FC<PlayersListProps> = ({ fantasyLeague, seasonYear, us
 
   const [addOpen, setAddOpen] = useState(false);
   const [selectedPlayer, setSelectedPlayer] = useState<null | {
-  id: number; name: string; photo: string; position: 'Defense' | 'Midfielder' | 'Attacker'; teamCode?: string;
+    id: number; name: string; photo: string; position: 'Goalkeeper' | 'Defense' | 'Defender' | 'Midfielder' | 'Attacker'; teamCode?: string;
   }>(null);
 
   const [waiverClaimOpen, setWaiverClaimOpen] = useState(false);
@@ -194,7 +216,7 @@ const PlayersList: React.FC<PlayersListProps> = ({ fantasyLeague, seasonYear, us
   const { data, isLoading: isLoadingPlayers, isFetching, refetch: refetchPlayers } = usePlayers({
     position: position === 'ALL'
       ? undefined
-      : [POSITIONS_BACKEND_MAP[position as keyof typeof POSITIONS_BACKEND_MAP]],
+      : [positionsBackendMap[position]],
     teamId: teamId ?? undefined,        // <-- only change here
     search,
     page: page + 1,
@@ -269,7 +291,7 @@ const PlayersList: React.FC<PlayersListProps> = ({ fantasyLeague, seasonYear, us
           onChange={(_, v) => setPosition(v ?? position)}
           size="small"
         >
-          {POSITION_OPTIONS.map((opt) => (
+          {positionOptions.map((opt) => (
             <ToggleButton key={opt.value} value={opt.value}>
               {opt.label}
             </ToggleButton>
