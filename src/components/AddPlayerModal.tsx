@@ -12,14 +12,14 @@ type SlotType = 'starter' | 'bench';
 
 export type UISlot = {
   index: number;
-  slot: 'DEF' | 'MEI' | 'ATA' | 'FLEX';
+  slot: 'GK' | 'DEF' | 'MEI' | 'ATA' | 'FLEX';
   slotType: SlotType;
   allowedPositions: RosterSlot[];
   player: null | {
     id: number;
     name: string;
     photo: string;
-    position: 'Defense' | 'Midfielder' | 'Attacker';
+    position: 'Goalkeeper' | 'Defense' | 'Defender' | 'Midfielder' | 'Attacker';
     team: { code: string };
   };
 };
@@ -34,7 +34,7 @@ type AddPlayerModalProps = {
     id: number;
     name: string;
     photo: string;
-    position: 'Defense' | 'Midfielder' | 'Attacker';
+    position: 'Goalkeeper' | 'Defense' | 'Defender' | 'Midfielder' | 'Attacker';
     teamCode?: string;
   };
   refetch: () => void;

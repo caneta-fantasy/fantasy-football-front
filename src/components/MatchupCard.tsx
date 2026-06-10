@@ -10,7 +10,9 @@ interface Props {
 
 const MatchupCard: React.FC<Props> = ({ matchup, highlighted = false, onClick }) => {
   const homeName = matchup.homeTeamName ?? 'Ghost';
+  const homeOwner = matchup.homeOwnerName;
   const awayName = matchup.awayTeamName ?? 'Ghost';
+  const awayOwner = matchup.awayOwnerName;
 
   if (matchup.status === 'bye') {
     return (
@@ -65,12 +67,14 @@ const MatchupCard: React.FC<Props> = ({ matchup, highlighted = false, onClick })
         }),
       }}
     >
-      <Typography
-        fontWeight={homeWon ? 700 : 400}
-        sx={{ flex: 1, textAlign: 'right', color: matchup.isGhost ? 'text.disabled' : 'text.primary' }}
-      >
-        {homeName}
-      </Typography>
+      <Box sx={{ flex: 1, textAlign: 'right' }}>
+        <Typography fontWeight={homeWon ? 700 : 400} color={matchup.isGhost ? 'text.disabled' : 'text.primary'}>
+          {homeName}
+        </Typography>
+        {homeOwner && (
+          <Typography variant="caption" color="text.secondary">{homeOwner}</Typography>
+        )}
+      </Box>
 
       <Box sx={{ display: 'flex', gap: 0.5, alignItems: 'center', minWidth: 80, justifyContent: 'center' }}>
         <Typography fontWeight={700} color={homeWon ? 'success.main' : 'text.secondary'}>
@@ -82,12 +86,14 @@ const MatchupCard: React.FC<Props> = ({ matchup, highlighted = false, onClick })
         </Typography>
       </Box>
 
-      <Typography
-        fontWeight={awayWon ? 700 : 400}
-        sx={{ flex: 1, color: matchup.isGhost ? 'text.disabled' : 'text.primary' }}
-      >
-        {awayName}
-      </Typography>
+      <Box sx={{ flex: 1 }}>
+        <Typography fontWeight={awayWon ? 700 : 400} color={matchup.isGhost ? 'text.disabled' : 'text.primary'}>
+          {awayName}
+        </Typography>
+        {awayOwner && (
+          <Typography variant="caption" color="text.secondary">{awayOwner}</Typography>
+        )}
+      </Box>
     </Box>
   );
 };

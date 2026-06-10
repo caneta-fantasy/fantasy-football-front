@@ -33,7 +33,7 @@ const StandingsTable: React.FC<Props> = ({ seasonId, userTeamId }) => {
   if (!standings || standings.length === 0) {
     return (
       <Typography color="text.secondary" textAlign="center" py={3}>
-        Ainda não há jogos concluídos.
+        O draft ainda não foi concluído.
       </Typography>
     );
   }
@@ -80,6 +80,11 @@ const StandingsTable: React.FC<Props> = ({ seasonId, userTeamId }) => {
                 </TableCell>
                 <TableCell sx={{ py: 1, px: 1.5, fontWeight: isMe ? 700 : 400 }}>
                   {row.teamName}
+                  {row.ownerName && (
+                    <Typography variant="caption" display="block" color="text.secondary" fontWeight={400}>
+                      {row.ownerName}
+                    </Typography>
+                  )}
                 </TableCell>
                 <TableCell align="center" sx={{ py: 1, px: 1.5, fontWeight: 700 }}>
                   {row.points}

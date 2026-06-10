@@ -7,8 +7,10 @@ export interface FantasyMatchupDto {
   roundNumber: number;
   homeTeamId: number | null;
   homeTeamName: string | null;
+  homeOwnerName: string | null;
   awayTeamId: number | null;
   awayTeamName: string | null;
+  awayOwnerName: string | null;
   homeScore: number | null;
   awayScore: number | null;
   winnerId: number | null;
@@ -32,6 +34,7 @@ const authHeader = () => ({
 export interface StandingDto {
   teamId: number;
   teamName: string;
+  ownerName?: string | null;
   wins: number;
   draws: number;
   losses: number;

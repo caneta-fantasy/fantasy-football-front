@@ -52,6 +52,7 @@ export const usePlayers = ({
   fantasyLeagueId,
   onlyFreeAgents,
   teamId,
+  excludePlayerIds,
 }: {
   position?: string[];
   search?: string;
@@ -63,14 +64,15 @@ export const usePlayers = ({
   fantasyLeagueId?: number;
   onlyFreeAgents: boolean,
   teamId?: number,
+  excludePlayerIds?: number[],
 }) => {
   return useQuery<PlayerResponse>({
-    queryKey: ['players', { position, search, page, limit, sortBy, order, leagueId, fantasyLeagueId, onlyFreeAgents, teamId }],
+    queryKey: ['players', { position, search, page, limit, sortBy, order, leagueId, fantasyLeagueId, onlyFreeAgents, teamId, excludePlayerIds }],
     enabled: leagueId != null,
     placeholderData: (prev) => prev,
     queryFn: async () => {
       const response = await axios.get(`${apiConfig.endpoints.players.getAll}`, {
-        params: { position, search, page, limit, sortBy, order, leagueId, fantasyLeagueId, onlyFreeAgents, teamId },
+        params: { position, search, page, limit, sortBy, order, leagueId, fantasyLeagueId, onlyFreeAgents, teamId, excludePlayerIds },
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token')}`,
         },
