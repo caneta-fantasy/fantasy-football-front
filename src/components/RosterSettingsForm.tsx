@@ -26,13 +26,17 @@ interface Props {
 }
 
 const RosterSettingsForm: React.FC<Props> = ({ values, onChange, id, refetchRosterSettings, refetchDraftSettings, seasonStatus }) => {
-  const [openSnackbar, setOpenSnackbar] = useState(false);
+  const [snackbar, setSnackbar] = useState<{ open: boolean; message: string; severity: 'success' | 'error' }>({ open: false, message: '', severity: 'success' });
   const isLocked = !!seasonStatus && ROSTER_LOCKED_STATUSES.includes(seasonStatus);
   const updateRoster = useUpdateRosterSettings({
     onSuccess: () => {
-      setOpenSnackbar(true);
+      setSnackbar({ open: true, message: 'Configurações salvas com sucesso!', severity: 'success' });
       refetchRosterSettings();
       refetchDraftSettings();
+    },
+    onError: (err: any) => {
+      const msg = err?.response?.data?.message ?? 'Erro ao salvar configurações.';
+      setSnackbar({ open: true, message: Array.isArray(msg) ? msg.join(', ') : msg, severity: 'error' });
     },
   });
 
@@ -144,6 +148,79 @@ const RosterSettingsForm: React.FC<Props> = ({ values, onChange, id, refetchRost
         />
       </Box>
 
+      {/* Position Limits */}
+      <Typography fontWeight={600} sx={{ my: 2, fontSize: '1.2rem' }}>Limites por Posição (opcional)</Typography>
+      <Typography variant="caption" color="text.secondary" display="block" sx={{ mb: 2 }}>
+        Deixe em branco para sem limite. Limites totais do elenco de cada jogador somando titulares e reservas.
+      </Typography>
+      <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 2 }}>
+        {values.defenseType === 'OPEN' && (
+          <Box>
+            <Typography fontWeight={600}>Máx. Goleiros</Typography>
+            <TextField
+              fullWidth
+              type="number"
+              inputProps={{ min: 1 }}
+              disabled={isLocked}
+              placeholder="Sem limite"
+              value={values.maxGk ?? ''}
+              onChange={(e) => onChange('maxGk', e.target.value === '' ? null : Number(e.target.value))}
+            />
+          </Box>
+        )}
+        {values.defenseType === 'OPEN' ? (
+          <Box>
+            <Typography fontWeight={600}>Máx. Defensores</Typography>
+            <TextField
+              fullWidth
+              type="number"
+              inputProps={{ min: 1 }}
+              disabled={isLocked}
+              placeholder="Sem limite"
+              value={values.maxDefenders ?? ''}
+              onChange={(e) => onChange('maxDefenders', e.target.value === '' ? null : Number(e.target.value))}
+            />
+          </Box>
+        ) : (
+          <Box>
+            <Typography fontWeight={600}>Máx. Defesas</Typography>
+            <TextField
+              fullWidth
+              type="number"
+              inputProps={{ min: 1 }}
+              disabled={isLocked}
+              placeholder="Sem limite"
+              value={values.maxDef ?? ''}
+              onChange={(e) => onChange('maxDef', e.target.value === '' ? null : Number(e.target.value))}
+            />
+          </Box>
+        )}
+        <Box>
+          <Typography fontWeight={600}>Máx. Meio-campistas</Typography>
+          <TextField
+            fullWidth
+            type="number"
+            inputProps={{ min: 1 }}
+            disabled={isLocked}
+            placeholder="Sem limite"
+            value={values.maxMid ?? ''}
+            onChange={(e) => onChange('maxMid', e.target.value === '' ? null : Number(e.target.value))}
+          />
+        </Box>
+        <Box>
+          <Typography fontWeight={600}>Máx. Atacantes</Typography>
+          <TextField
+            fullWidth
+            type="number"
+            inputProps={{ min: 1 }}
+            disabled={isLocked}
+            placeholder="Sem limite"
+            value={values.maxFwd ?? ''}
+            onChange={(e) => onChange('maxFwd', e.target.value === '' ? null : Number(e.target.value))}
+          />
+        </Box>
+      </Box>
+
       <Box sx={{ mt: 2 }}>
         <Typography fontWeight={600} sx={{ mb: 1 }}>Tipo de Defesa</Typography>
         <ToggleButtonGroup
@@ -180,9 +257,9 @@ const RosterSettingsForm: React.FC<Props> = ({ values, onChange, id, refetchRost
         </Button>
       </Box>
 
-      <Snackbar open={openSnackbar} autoHideDuration={3000} onClose={() => setOpenSnackbar(false)}>
-        <Alert severity="success" sx={{ width: '100%' }}>
-          Configurações salvas com sucesso!
+      <Snackbar open={snackbar.open} autoHideDuration={3000} onClose={() => setSnackbar((s) => ({ ...s, open: false }))}>
+        <Alert severity={snackbar.severity} sx={{ width: '100%' }}>
+          {snackbar.message}
         </Alert>
       </Snackbar>
     </>

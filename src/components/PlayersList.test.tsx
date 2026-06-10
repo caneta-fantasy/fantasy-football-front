@@ -168,7 +168,8 @@ describe('PlayersList (Jogadores)', () => {
         sortBy: 'totalPoints',
         order: 'desc',
         onlyFreeAgents: false,
-        leagueId: 555,
+        // #66 reverted usePlayers to fantasyLeague.league.id (not externalId).
+        leagueId: 5,
         fantasyLeagueId: 99,
       }),
     )

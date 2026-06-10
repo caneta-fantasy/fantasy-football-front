@@ -134,7 +134,7 @@ const PlayerSelectModal: React.FC<PlayerSelectModalProps> = ({
     limit: rowsPerPage,
     sortBy: 'goals',
     order: 'desc',
-    leagueId: fantasyLeague.league.id,
+    leagueId: fantasyLeague.league.id,       // internal DB id — used by tp.league_id join
     fantasyLeagueId: fantasyLeague.id,
     onlyFreeAgents: true,
     teamId: teamId !== '' ? teamId : undefined,
