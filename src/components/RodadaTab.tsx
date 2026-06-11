@@ -220,6 +220,9 @@ const RodadaTab: React.FC<Props> = ({
     ? [myMatchup, ...allMatchups.filter((m) => m.id !== myMatchup.id)]
     : allMatchups;
 
+  // Real championship round this fantasy round maps to (differs after a skip)
+  const activeRealRound = allMatchups[0]?.realRound ?? activeRound;
+
   // Default expansion: user's matchup open on mount / round change
   const defaultExpandedId = myMatchup?.id ?? orderedMatchups[0]?.id ?? null;
   const expandedId = expandedMatchupId !== undefined ? expandedMatchupId : defaultExpandedId;
@@ -278,6 +281,12 @@ const RodadaTab: React.FC<Props> = ({
         >
           <ArrowForwardIosIcon fontSize="small" />
         </IconButton>
+
+        {activeRealRound !== activeRound && (
+          <Typography variant="body2" color="text.secondary">
+            {activeRealRound} do Brasileirao
+          </Typography>
+        )}
       </Stack>
 
       {/* Matchup list — stable order, expand/collapse in place */}

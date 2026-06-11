@@ -8,6 +8,7 @@ interface CreateFantasyLeagueData {
   ownerId: number;
   leagueId: number;
   draftType: string;
+  numberOfRounds?: number;
 }
 
 export interface UpdateFantasyLeague {

@@ -75,6 +75,14 @@ const endpoints = {
     validateConfig: `${API_BASE_URL}/fantasy-matchups/validate-config`,
     delete: (seasonId: string) => `${API_BASE_URL}/fantasy-matchups/season/${seasonId}`,
   },
+  roundMappings: {
+    calendar: (seasonId: string) =>
+      `${API_BASE_URL}/fantasy-matchups/season/${seasonId}/round-calendar`,
+    skip: (seasonId: string, realRound: number) =>
+      `${API_BASE_URL}/fantasy-matchups/season/${seasonId}/skip/${realRound}`,
+    unskip: (seasonId: string, realRound: number) =>
+      `${API_BASE_URL}/fantasy-matchups/season/${seasonId}/unskip/${realRound}`,
+  },
   fantasyRoundGames: {
     lockedTeams: (leagueExternalId: number, seasonYear: number, roundNumber: number) =>
       `${API_BASE_URL}/fantasy-round-games/league/${leagueExternalId}/season/${seasonYear}/round/${roundNumber}/locked-teams`,
