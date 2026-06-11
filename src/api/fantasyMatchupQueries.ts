@@ -5,6 +5,8 @@ import { apiConfig } from './config';
 export interface FantasyMatchupDto {
   id: string;
   roundNumber: number;
+  // Real-league round this fantasy round maps to (equals roundNumber unless skipped)
+  realRound: number;
   homeTeamId: number | null;
   homeTeamName: string | null;
   homeOwnerName: string | null;

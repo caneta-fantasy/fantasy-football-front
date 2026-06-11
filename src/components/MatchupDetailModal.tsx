@@ -208,7 +208,11 @@ export interface MatchupDetailProps {
 export const MatchupDetail: React.FC<MatchupDetailProps> = ({ matchup, userTeamId, seasonYear, seasonId }) => {
   const isCompleted = matchup.status === 'completed';
 
-  const { data: realMatches } = useRealMatchesByRound(seasonYear, matchup.roundNumber);
+  // Real-world data (games, player history) lives under the REAL round, which
+  // differs from the fantasy round when the league skipped a championship round
+  const realRound = matchup.realRound ?? matchup.roundNumber;
+
+  const { data: realMatches } = useRealMatchesByRound(seasonYear, realRound);
   const { data: pointsMap } = usePointsByRound(
     isCompleted ? undefined : seasonId,
     matchup.roundNumber,
@@ -278,7 +282,7 @@ export const MatchupDetail: React.FC<MatchupDetailProps> = ({ matchup, userTeamI
         playerName={statsSlot?.name}
         playerPhoto={statsSlot?.photo}
         seasonId={seasonId}
-        roundFilter={matchup.roundNumber}
+        roundFilter={realRound}
         opponentInfo={statsSlot?.opponentInfo}
         onClose={() => setStatsSlot(null)}
       />

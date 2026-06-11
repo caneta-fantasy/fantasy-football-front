@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import {
+  Alert,
   Box,
   Typography,
   Button,
@@ -37,9 +38,15 @@ const modalStyle = {
   borderRadius: 3,
 };
 
+const CREATION_CUTOFF_ROUND = 26;
+const DEFAULT_ROUNDS = 19;
+const MIN_ROUNDS = 12;
+
 interface CreateLeagueModalProps {
   open: boolean;
   handleClose: () => void;
+  realCurrentRound?: number | null;
+  maxRealRound?: number | null;
 }
 
 const draftTypes = [
@@ -55,12 +62,37 @@ const draftTypes = [
   },
 ];
 
-const CreateLeagueModal: React.FC<CreateLeagueModalProps> = ({ open, handleClose }) => {
+const CreateLeagueModal: React.FC<CreateLeagueModalProps> = ({ open, handleClose, realCurrentRound, maxRealRound }) => {
   const { user } = useAuth();
   const [leagueName, setLeagueName] = useState('');
   const [numberOfTeams, setNumberOfTeams] = useState(8);
   const [draftType, setDraftType] = useState('snake');
   const { mutate: createFantasyLeague, isPending, isError, error } = useCreateFantasyLeague();
+
+  const maxAllowed = useMemo(() => {
+    if (maxRealRound != null && realCurrentRound != null) {
+      return maxRealRound - realCurrentRound + 1;
+    }
+    return null;
+  }, [maxRealRound, realCurrentRound]);
+
+  const roundOptions = useMemo(() => {
+    const all = Array.from({ length: 20 }, (_, i) => MIN_ROUNDS + i);
+    return maxAllowed != null ? all.filter((v) => v <= maxAllowed) : all;
+  }, [maxAllowed]);
+
+  const [numberOfRounds, setNumberOfRounds] = useState(() =>
+    Math.min(DEFAULT_ROUNDS, maxAllowed ?? DEFAULT_ROUNDS),
+  );
+
+  // Recalculate default when real round info loads
+  React.useEffect(() => {
+    if (maxAllowed != null) {
+      setNumberOfRounds((prev) => Math.min(prev, maxAllowed));
+    }
+  }, [maxAllowed]);
+
+  const isPastCutoff = realCurrentRound != null && realCurrentRound > CREATION_CUTOFF_ROUND;
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -73,6 +105,7 @@ const CreateLeagueModal: React.FC<CreateLeagueModalProps> = ({ open, handleClose
         ownerId: Number(user?.id) || 0,
         leagueId: 1,
         draftType,
+        numberOfRounds,
       },
       {
         onSuccess: handleClose,
@@ -89,6 +122,11 @@ const CreateLeagueModal: React.FC<CreateLeagueModalProps> = ({ open, handleClose
           Criar Nova Liga
         </Typography>
 
+        {isPastCutoff ? (
+          <Alert severity="warning">
+            Não é possível criar novas ligas após a rodada {CREATION_CUTOFF_ROUND} do campeonato. Aguarde a próxima temporada.
+          </Alert>
+        ) : (
         <form onSubmit={handleSubmit}>
           <Stack spacing={3}>
             <TextField
@@ -152,6 +190,23 @@ const CreateLeagueModal: React.FC<CreateLeagueModalProps> = ({ open, handleClose
               </RadioGroup>
             </FormControl>
 
+            <TextField
+              select
+              label="Número de Rodadas"
+              value={numberOfRounds}
+              onChange={(e) => setNumberOfRounds(Number(e.target.value))}
+              fullWidth
+              helperText={
+                maxAllowed != null && maxAllowed < DEFAULT_ROUNDS
+                  ? `Máximo disponível no campeonato: ${maxAllowed} rodadas`
+                  : undefined
+              }
+            >
+              {roundOptions.map((n) => (
+                <MenuItem key={n} value={n}>{n}</MenuItem>
+              ))}
+            </TextField>
+
             <Stack direction="row" spacing={2} justifyContent="flex-end" mt={1}>
               <Button onClick={handleClose} variant="outlined">
                 Cancelar
@@ -166,6 +221,7 @@ const CreateLeagueModal: React.FC<CreateLeagueModalProps> = ({ open, handleClose
             </Stack>
           </Stack>
         </form>
+        )}
 
         {isError && (
           <Typography color="error" sx={{ mt: 2 }}>

@@ -1,4 +1,4 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQueries, useQuery, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
 import { apiConfig } from './config';
 
@@ -60,6 +60,37 @@ export const useListRoundMatches = (
     enabled: !!leagueExternalId && !!seasonYear && roundNumber != null,
     staleTime: 0,
   });
+
+// Fetches all rounds in parallel and returns a map of realRound → non-PST match count.
+// Used by RoundCalendar to flag rounds with fewer than 10 confirmed games.
+export const useAllRoundsMatchCounts = (
+  leagueExternalId: number | undefined,
+  seasonYear: number | undefined,
+  realRounds: number[],
+): Map<number, number> => {
+  const results = useQueries({
+    queries: realRounds.map((round) => ({
+      queryKey: ['roundGameMatches', leagueExternalId, seasonYear, round],
+      queryFn: async () => {
+        const res = await axios.get(
+          apiConfig.endpoints.fantasyRoundGames.listMatches(leagueExternalId!, seasonYear!, round),
+          { headers: authHeader() },
+        );
+        return { round, matches: res.data as RoundGameMatch[] };
+      },
+      enabled: !!leagueExternalId && !!seasonYear,
+      staleTime: 0,
+    })),
+  });
+
+  const map = new Map<number, number>();
+  for (const r of results) {
+    if (r.data) {
+      map.set(r.data.round, r.data.matches.filter((m) => m.status !== 'PST').length);
+    }
+  }
+  return map;
+};
 
 export const useOrphanedMatches = (
   leagueExternalId: number | undefined,

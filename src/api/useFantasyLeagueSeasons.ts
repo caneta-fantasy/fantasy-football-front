@@ -17,6 +17,11 @@ export interface FantasyLeagueSeason {
   seasonYear: number;
   currentFantasyRound: number | null;
   currentRealRound: number | null;
+  // Real-league round tracker + skip budget (round calendar feature)
+  realCurrentRound: number | null;
+  maxRealRound: number;
+  lastMappedRealRound: number | null;
+  remainingSkipMargin: number | null;
   waiverSystem: 'AUCTION' | 'PRIORITY';
   initialWaiverBudget: number;
   fantasyLeague?: { league?: { externalId?: number } };
