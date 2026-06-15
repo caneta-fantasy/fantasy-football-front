@@ -159,6 +159,15 @@ const endpoints = {
     veto: (id: string) => `${API_BASE_URL}/trades/${id}/veto`,
     process: (id: string) => `${API_BASE_URL}/trades/${id}/process`,
   },
+  simulator: {
+    leagues: `${API_BASE_URL}/simulator/leagues`,
+    league: `${API_BASE_URL}/simulator/league`,
+    deleteLeague: (leagueId: number) => `${API_BASE_URL}/simulator/leagues/${leagueId}`,
+    recreateLeague: (leagueId: number) => `${API_BASE_URL}/simulator/leagues/${leagueId}/recreate`,
+    start: (seasonId: string) => `${API_BASE_URL}/simulator/seasons/${seasonId}/start`,
+    advance: (seasonId: string) => `${API_BASE_URL}/simulator/seasons/${seasonId}/advance`,
+    lockedTeams: (seasonId: string) => `${API_BASE_URL}/simulator/seasons/${seasonId}/locked-teams`,
+  },
   currentSeason: `${API_BASE_URL}/current-season`,
   usersTeamsRoster: {
     addPlayer: `${API_BASE_URL}/user-team-rosters`,

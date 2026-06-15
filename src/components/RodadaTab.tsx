@@ -25,17 +25,25 @@ interface Props {
   numberOfRounds?: number | null;
 }
 
+// Returns null when every round (regular + playoffs) is completed — season over
 function detectCurrentRound(
   regularRounds: number[],
   playoffRounds: number[],
   regularSchedule: { roundNumber: number; matchups: FantasyMatchupDto[] }[],
-): number {
+  playoffMatchups: FantasyMatchupDto[],
+): number | null {
   const activeRegular = regularSchedule.find((r) =>
     r.matchups.some((m) => m.status !== 'completed' && m.status !== 'bye'),
   );
   if (activeRegular) return activeRegular.roundNumber;
-  if (playoffRounds.length > 0) return playoffRounds[0];
-  return regularRounds[regularRounds.length - 1];
+  for (const round of playoffRounds) {
+    const matchups = playoffMatchups.filter((m) => m.roundNumber === round);
+    // No matchups yet (bracket/stage not generated) → this round is next up
+    if (matchups.length === 0) return round;
+    if (matchups.some((m) => m.status !== 'completed' && m.status !== 'bye')) return round;
+  }
+  if (playoffRounds.length === 0) return regularRounds[regularRounds.length - 1] ?? null;
+  return null;
 }
 
 // ─── Single matchup row: collapsed = score card, expanded = full detail ──────
@@ -171,9 +179,14 @@ const RodadaTab: React.FC<Props> = ({
   const currentRoundNumber = useMemo(() => {
     if (currentRound != null) return currentRound;
     if (regularRounds.length > 0)
-      return detectCurrentRound(regularRounds, playoffRounds, schedule ?? []);
+      return detectCurrentRound(
+        regularRounds,
+        playoffRounds,
+        schedule ?? [],
+        playoffMatchups ?? [],
+      );
     return null;
-  }, [currentRound, regularRounds, playoffRounds, schedule]);
+  }, [currentRound, regularRounds, playoffRounds, schedule, playoffMatchups]);
 
   if (!seasonId) {
     return (
@@ -199,7 +212,8 @@ const RodadaTab: React.FC<Props> = ({
     );
   }
 
-  const activeRound = selectedRound ?? currentRoundNumber ?? allRounds[0];
+  // Season over (no current round) → default to the last round played
+  const activeRound = selectedRound ?? currentRoundNumber ?? allRounds[allRounds.length - 1];
   const activeIndex = allRounds.indexOf(activeRound);
   const isPlayoffRound = playoffStartRound != null && activeRound >= playoffStartRound;
 

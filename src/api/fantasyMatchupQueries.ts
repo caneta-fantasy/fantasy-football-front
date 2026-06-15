@@ -21,7 +21,11 @@ export interface FantasyMatchupDto {
   isGhost: boolean;
   playoffStage: number | null;
   twoLegPairId: string | null;
+  // Bracket POSITION of each side (drives layout/pairings) — NOT the team's identity seed.
   playoffSeed: { homeSeed: number; awaySeed: number } | null;
+  // The teams' true regular-season seeds, stable across the whole bracket.
+  homeTeamSeed: number | null;
+  awayTeamSeed: number | null;
 }
 
 export interface ScheduleByRoundDto {

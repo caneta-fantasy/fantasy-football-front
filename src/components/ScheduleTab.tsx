@@ -36,20 +36,20 @@ const ScheduleTab: React.FC<Props> = ({ seasonId, userTeamId, seasonYear }) => {
 
   return (
     <Box>
-      <Typography variant="h6" fontWeight={700} mb={2}>
-        Classificação
-      </Typography>
-      <StandingsTable seasonId={seasonId} userTeamId={userTeamId} />
-
       {hasPlayoffMatchups && (
         <>
-          <Divider sx={{ my: 4 }} />
           <Typography variant="h6" fontWeight={700} mb={2}>
             Mata-mata
           </Typography>
           <PlayoffBracket seasonId={seasonId} seasonYear={seasonYear} />
+          <Divider sx={{ my: 4 }} />
         </>
       )}
+
+      <Typography variant="h6" fontWeight={700} mb={2}>
+        Classificação
+      </Typography>
+      <StandingsTable seasonId={seasonId} userTeamId={userTeamId} />
     </Box>
   );
 };

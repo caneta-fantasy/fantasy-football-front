@@ -19,6 +19,7 @@ export interface FantasyLeague {
     numberOfTeams: number;
     isOwner?: boolean;
     isActive?: boolean;
+    isSimulation?: boolean;
     league: {
       id: number;
       externalId: number;

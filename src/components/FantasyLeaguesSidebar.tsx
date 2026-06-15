@@ -1,6 +1,6 @@
 // FantasyLeaguesSidebar.tsx
 import React from 'react';
-import { Button, Stack, Typography, Divider, Paper } from '@mui/material';
+import { Button, Stack, Typography, Divider, Paper, Chip } from '@mui/material';
 import { FantasyLeague } from '../api/fantasyLeagueQueries';
 import SeasonStatusCard from '../components/SeasonStatusCard';
 import { useFantasyLeagueSeasons } from '../api/useFantasyLeagueSeasons';
@@ -46,6 +46,9 @@ const FantasyLeaguesSidebar: React.FC<Props> = ({
     >
       <Typography variant="h6" gutterBottom>
         {fantasyLeague.name}
+        {fantasyLeague.isSimulation && (
+          <Chip label="Simulação" color="warning" size="small" sx={{ ml: 1 }} />
+        )}
       </Typography>
 
       <Typography variant="body2" sx={{ mb: 1 }}>
