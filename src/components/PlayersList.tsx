@@ -51,6 +51,7 @@ import Loading from './Loading';
 import { useRealMatchesByRound } from '../api/matchesQueries';
 import { getOpponentForTeam, formatMatchTime } from '../utils/matchUtils';
 import { useLockedTeams } from '../api/fantasyRoundGameQueries';
+import { useSimulationLockedTeams } from '../api/simulatorQueries';
 
 
 const POSITIONS_TRANSLATION = {
@@ -115,8 +116,19 @@ const PlayersList: React.FC<PlayersListProps> = ({ fantasyLeague, seasonYear, us
     activeRealRound ? seasonYear : undefined,
     activeRealRound ?? undefined,
   );
-  const { data: lockedTeamsData } = useLockedTeams(fantasyLeague.league.externalId, seasonYear, activeRealRound);
-  const lockedTeamIds = new Set<number>(lockedTeamsData?.lockedTeamIds ?? []);
+  // Simulation leagues: locks are the admin's manual per-club toggles, not real kickoffs
+  const isSimulation = !!fantasyLeague.isSimulation;
+  const { data: lockedTeamsData } = useLockedTeams(
+    isSimulation ? undefined : fantasyLeague.league.externalId,
+    seasonYear,
+    activeRealRound,
+  );
+  const { data: simLockedTeams } = useSimulationLockedTeams(isSimulation ? season?.id : null);
+  const lockedTeamIds = new Set<number>(
+    isSimulation
+      ? (simLockedTeams?.teams ?? []).filter((t) => t.locked).map((t) => t.id)
+      : lockedTeamsData?.lockedTeamIds ?? [],
+  );
   const draftCompleted = season ? POST_DRAFT_STATUSES.includes(season.status as LeagueStatus) : false;
 
   const { data: rosterSettingsData } = useRosterSettings(fantasyLeague.id);

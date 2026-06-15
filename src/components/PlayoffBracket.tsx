@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { Box, CircularProgress, Paper, Typography } from '@mui/material';
+import { Box, CircularProgress, Paper, Tooltip, Typography } from '@mui/material';
 import { usePlayoffMatchups, FantasyMatchupDto } from '../api/fantasyMatchupQueries';
 
 interface Props {
@@ -149,7 +149,7 @@ function detectByeTeams(
 // ──────────────────────────────────────────────────────────────────────────────
 
 const SLOT_HEIGHT = 84;
-const SLOT_WIDTH = 210;
+const SLOT_WIDTH = 280;
 const CONNECTOR_W = 28;
 
 const scoreStr = (score: number | null) =>
@@ -163,9 +163,10 @@ interface TeamRowProps {
   isTwoLeg: boolean;
   isWinner: boolean;
   hasBorder: boolean;
+  seed?: number | null;
 }
 
-const TeamRow: React.FC<TeamRowProps> = ({ name, score, leg1Score, leg2Score, isTwoLeg, isWinner, hasBorder }) => (
+const TeamRow: React.FC<TeamRowProps> = ({ name, score, leg1Score, leg2Score, isTwoLeg, isWinner, hasBorder, seed }) => (
   <Box
     sx={{
       display: 'flex',
@@ -179,14 +180,27 @@ const TeamRow: React.FC<TeamRowProps> = ({ name, score, leg1Score, leg2Score, is
       minWidth: 0,
     }}
   >
-    <Typography
-      variant="caption"
-      fontWeight={isWinner ? 800 : 400}
-      noWrap
-      sx={{ flex: 1, mr: 0.75, fontSize: 11, lineHeight: 1.3 }}
-    >
-      {name ?? '?'}
-    </Typography>
+    <Box sx={{ display: 'flex', alignItems: 'center', flex: 1, minWidth: 0, mr: 0.75 }}>
+      {seed != null && (
+        <Typography
+          component="span"
+          variant="caption"
+          sx={{ fontSize: 9, color: 'text.disabled', fontWeight: 600, mr: 0.4, flexShrink: 0 }}
+        >
+          #{seed}
+        </Typography>
+      )}
+      <Tooltip title={name ?? ''} placement="top" disableHoverListener={(name?.length ?? 0) <= 20}>
+        <Typography
+          variant="caption"
+          fontWeight={isWinner ? 800 : 400}
+          noWrap
+          sx={{ fontSize: 11, lineHeight: 1.3 }}
+        >
+          {name ?? '?'}
+        </Typography>
+      </Tooltip>
+    </Box>
     {isTwoLeg ? (
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.4, flexShrink: 0 }}>
         <Typography variant="caption" sx={{ fontSize: 10, color: 'text.disabled' }}>
@@ -247,6 +261,7 @@ const MatchupBox: React.FC<{ slot: BracketSlot }> = ({ slot }) => {
         isTwoLeg={isTwoLeg}
         isWinner={homeWon}
         hasBorder
+        seed={rep.homeTeamSeed ?? null}
       />
       <TeamRow
         name={rep.awayTeamName}
@@ -256,23 +271,31 @@ const MatchupBox: React.FC<{ slot: BracketSlot }> = ({ slot }) => {
         isTwoLeg={isTwoLeg}
         isWinner={awayWon}
         hasBorder={false}
+        seed={rep.awayTeamSeed ?? null}
       />
     </Paper>
   );
 };
 
-const ByeBox: React.FC<{ teamName: string }> = ({ teamName }) => (
+const ByeBox: React.FC<{ teamName: string; seed?: number }> = ({ teamName, seed }) => (
   <Paper
     variant="outlined"
     sx={{ width: SLOT_WIDTH, borderRadius: 1.5, overflow: 'hidden', borderColor: 'divider', bgcolor: 'action.hover' }}
   >
-    <Box sx={{ px: 1, py: 0.65, borderBottom: '1px solid', borderColor: 'divider' }}>
-      <Typography variant="caption" fontWeight={700} noWrap sx={{ fontSize: 11 }}>
-        {teamName}
-      </Typography>
+    <Box sx={{ px: 1, py: 0.65, borderBottom: '1px solid', borderColor: 'divider', display: 'flex', alignItems: 'center' }}>
+      {seed != null && (
+        <Typography component="span" variant="caption" sx={{ fontSize: 9, color: 'text.disabled', fontWeight: 600, mr: 0.4, flexShrink: 0 }}>
+          #{seed}
+        </Typography>
+      )}
+      <Tooltip title={teamName} placement="top" disableHoverListener={teamName.length <= 20}>
+        <Typography variant="caption" fontWeight={700} noWrap sx={{ fontSize: 11 }}>
+          {teamName}
+        </Typography>
+      </Tooltip>
     </Box>
     <Box sx={{ px: 1, py: 0.65 }}>
-      <Typography variant="caption" color="text.disabled" sx={{ fontSize: 10 }}>Bye</Typography>
+      <Typography variant="caption" color="text.disabled" sx={{ fontSize: 10 }}>Folga</Typography>
     </Box>
   </Paper>
 );
@@ -344,7 +367,7 @@ const BracketColumn: React.FC<ColumnProps> = ({ maxStage, slotMap, visualOrder, 
               alignItems: 'center',
             }}
           >
-            {byeName ? <ByeBox teamName={byeName} /> : slot ? <MatchupBox slot={slot} /> : <TbdBox />}
+            {byeName ? <ByeBox teamName={byeName} seed={position} /> : slot ? <MatchupBox slot={slot} /> : <TbdBox />}
           </Box>
         );
       })}

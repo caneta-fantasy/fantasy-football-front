@@ -14,7 +14,8 @@ import { UserTeam } from '../api/userTeamsQueries';
 import Loading from './Loading';
 import { useRealMatchesByRound } from '../api/matchesQueries';
 import { getOpponentForTeam } from '../utils/matchUtils';
-import { useLockedTeams } from '../api/fantasyRoundGameQueries';  
+import { useLockedTeams } from '../api/fantasyRoundGameQueries';
+import { useSimulationLockedTeams } from '../api/simulatorQueries';
 import { useFantasyLeagueSeasons } from '../api/useFantasyLeagueSeasons';
 
 interface Props {
@@ -38,8 +39,19 @@ interface Props {
     const { data: season } = useFantasyLeagueSeasons(fantasyLeague.id);
     const currentRealRound = season?.currentRealRound ?? undefined;
     const { data: realMatches } = useRealMatchesByRound(seasonYear, currentRealRound);
-    const { data: lockedTeamsData } = useLockedTeams(fantasyLeague.league.externalId, seasonYear, currentRealRound);
-    const lockedTeamIds = new Set<number>(lockedTeamsData?.lockedTeamIds ?? []);
+    // Simulation leagues: locks are the admin's manual per-club toggles, not real kickoffs
+    const isSimulation = !!fantasyLeague.isSimulation;
+    const { data: lockedTeamsData } = useLockedTeams(
+      isSimulation ? undefined : fantasyLeague.league.externalId,
+      seasonYear,
+      currentRealRound,
+    );
+    const { data: simLockedTeams } = useSimulationLockedTeams(isSimulation ? season?.id : null);
+    const lockedTeamIds = new Set<number>(
+      isSimulation
+        ? (simLockedTeams?.teams ?? []).filter((t) => t.locked).map((t) => t.id)
+        : lockedTeamsData?.lockedTeamIds ?? [],
+    );
     const isViewingOwnTeam = selectedTeamId === userTeam.id;
     const viewedTeam = leagueTeams?.find((t: FantasyLeagueTeamsResponse) => t.id === selectedTeamId);
 

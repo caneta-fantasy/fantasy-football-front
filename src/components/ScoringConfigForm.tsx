@@ -43,11 +43,11 @@ const ATTACK_ROWS: StatRow[] = [
 
 const DEFENSE_ROWS: StatRow[] = [
   { field: 'penaltySavedPoints', label: 'Defesa de pênalti', note: 'GK / defesa fechada' },
-  { field: 'cleanSheetPoints', label: 'Jogo sem sofrer gols', note: 'GK+DEF / defesa fechada' },
+  { field: 'cleanSheetPoints', label: 'Jogo sem sofrer gols', note: 'GK / defesa fechada' },
   { field: 'savePoints', label: 'Defesa', note: 'GK / defesa fechada' },
   { field: 'tacklePoints', label: 'Desarme' },
   { field: 'ownGoalPoints', label: 'Gol contra' },
-  { field: 'goalConcededPoints', label: 'Gol sofrido', note: 'GK+DEF / defesa fechada' },
+  { field: 'goalConcededPoints', label: 'Gol sofrido', note: 'GK / defesa fechada' },
   { field: 'redCardPoints', label: 'Cartão vermelho' },
   { field: 'yellowCardPoints', label: 'Cartão amarelo' },
   { field: 'foulCommittedPoints', label: 'Falta cometida' },

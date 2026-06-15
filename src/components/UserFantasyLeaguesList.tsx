@@ -1,9 +1,10 @@
-import { 
-  Box, 
-  Typography, 
-  Card, 
-  CardActionArea, 
+import {
+  Box,
+  Typography,
+  Card,
+  CardActionArea,
   CardContent,
+  Chip,
 } from '@mui/material';
 import { FantasyLeague } from '../api/fantasyLeagueQueries';
 
@@ -60,6 +61,9 @@ export const UserFantasyLeaguesList = ({ fantasyLeagues, onFantasyLeagueSelect }
               <CardContent>
                 <Typography gutterBottom variant="h6" component="div">
                   {fantasyLeague.name}
+                  {fantasyLeague.isSimulation && (
+                    <Chip label="Simulação" color="warning" size="small" sx={{ ml: 1 }} />
+                  )}
                   {fantasyLeague.isOwner && (
                     <Typography 
                       component="span" 
