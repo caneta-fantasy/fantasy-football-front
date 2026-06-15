@@ -5,8 +5,13 @@ const endpoints = {
   auth: {
     signup: `${API_BASE_URL}/users/signup`,
     signin: `${API_BASE_URL}/users/signin`,
+    login: `${API_BASE_URL}/auth/login`,
     refresh: `${API_BASE_URL}/auth/refresh`,
     profile: `${API_BASE_URL}/auth/profile`,
+    forgotPassword: `${API_BASE_URL}/auth/forgot-password`,
+    resetPassword: `${API_BASE_URL}/auth/reset-password`,
+    verifyEmail: `${API_BASE_URL}/users/verify-email`,
+    resendVerification: `${API_BASE_URL}/users/me/resend-verification`,
   },
   users: {
     update: `${API_BASE_URL}/users/update`,
@@ -16,6 +21,8 @@ const endpoints = {
     create: `${API_BASE_URL}/fantasy-leagues`,
     get: `${API_BASE_URL}/fantasy-leagues`,
     myLeagues: `${API_BASE_URL}/fantasy-leagues/my-leagues`,
+    join: `${API_BASE_URL}/fantasy-leagues/join`,
+    byCode: (code: string) => `${API_BASE_URL}/fantasy-leagues/by-code/${code}`,
     getLeague: `${API_BASE_URL}/fantasy-leagues`,
     update: (id: number) => `${API_BASE_URL}/fantasy-leagues/${id}`,
     getInvitesByLeagueId: (id: number) => `${API_BASE_URL}/fantasy-leagues/${id}/invites`,

@@ -56,6 +56,76 @@ export const useLogIn = () => {
 };
 
 
+export const useForgotPassword = () => {
+  return useMutation({
+    mutationFn: async (email: string) => {
+      const response = await fetch(apiConfig.endpoints.auth.forgotPassword, {
+        method: 'POST',
+        headers: apiConfig.headers,
+        body: JSON.stringify({ email }),
+      });
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.message || 'Falha ao solicitar redefinição');
+      }
+      return response.json();
+    },
+  });
+};
+
+export const useResetPassword = () => {
+  return useMutation({
+    mutationFn: async (data: { token: string; password: string }) => {
+      const response = await fetch(apiConfig.endpoints.auth.resetPassword, {
+        method: 'POST',
+        headers: apiConfig.headers,
+        body: JSON.stringify(data),
+      });
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.message || 'Falha ao redefinir a senha');
+      }
+      return response.json();
+    },
+  });
+};
+
+export const useVerifyEmail = () => {
+  return useMutation({
+    mutationFn: async (token: string) => {
+      const response = await fetch(apiConfig.endpoints.auth.verifyEmail, {
+        method: 'POST',
+        headers: apiConfig.headers,
+        body: JSON.stringify({ token }),
+      });
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.message || 'Falha ao verificar o email');
+      }
+      return response.json();
+    },
+  });
+};
+
+export const useResendVerification = () => {
+  return useMutation({
+    mutationFn: async () => {
+      const response = await fetch(apiConfig.endpoints.auth.resendVerification, {
+        method: 'POST',
+        headers: {
+          ...apiConfig.headers,
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
+        },
+      });
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.message || 'Falha ao reenviar verificação');
+      }
+      return response.json();
+    },
+  });
+};
+
 export const useGetCurrentUser = () => {
   return useQuery<User>({
     queryKey: ['currentUser'],

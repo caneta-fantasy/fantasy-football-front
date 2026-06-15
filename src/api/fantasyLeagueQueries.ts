@@ -17,6 +17,7 @@ export interface FantasyLeague {
     id: number;
     name: string;
     numberOfTeams: number;
+    joinCode?: string | null;
     isOwner?: boolean;
     isActive?: boolean;
     isSimulation?: boolean;
