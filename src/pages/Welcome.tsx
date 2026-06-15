@@ -4,6 +4,7 @@ import { Box, Typography, Button, Stack, Alert } from '@mui/material';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import CreateLeagueModal from '../components/CreateLeagueModal';
+import JoinLeagueModal from '../components/JoinLeagueModal';
 import { UserFantasyLeaguesList } from '../components/UserFantasyLeaguesList';
 import { useGetMyLeagues } from '../api/fantasyLeagueQueries';
 import { useFantasyLeagueSeasons } from '../api/useFantasyLeagueSeasons';
@@ -15,6 +16,7 @@ const Welcome = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isJoinModalOpen, setIsJoinModalOpen] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   
   // Use the React Query hook
@@ -130,7 +132,7 @@ const acceptInviteMutation = useMutation({
           </Typography>
         ) : (
           <>
-          <Box sx={{ mb: 2 }}>
+          <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} sx={{ mb: 2 }}>
           <Button
             onClick={() => setIsModalOpen(true)}
             sx={{
@@ -145,7 +147,21 @@ const acceptInviteMutation = useMutation({
           >
             Criar Nova Liga
           </Button>
-        </Box>
+          <Button
+            variant="outlined"
+            onClick={() => setIsJoinModalOpen(true)}
+            sx={{
+              padding: '10px 20px',
+              borderRadius: '8px',
+              fontSize: '16px',
+              textTransform: 'none',
+              borderColor: '#1976d2',
+              color: '#1976d2',
+            }}
+          >
+            Entrar com código
+          </Button>
+        </Stack>
           <UserFantasyLeaguesList 
             fantasyLeagues={fantasyLeagues || []} 
             onFantasyLeagueSelect={handleFantasyLeagueSelect} 
@@ -159,6 +175,11 @@ const acceptInviteMutation = useMutation({
         handleClose={() => setIsModalOpen(false)}
         realCurrentRound={firstLeagueSeason?.realCurrentRound ?? null}
         maxRealRound={firstLeagueSeason?.maxRealRound ?? null}
+      />
+
+      <JoinLeagueModal
+        open={isJoinModalOpen}
+        handleClose={() => setIsJoinModalOpen(false)}
       />
 
       {errorMessage && (

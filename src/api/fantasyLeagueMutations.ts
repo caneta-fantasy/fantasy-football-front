@@ -88,6 +88,24 @@ export const useUpdateFantasyLeague = ({ onSuccess }: { onSuccess: () => void })
   });
 };
 
+export const useJoinFantasyLeague = () => {
+  return useMutation({
+    mutationFn: async (joinCode: string) => {
+      const res = await axios.post(
+        apiConfig.endpoints.fantasyLeagues.join,
+        { joinCode },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${localStorage.getItem('token')}`,
+          },
+        },
+      );
+      return res.data as { message: string; leagueId: number };
+    },
+  });
+};
+
 export const useDeleteFantasyLeague = () =>
   useMutation({
     mutationFn: (id: number) =>

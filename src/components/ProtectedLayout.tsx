@@ -1,6 +1,7 @@
 // ProtectedLayout.tsx
 import { useAuth } from '../context/AuthContext';
 import { Navigate, Outlet, useLocation } from 'react-router-dom';
+import EmailVerificationBanner from './EmailVerificationBanner';
 
 const ProtectedLayout = () => {
   const { user } = useAuth();
@@ -15,7 +16,12 @@ const ProtectedLayout = () => {
     return <Navigate to="/welcome" replace />;
   }
 
-  return <Outlet />;
+  return (
+    <>
+      <EmailVerificationBanner />
+      <Outlet />
+    </>
+  );
 };
 
 export default ProtectedLayout;

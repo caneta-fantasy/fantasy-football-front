@@ -10,7 +10,7 @@ import {
 import { Link as RouterLink } from 'react-router-dom';
 import { useLogIn } from '../api/authQueries';
 import { useAuth } from '../context/AuthContext';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import Loading from '../components/Loading';
 
 const SignIn: React.FC = () => {
@@ -26,6 +26,8 @@ const SignIn: React.FC = () => {
 
   const { login } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
+  const successMessage = (location.state as { message?: string })?.message;
   const { mutate: signIn, isPending, isError, error } = useLogIn();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -83,6 +85,12 @@ const SignIn: React.FC = () => {
           Entrar na sua conta
         </Typography>
         
+        {successMessage && (
+          <Typography color="success.main" sx={{ mb: 2 }}>
+            {successMessage}
+          </Typography>
+        )}
+
         {isError && (
           <Typography color="error" sx={{ mb: 2 }}>
             {error instanceof Error ? error.message : 'Falha no login. Verifique suas credenciais.'}
@@ -123,7 +131,13 @@ const SignIn: React.FC = () => {
             helperText={errors.password ? "Senha é obrigatória" : ""}
             required
           />
-          
+
+          <Box sx={{ textAlign: 'right', mt: 1 }}>
+            <Link component={RouterLink} to="/forgot-password" variant="body2">
+              Esqueceu a senha?
+            </Link>
+          </Box>
+
           <Button
             type="submit"
             fullWidth
