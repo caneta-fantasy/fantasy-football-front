@@ -1,5 +1,5 @@
 import { Avatar, Typography, Box, Chip, Paper, Stack, Button } from '@mui/material';
-import { POSITIONS_TRANSLATION } from './PlayerSelectModal';
+import { POSITIONS_TRANSLATION } from '../utils/positions';
 import { RosterPlayer, Slot } from './userTeamRosterQueries';
 import { OpponentInfo, formatMatchTime } from '../utils/matchUtils';
 

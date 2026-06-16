@@ -1,9 +1,8 @@
 import { useMutation, useQueries, useQuery, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
 import { apiConfig } from './config';
+import { authHeader } from './httpClient';
 import { STALE_TIME, REFETCH_INTERVAL } from './queryConfig';
-
-const authHeader = () => ({ Authorization: `Bearer ${localStorage.getItem('token')}` });
 
 export interface RoundGameMatch {
   matchId: number;

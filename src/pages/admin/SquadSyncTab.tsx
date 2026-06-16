@@ -25,9 +25,8 @@ import SyncIcon from '@mui/icons-material/Sync';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import { apiConfig } from '../../api/config';
+import { authHeader } from '../../api/httpClient';
 import { useSyncAllSquads, useSyncTeamSquad } from '../../api/playerSyncQueries';
-
-const authHeader = () => ({ Authorization: `Bearer ${localStorage.getItem('token')}` });
 
 interface TeamFilter {
   id: number;

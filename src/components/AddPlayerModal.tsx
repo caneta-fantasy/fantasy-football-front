@@ -6,7 +6,7 @@ import {
 } from '@mui/material';
 import { useAddPlayer, useReplacePlayer } from '../api/userTeamRosterMutations';
 import { mapPositionToSlot, RosterSlot } from '../utils/positions';
-import { POSITIONS_TRANSLATION } from './PlayerSelectModal';
+import { POSITIONS_TRANSLATION } from '../utils/positions';
 
 type SlotType = 'starter' | 'bench';
 

@@ -17,6 +17,7 @@ import {
   Divider,
 } from '@mui/material';
 import { Trade, TradeLeg, useAcceptTrade, DropPlayerForLeg } from '../api/tradeQueries';
+import { POSITION_SLOT_MAP } from '../utils/positions';
 import { useRoster } from './userTeamRosterQueries';
 
 interface Props {
@@ -38,16 +39,7 @@ const IncomingLegRow: React.FC<{
 }> = ({ leg, myUserTeamId, seasonYear, dropPlayerId, onDropChange, outgoingPlayerIds }) => {
   const { data: roster = [] } = useRoster({ userTeamId: myUserTeamId, seasonYear });
 
-  const positionSlotMap: Record<string, string[]> = {
-    Defense: ['DEF'],
-    Defender: ['DEF'],
-    Midfielder: ['MEI', 'FLEX'],
-    Attacker: ['ATA', 'FLEX'],
-    Forward: ['ATA', 'FLEX'],
-    Striker: ['ATA', 'FLEX'],
-    Winger: ['ATA', 'FLEX'],
-  };
-  const compatibleSlots = positionSlotMap[leg.player.position] ?? [];
+  const compatibleSlots = POSITION_SLOT_MAP[leg.player.position] ?? [];
 
   // A slot is available if it's empty OR the player in it is being traded away
   const hasOpenSlot = roster.some((s: any) => {

@@ -1,10 +1,7 @@
 import { useMutation } from '@tanstack/react-query';
 import axios from 'axios';
 import { apiConfig } from './config';
-
-const authHeader = () => ({
-  Authorization: `Bearer ${localStorage.getItem('token')}`,
-});
+import { authHeader } from './httpClient';
 
 export interface UpdateProfileData {
   firstName?: string;

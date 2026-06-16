@@ -1,10 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import { apiConfig } from './config';
-
-const authHeader = () => ({
-  Authorization: `Bearer ${localStorage.getItem('token')}`,
-});
+import { authHeader } from './httpClient';
 
 export interface PlayerHistoryRow {
   roundNumber: number | null;

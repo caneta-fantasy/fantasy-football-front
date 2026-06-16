@@ -48,48 +48,18 @@ import { FantasyLeague } from '../api/fantasyLeagueQueries';
 import { useFantasyLeagueSeasons } from '../api/useFantasyLeagueSeasons';
 import { LeagueStatus } from './SeasonStatusCard';
 import Loading from './Loading';
+import {
+  POSITIONS_TRANSLATION,
+  CLOSED_POSITION_OPTIONS,
+  OPEN_POSITION_OPTIONS,
+  CLOSED_POSITIONS_BACKEND_MAP,
+  OPEN_POSITIONS_BACKEND_MAP,
+} from '../utils/positions';
 import { useRealMatchesByRound } from '../api/matchesQueries';
 import { getOpponentForTeam, formatMatchTime } from '../utils/matchUtils';
 import { useLockedTeams } from '../api/fantasyRoundGameQueries';
 import { useSimulationLockedTeams } from '../api/simulatorQueries';
 
-
-const POSITIONS_TRANSLATION = {
-  'Defender': 'Defensor',
-  'Midfielder': 'Meio-Campo',
-  'Attacker': 'Atacante',
-  'Goalkeeper': 'Goleiro',
-  'ALL': 'Todos',
-  'Defense': 'Defesa',
-};
-
-const CLOSED_POSITION_OPTIONS = [
-  { value: 'ALL', label: 'TODOS' },
-  { value: 'DEF', label: 'DEF' },
-  { value: 'MEI', label: 'MEI' },
-  { value: 'ATA', label: 'ATA' },
-];
-
-const OPEN_POSITION_OPTIONS = [
-  { value: 'ALL', label: 'TODOS' },
-  { value: 'GK', label: 'GK' },
-  { value: 'DEF', label: 'DEF' },
-  { value: 'MEI', label: 'MEI' },
-  { value: 'ATA', label: 'ATA' },
-];
-
-const CLOSED_POSITIONS_BACKEND_MAP: Record<string, string> = {
-  DEF: 'Defense',
-  MEI: 'Midfielder',
-  ATA: 'Attacker',
-};
-
-const OPEN_POSITIONS_BACKEND_MAP: Record<string, string> = {
-  GK: 'Goalkeeper',
-  DEF: 'Defender',
-  MEI: 'Midfielder',
-  ATA: 'Attacker',
-};
 
 interface PlayersListProps {
   fantasyLeague: FantasyLeague;
