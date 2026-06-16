@@ -22,6 +22,7 @@ import { useFantasyLeagueTeams } from '../api/fantasyLeagueQueries';
 import { useRoster } from './userTeamRosterQueries';
 import { useProposeTrade, TradeLegInput } from '../api/tradeQueries';
 import { FantasyLeague } from '../api/fantasyLeagueQueries';
+import { POSITION_SLOT_MAP } from '../utils/positions';
 
 interface Props {
   open: boolean;
@@ -40,15 +41,6 @@ interface LegDraft {
   dropPlayerId: number | '';
 }
 
-const positionSlotMap: Record<string, string[]> = {
-  Defense: ['DEF'],
-  Defender: ['DEF'],
-  Midfielder: ['MEI', 'FLEX'],
-  Attacker: ['ATA', 'FLEX'],
-  Forward: ['ATA', 'FLEX'],
-  Striker: ['ATA', 'FLEX'],
-  Winger: ['ATA', 'FLEX'],
-};
 
 // Sub-component: player selector from a given team's roster
 const PlayerSelectRow: React.FC<{
@@ -98,7 +90,7 @@ const DropSelector: React.FC<{
 }> = ({ myUserTeamId, seasonYear, incomingPosition, outgoingPlayerIds, value, onChange }) => {
   const { data: roster = [] } = useRoster({ userTeamId: myUserTeamId, seasonYear });
 
-  const compatibleSlots = positionSlotMap[incomingPosition] ?? [];
+  const compatibleSlots = POSITION_SLOT_MAP[incomingPosition] ?? [];
 
   const hasOpenSlot = roster.some((s: any) => {
     const free = !s.player || outgoingPlayerIds.includes(s.player?.id);

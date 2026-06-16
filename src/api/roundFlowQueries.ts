@@ -1,9 +1,8 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
 import { apiConfig } from './config';
+import { authHeader } from './httpClient';
 import { REFETCH_INTERVAL } from './queryConfig';
-
-const authHeader = () => ({ Authorization: `Bearer ${localStorage.getItem('token')}` });
 
 export type RoundFlowStatus =
   | 'PENDING'

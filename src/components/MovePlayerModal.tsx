@@ -7,7 +7,7 @@ import {
 } from '@mui/material';
 import { useMovePlayer } from '../api/userTeamRosterMutations';
 import { mapPositionToSlot, RosterSlot } from '../utils/positions';
-import { POSITIONS_TRANSLATION } from './PlayerSelectModal';
+import { POSITIONS_TRANSLATION } from '../utils/positions';
 import Loading from './Loading';
 
 type SlotType = 'starter' | 'bench';

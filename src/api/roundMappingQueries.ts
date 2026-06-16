@@ -1,6 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
 import { apiConfig } from './config';
+import { authHeader } from './httpClient';
 
 export type RoundCalendarRowStatus =
   | 'FINISHED'
@@ -30,10 +31,6 @@ export interface RoundCalendar {
   remainingMargin: number;
   rows: RoundCalendarRow[];
 }
-
-const authHeader = () => ({
-  Authorization: `Bearer ${localStorage.getItem('token')}`,
-});
 
 export const useRoundCalendar = (seasonId: string | undefined) =>
   useQuery<RoundCalendar>({

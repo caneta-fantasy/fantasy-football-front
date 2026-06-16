@@ -31,27 +31,11 @@ import { useAddPlayer } from '../api/userTeamRosterMutations';
 import { FantasyLeague } from '../api/fantasyLeagueQueries';
 import { useRosterSettings } from '../api/useRosterSettings';
 import Loading from './Loading';
-
-export const POSITIONS_TRANSLATION = {
-  Defender: 'Defensor',
-  Midfielder: 'Meio-Campo',
-  Attacker: 'Atacante',
-  Goalkeeper: 'Goleiro',
-  Defense: 'Defesa',
-};
-
-const CLOSED_POSITIONS_BACKEND_MAP: Record<string, string> = {
-  DEF: 'Defense',
-  MEI: 'Midfielder',
-  ATA: 'Attacker',
-};
-
-const OPEN_POSITIONS_BACKEND_MAP: Record<string, string> = {
-  GK: 'Goalkeeper',
-  DEF: 'Defender',
-  MEI: 'Midfielder',
-  ATA: 'Attacker',
-};
+import {
+  POSITIONS_TRANSLATION,
+  CLOSED_POSITIONS_BACKEND_MAP,
+  OPEN_POSITIONS_BACKEND_MAP,
+} from '../utils/positions';
 
 interface PlayerSelectModalProps {
   open: boolean;

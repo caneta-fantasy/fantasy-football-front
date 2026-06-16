@@ -22,44 +22,16 @@ import {
 import SearchIcon from '@mui/icons-material/Search';
 import { usePlayers, usePlayersFilters } from '../api/playersQueries';
 import { DraftPick } from '../api/draftQueries';
-import { mapPositionToSlot } from '../utils/positions';
+import {
+  mapPositionToSlot,
+  POSITIONS_TRANSLATION,
+  CLOSED_POSITION_OPTIONS,
+  OPEN_POSITION_OPTIONS,
+  CLOSED_POSITIONS_BACKEND_MAP,
+  OPEN_POSITIONS_BACKEND_MAP,
+} from '../utils/positions';
 import { useRosterSettings } from '../api/useRosterSettings';
 
-const CLOSED_POSITION_OPTIONS = [
-  { value: 'ALL', label: 'TODOS' },
-  { value: 'DEF', label: 'DEF' },
-  { value: 'MEI', label: 'MEI' },
-  { value: 'ATA', label: 'ATA' },
-];
-
-const OPEN_POSITION_OPTIONS = [
-  { value: 'ALL', label: 'TODOS' },
-  { value: 'GK', label: 'GK' },
-  { value: 'DEF', label: 'DEF' },
-  { value: 'MEI', label: 'MEI' },
-  { value: 'ATA', label: 'ATA' },
-];
-
-const CLOSED_POSITIONS_BACKEND_MAP: Record<string, string> = {
-  DEF: 'Defense',
-  MEI: 'Midfielder',
-  ATA: 'Attacker',
-};
-
-const OPEN_POSITIONS_BACKEND_MAP: Record<string, string> = {
-  GK: 'Goalkeeper',
-  DEF: 'Defender',
-  MEI: 'Midfielder',
-  ATA: 'Attacker',
-};
-
-const POSITIONS_TRANSLATION: Record<string, string> = {
-  Defender: 'Defensor',
-  Midfielder: 'Meio-Campo',
-  Attacker: 'Atacante',
-  Goalkeeper: 'Goleiro',
-  Defense: 'Defesa',
-};
 
 interface Props {
   leagueId: number;

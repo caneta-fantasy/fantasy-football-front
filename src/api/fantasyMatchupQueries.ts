@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import { apiConfig } from './config';
+import { authHeader } from './httpClient';
 
 export interface FantasyMatchupDto {
   id: string;
@@ -32,10 +33,6 @@ export interface ScheduleByRoundDto {
   roundNumber: number;
   matchups: FantasyMatchupDto[];
 }
-
-const authHeader = () => ({
-  Authorization: `Bearer ${localStorage.getItem('token')}`,
-});
 
 export interface StandingDto {
   teamId: number;
