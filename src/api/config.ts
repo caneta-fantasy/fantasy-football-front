@@ -1,3 +1,4 @@
+import { STALE_TIME } from './queryConfig';
 
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:4000';
 
@@ -195,7 +196,7 @@ const queryConfig = {
     queries: {
       refetchOnWindowFocus: false,
       retry: 1,
-      staleTime: 5 * 60 * 1000,
+      staleTime: STALE_TIME.STANDARD,
     },
   },
 };

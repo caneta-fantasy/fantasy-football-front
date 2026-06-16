@@ -1,6 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
 import { apiConfig } from './config';
+import { REFETCH_INTERVAL } from './queryConfig';
 
 const authHeader = () => ({ Authorization: `Bearer ${localStorage.getItem('token')}` });
 
@@ -31,7 +32,7 @@ export function useWaiverClaims(seasonId: string | undefined) {
       return res.data;
     },
     enabled: !!seasonId,
-    refetchInterval: 30_000,
+    refetchInterval: REFETCH_INTERVAL.STANDARD,
   });
 }
 
@@ -101,7 +102,7 @@ export function useWaiverWindowStatus(leagueExternalId: number | null | undefine
       return res.data;
     },
     enabled: !!leagueExternalId && !!seasonYear,
-    refetchInterval: 30_000,
+    refetchInterval: REFETCH_INTERVAL.STANDARD,
   });
 }
 

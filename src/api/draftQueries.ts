@@ -1,6 +1,7 @@
 import { useMutation, useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import { apiConfig } from './config';
+import { REFETCH_INTERVAL } from './queryConfig';
 
 const authHeader = () => ({ Authorization: `Bearer ${localStorage.getItem('token')}` });
 
@@ -46,7 +47,7 @@ export const useDraftPresence = (draftId: string | undefined) => {
       return res.data;
     },
     enabled: !!draftId,
-    refetchInterval: 5000,
+    refetchInterval: REFETCH_INTERVAL.LIVE,
   });
 };
 
@@ -78,6 +79,6 @@ export const useDraft = (leagueId: number, season: number | undefined) => {
       return res.data ?? null;
     },
     enabled: !!leagueId && !!season,
-    refetchInterval: 30000,
+    refetchInterval: REFETCH_INTERVAL.STANDARD,
   });
 };

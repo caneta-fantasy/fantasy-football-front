@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import { apiConfig } from './config';
+import { STALE_TIME } from './queryConfig';
 
 export interface TeamInfoDto {
   id: number;
@@ -24,7 +25,7 @@ export function useRealMatchesByRound(seasonYear?: number, roundNumber?: number)
         .get(apiConfig.endpoints.matches.byRound(seasonYear!, roundNumber!))
         .then((r) => r.data),
     enabled: !!seasonYear && !!roundNumber,
-    staleTime: Infinity,
+    staleTime: STALE_TIME.STATIC,
     gcTime: 1000 * 60 * 60 * 24,
   });
 }

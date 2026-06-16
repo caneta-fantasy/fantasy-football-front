@@ -2,6 +2,7 @@
 import axios from 'axios';
 import { useQuery } from '@tanstack/react-query';
 import { apiConfig } from './config';
+import { STALE_TIME } from './queryConfig';
 
 export interface Player {
   player_id: number;
@@ -101,6 +102,6 @@ export const usePlayersFilters = (params: UsePlayersFiltersParams) => {
       );
       return response.data;
     },
-    staleTime: 5 * 60 * 1000,
+    staleTime: STALE_TIME.STANDARD,
   });
 };

@@ -1,6 +1,7 @@
 import { useMutation, useQueries, useQuery, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
 import { apiConfig } from './config';
+import { STALE_TIME, REFETCH_INTERVAL } from './queryConfig';
 
 const authHeader = () => ({ Authorization: `Bearer ${localStorage.getItem('token')}` });
 
@@ -39,8 +40,8 @@ export const useLockedTeams = (
       return res.data;
     },
     enabled: !!leagueExternalId && !!seasonYear && roundNumber != null,
-    refetchInterval: 2 * 60 * 1000,
-    staleTime: 0,
+    refetchInterval: REFETCH_INTERVAL.SLOW,
+    staleTime: STALE_TIME.ALWAYS,
   });
 
 export const useListRoundMatches = (
@@ -58,7 +59,7 @@ export const useListRoundMatches = (
       return res.data;
     },
     enabled: !!leagueExternalId && !!seasonYear && roundNumber != null,
-    staleTime: 0,
+    staleTime: STALE_TIME.ALWAYS,
   });
 
 // Fetches all rounds in parallel and returns a map of realRound → non-PST match count.
@@ -79,7 +80,7 @@ export const useAllRoundsMatchCounts = (
         return { round, matches: res.data as RoundGameMatch[] };
       },
       enabled: !!leagueExternalId && !!seasonYear,
-      staleTime: 0,
+      staleTime: STALE_TIME.ALWAYS,
     })),
   });
 
@@ -106,7 +107,7 @@ export const useOrphanedMatches = (
       return res.data;
     },
     enabled: !!leagueExternalId && !!seasonYear,
-    staleTime: 0,
+    staleTime: STALE_TIME.ALWAYS,
   });
 
 // ─── Mutations ───────────────────────────────────────────────────────────────
@@ -209,7 +210,7 @@ export const useMatchVenues = (leagueExternalId: number | undefined, seasonYear:
       return res.data;
     },
     enabled: !!leagueExternalId && !!seasonYear,
-    staleTime: 5 * 60 * 1000,
+    staleTime: STALE_TIME.STANDARD,
   });
 
 export const usePatchMatch = () => {
