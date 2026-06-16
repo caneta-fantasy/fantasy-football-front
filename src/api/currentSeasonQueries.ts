@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import { apiConfig } from './config';
+import { STALE_TIME } from './queryConfig';
 
 interface CurrentSeason {
   year: number;
@@ -13,6 +14,6 @@ export const useCurrentSeason = () => {
       const res = await axios.get(apiConfig.endpoints.currentSeason);
       return res.data;
     },
-    staleTime: 6 * 60 * 1000, // 10 hour
+    staleTime: STALE_TIME.LONG,
   });
 };

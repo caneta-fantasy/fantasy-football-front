@@ -1,6 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
 import { apiConfig } from './config';
+import { REFETCH_INTERVAL } from './queryConfig';
 
 const authHeader = () => ({ Authorization: `Bearer ${localStorage.getItem('token')}` });
 
@@ -69,7 +70,7 @@ export function useRoundFlows(filter?: {
       });
       return res.data;
     },
-    refetchInterval: 30_000,
+    refetchInterval: REFETCH_INTERVAL.STANDARD,
   });
 }
 

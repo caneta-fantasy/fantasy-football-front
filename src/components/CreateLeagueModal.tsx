@@ -17,6 +17,11 @@ import {
 } from '@mui/material';
 import { useAuth } from '../context/AuthContext';
 import { useCreateFantasyLeague } from '../api/fantasyLeagueMutations';
+import {
+  CREATION_CUTOFF_ROUND,
+  DEFAULT_ROUNDS,
+  MIN_ROUNDS,
+} from '../constants/league';
 import Loading from './Loading';
 
 const modalStyle = {
@@ -37,10 +42,6 @@ const modalStyle = {
   },
   borderRadius: 3,
 };
-
-const CREATION_CUTOFF_ROUND = 26;
-const DEFAULT_ROUNDS = 19;
-const MIN_ROUNDS = 12;
 
 interface CreateLeagueModalProps {
   open: boolean;
