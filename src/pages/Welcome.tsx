@@ -2,7 +2,7 @@
 import { useEffect, useState } from 'react';
 import { Box, Typography, Button, Stack, Alert } from '@mui/material';
 import { useAuth } from '../context/AuthContext';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import CreateLeagueModal from '../components/CreateLeagueModal';
 import JoinLeagueModal from '../components/JoinLeagueModal';
 import { UserFantasyLeaguesList } from '../components/UserFantasyLeaguesList';
@@ -17,6 +17,13 @@ const Welcome = () => {
   const navigate = useNavigate();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isJoinModalOpen, setIsJoinModalOpen] = useState(false);
+  const [searchParams] = useSearchParams();
+  const joinCodeFromLink = searchParams.get('code') ?? undefined;
+
+  // Opened via a shareable invite link (/join?code=…) → open the join modal prefilled.
+  useEffect(() => {
+    if (joinCodeFromLink) setIsJoinModalOpen(true);
+  }, [joinCodeFromLink]);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   
   // Use the React Query hook
@@ -37,7 +44,7 @@ const acceptInviteMutation = useMutation({
 
     if (!res.ok) {
       const error = await res.json();
-      throw new Error(error.detail || 'Failed to accept invite');
+      throw new Error(error.detail || 'Falha ao aceitar o convite');
     }
 
     return res.json();
@@ -180,6 +187,7 @@ const acceptInviteMutation = useMutation({
       <JoinLeagueModal
         open={isJoinModalOpen}
         handleClose={() => setIsJoinModalOpen(false)}
+        initialCode={joinCodeFromLink}
       />
 
       {errorMessage && (

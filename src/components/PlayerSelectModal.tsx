@@ -12,7 +12,6 @@ import {
   TableCell,
   TableHead,
   TableRow,
-  Avatar,
   TablePagination,
   IconButton,
   InputAdornment,
@@ -244,10 +243,7 @@ const PlayerSelectModal: React.FC<PlayerSelectModalProps> = ({
                     style={{ cursor: 'pointer' }}
                   >
                     <TableCell>
-                      <Box display="flex" alignItems="center" gap={1}>
-                        <Avatar src={player.player_photo} alt={player.player_name} />
-                        {player.player_name}
-                      </Box>
+                      {player.player_name}
                     </TableCell>
                     <TableCell>{player.team_name}</TableCell>
                     <TableCell>

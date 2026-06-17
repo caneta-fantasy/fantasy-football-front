@@ -43,6 +43,16 @@ export default function DraftRoomPage() {
 
   const myUserTeam = (teams ?? []).find((t: any) => t.user?.id === currentUser.id);
 
+  // Only league members (users with a team) may enter the draft room.
+  if (teams !== undefined && !myUserTeam) {
+    return (
+      <Box display="flex" flexDirection="column" alignItems="center" pt={10} gap={2}>
+        <Typography variant="h6">Você não participa desta liga.</Typography>
+        <Button onClick={() => navigate('/welcome')}>Voltar</Button>
+      </Box>
+    );
+  }
+
   return (
     <Box sx={{ px: 3, py: 3 }}>
       <Button

@@ -102,7 +102,7 @@ export default function DraftOrderDisplay({ draft, picks, currentUserId, connect
                         <Chip label="Você" size="small" variant="outlined" sx={{ flexShrink: 0 }} />
                       )}
                       {isDone && pick.isAutoDrafted && (
-                        <Chip label="Auto" size="small" color="warning" sx={{ flexShrink: 0 }} />
+                        <Chip label="Automático" size="small" color="warning" sx={{ flexShrink: 0 }} />
                       )}
                     </Paper>
                   );

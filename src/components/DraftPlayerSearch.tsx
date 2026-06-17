@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import {
-  Avatar,
   Box,
   Button,
   CircularProgress,
@@ -9,7 +8,6 @@ import {
   InputLabel,
   List,
   ListItem,
-  ListItemAvatar,
   ListItemText,
   MenuItem,
   Pagination,
@@ -157,9 +155,6 @@ export default function DraftPlayerSearch({ leagueId, realLeagueId, realLeagueEx
               </Button>
             }
           >
-            <ListItemAvatar sx={{ minWidth: 40 }}>
-              <Avatar src={player.player_photo} sx={{ width: 32, height: 32 }} />
-            </ListItemAvatar>
             <ListItemText
               primary={
                 <Typography variant="body2" fontWeight={500} noWrap>

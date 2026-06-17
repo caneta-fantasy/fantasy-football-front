@@ -28,12 +28,24 @@ const FantasyLeaguesSidebar: React.FC<Props> = ({
   const isOwner = currentUserId === fantasyLeague.owner?.id;
   const isEmailVerified = !!user?.emailVerifiedAt;
   const [copied, setCopied] = useState(false);
+  const [copiedLink, setCopiedLink] = useState(false);
 
   const handleCopyCode = () => {
     if (!fantasyLeague.joinCode) return;
     navigator.clipboard.writeText(fantasyLeague.joinCode);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
+  };
+
+  const joinLink = fantasyLeague.joinCode
+    ? `${window.location.origin}/join?code=${fantasyLeague.joinCode}`
+    : '';
+
+  const handleCopyLink = () => {
+    if (!joinLink) return;
+    navigator.clipboard.writeText(joinLink);
+    setCopiedLink(true);
+    setTimeout(() => setCopiedLink(false), 2000);
   };
 
   const { data: fantasyLeagueSeason,  isLoading: isLoadingFantasyLeagueSeason, refetch: refetchFantasyLeagueSeason } = useFantasyLeagueSeasons(fantasyLeague.id);
@@ -99,6 +111,19 @@ const FantasyLeaguesSidebar: React.FC<Props> = ({
               </IconButton>
             </Tooltip>
           </Box>
+
+          <Tooltip title={copiedLink ? 'Link copiado!' : 'Copiar link de convite'}>
+            <Button
+              fullWidth
+              size="small"
+              variant="text"
+              startIcon={<ContentCopyIcon fontSize="small" />}
+              onClick={handleCopyLink}
+              sx={{ mt: 0.5, textTransform: 'none' }}
+            >
+              {copiedLink ? 'Link copiado!' : 'Copiar link de convite'}
+            </Button>
+          </Tooltip>
         </Box>
       )}
 

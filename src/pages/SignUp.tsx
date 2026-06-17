@@ -62,13 +62,13 @@ const SignUp: React.FC = () => {
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.message || 'Registration failed');
+        throw new Error(errorData.message || 'Falha no cadastro');
       }
       return response.json();
     },
     onSuccess: () => {
-      navigate('/signin', { 
-        state: { success: 'Registration successful! Please login.' } 
+      navigate('/signin', {
+        state: { message: 'Cadastro realizado com sucesso! Faça login.' }
       });
     },
   });
@@ -100,8 +100,8 @@ const SignUp: React.FC = () => {
       birthDate: formData.birthDate?.format('YYYY-MM-DD') || '',
     }, {
       onSuccess: () => {
-        navigate('/signin', { 
-          state: { success: 'Registration successful! Please login.' } 
+        navigate('/signin', {
+          state: { message: 'Cadastro realizado com sucesso! Faça login.' }
         });
       }
     });
