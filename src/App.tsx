@@ -36,6 +36,7 @@ const AppRoutes: React.FC = () => {
           <Route element={<ProtectedLayout />}>
             <Route path="/" element={<div className="App" />} />
             <Route path="/welcome" element={<Welcome />} />
+            <Route path="/join" element={<Welcome />} />
             <Route path="/profile" element={<Profile />} />
             <Route path="/fantasy-league/:fantasyLeagueId" element={<FantasyLeague currentUserId={currentUserId as number} />} />
             <Route path="/draft/:leagueId/:season/:draftId" element={<DraftRoomPage />} />

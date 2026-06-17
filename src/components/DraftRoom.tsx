@@ -18,6 +18,7 @@ import DraftOrderDisplay from './DraftOrderDisplay';
 import DraftPlayerSearch from './DraftPlayerSearch';
 import DraftMyTeam from './DraftMyTeam';
 import { DraftFullResponse, useFreezeDraft, useResetDraftTimer, useUnfreezeDraft } from '../api/draftQueries';
+import { useAuth } from '../context/AuthContext';
 import { Slot } from './userTeamRosterQueries';
 import { apiConfig } from '../api/config';
 import { mapPositionToSlot } from '../utils/positions';
@@ -89,6 +90,7 @@ export default function DraftRoom({
   }, [currentPickPositionForEffect, isPickerOnlineForEffect]);
   const { mutate: freeze, isPending: isFreezing } = useFreezeDraft();
   const { mutate: unfreeze, isPending: isUnfreezing } = useUnfreezeDraft();
+  const { user } = useAuth();
   const { mutate: resetTimer, isPending: isResetting } = useResetDraftTimer();
 
   const { data: rosterSlots } = useQuery<Slot[]>({
@@ -181,8 +183,8 @@ export default function DraftRoom({
         {!isConnected && (
           <Chip label="Reconectando..." color="error" size="small" />
         )}
-        {/* TEMPORARY — remove after testing */}
-        {draft.status === 'LIVE' && (
+        {/* Draft timer/pause controls — admins only */}
+        {draft.status === 'LIVE' && user?.isAdmin && (
           <Box display="flex" gap={1} ml="auto">
             <Button
               size="small"
@@ -192,7 +194,7 @@ export default function DraftRoom({
               disabled={isResetting}
               sx={{ textTransform: 'none' }}
             >
-              Reset Timer
+              Reiniciar Tempo
             </Button>
             <Button
               size="small"

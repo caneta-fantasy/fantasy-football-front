@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Modal,
   Box,
@@ -15,13 +15,19 @@ import { useJoinFantasyLeague } from '../api/fantasyLeagueMutations';
 interface JoinLeagueModalProps {
   open: boolean;
   handleClose: () => void;
+  initialCode?: string;
 }
 
-const JoinLeagueModal: React.FC<JoinLeagueModalProps> = ({ open, handleClose }) => {
-  const [code, setCode] = useState('');
+const JoinLeagueModal: React.FC<JoinLeagueModalProps> = ({ open, handleClose, initialCode }) => {
+  const [code, setCode] = useState(initialCode ?? '');
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const { mutate: join, isPending, isError, error, reset } = useJoinFantasyLeague();
+
+  // Prefill the code when opened from a shareable link (?code=…).
+  useEffect(() => {
+    if (open && initialCode) setCode(initialCode);
+  }, [open, initialCode]);
 
   const close = () => {
     setCode('');

@@ -7,7 +7,7 @@ interface LoadingProps {
   fullScreen?: boolean;
 }
 
-const Loading: React.FC<LoadingProps> = ({ message = 'Loading...', fullScreen = false }) => {
+const Loading: React.FC<LoadingProps> = ({ message = 'Carregando...', fullScreen = false }) => {
   return (
     <Box
       sx={{

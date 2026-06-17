@@ -12,7 +12,6 @@ import {
   TableHead,
   TableRow,
   TableSortLabel,
-  Avatar,
   TablePagination,
   useTheme,
   useMediaQuery,
@@ -405,25 +404,10 @@ const PlayersList: React.FC<PlayersListProps> = ({ fantasyLeague, seasonYear, us
             }}
           >
             <TableCell>
-              <Box display="flex" alignItems="center" gap={1} position="relative">
-                <Box position="relative" display="inline-block">
-                  <Avatar
-                    src={player.player_photo}
-                    alt={player.player_name}
-                  />
-                  {player.is_rostered && (
-                    <LockIcon
-                      fontSize="small"
-                      style={{
-                        position: 'absolute',
-                        right: -4,
-                        bottom: -4,
-                        width: 16,
-                        height: 16,
-                      }}
-                    />
-                  )}
-                </Box>
+              <Box display="flex" alignItems="center" gap={0.5}>
+                {player.is_rostered && (
+                  <LockIcon fontSize="small" sx={{ width: 16, height: 16 }} />
+                )}
                 {player.player_name}
               </Box>
             </TableCell>

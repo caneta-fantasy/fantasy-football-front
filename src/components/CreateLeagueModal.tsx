@@ -15,6 +15,7 @@ import {
   FormControlLabel,
   Paper,
 } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useCreateFantasyLeague } from '../api/fantasyLeagueMutations';
 import {
@@ -65,6 +66,7 @@ const draftTypes = [
 
 const CreateLeagueModal: React.FC<CreateLeagueModalProps> = ({ open, handleClose, realCurrentRound, maxRealRound }) => {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const [leagueName, setLeagueName] = useState('');
   const [numberOfTeams, setNumberOfTeams] = useState(8);
   const [draftType, setDraftType] = useState('snake');
@@ -109,7 +111,10 @@ const CreateLeagueModal: React.FC<CreateLeagueModalProps> = ({ open, handleClose
         numberOfRounds,
       },
       {
-        onSuccess: handleClose,
+        onSuccess: (res) => {
+          handleClose();
+          navigate(`/fantasy-league/${res.data.id}`);
+        },
       }
     );
   };

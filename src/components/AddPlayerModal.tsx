@@ -101,7 +101,6 @@ export default function AddPlayerModal({
       <DialogContent dividers>
         <Stack spacing={2}>
           <Stack direction="row" spacing={2} alignItems="center">
-            <Avatar src={player.photo} />
             <div>
               <Typography fontWeight={700}>{player.name}</Typography>
               <Typography variant="body2" color="text.secondary">
@@ -184,7 +183,7 @@ export default function AddPlayerModal({
                         selected={pendingSlot?.index === slot.index}
                       >
                         <ListItemAvatar>
-                          <Avatar src={slot.player!.photo} />
+                          <Avatar />
                         </ListItemAvatar>
                         <ListItemText
                           primary={

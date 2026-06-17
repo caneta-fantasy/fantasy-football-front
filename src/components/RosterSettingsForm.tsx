@@ -51,6 +51,35 @@ const RosterSettingsForm: React.FC<Props> = ({ values, onChange, id, refetchRost
         </Alert>
       )}
 
+      <Box sx={{ mb: 3 }}>
+        <Typography fontWeight={600} sx={{ mb: 1 }}>Tipo de Defesa</Typography>
+        <ToggleButtonGroup
+          exclusive
+          value={values.defenseType ?? 'CLOSED'}
+          onChange={(_, val) => {
+            if (!val || isLocked) return;
+            onChange('defenseType', val);
+            if (val === 'OPEN') {
+              onChange('starterGkSlots', 1);
+              onChange('starterDefenderSlots', 4);
+            } else {
+              onChange('starterGkSlots', 0);
+              onChange('starterDefenderSlots', 0);
+            }
+          }}
+          disabled={isLocked}
+          size="small"
+        >
+          <ToggleButton value="CLOSED">Defesa Fechada</ToggleButton>
+          <ToggleButton value="OPEN">Defesa Aberta</ToggleButton>
+        </ToggleButtonGroup>
+        <Typography variant="caption" color="text.secondary" display="block" sx={{ mt: 0.5 }}>
+          {values.defenseType === 'OPEN'
+            ? 'Jogadores defensores individuais de qualquer time'
+            : 'Unidade defensiva completa de um time (ex: Defesa do Flamengo)'}
+        </Typography>
+      </Box>
+
       {/* Starter Settings */}
       <Typography fontWeight={600} sx={{ mb: 2, fontSize: '1.2rem' }}>Jogadores Titulares</Typography>
       <Box>
@@ -248,35 +277,6 @@ const RosterSettingsForm: React.FC<Props> = ({ values, onChange, id, refetchRost
             onChange={(e) => onChange('maxFwd', e.target.value === '' ? null : Number(e.target.value))}
           />
         </Box>
-      </Box>
-
-      <Box sx={{ mt: 2 }}>
-        <Typography fontWeight={600} sx={{ mb: 1 }}>Tipo de Defesa</Typography>
-        <ToggleButtonGroup
-          exclusive
-          value={values.defenseType ?? 'CLOSED'}
-          onChange={(_, val) => {
-            if (!val || isLocked) return;
-            onChange('defenseType', val);
-            if (val === 'OPEN') {
-              onChange('starterGkSlots', 1);
-              onChange('starterDefenderSlots', 4);
-            } else {
-              onChange('starterGkSlots', 0);
-              onChange('starterDefenderSlots', 0);
-            }
-          }}
-          disabled={isLocked}
-          size="small"
-        >
-          <ToggleButton value="CLOSED">Defesa Fechada</ToggleButton>
-          <ToggleButton value="OPEN">Defesa Aberta</ToggleButton>
-        </ToggleButtonGroup>
-        <Typography variant="caption" color="text.secondary" display="block" sx={{ mt: 0.5 }}>
-          {values.defenseType === 'OPEN'
-            ? 'Jogadores defensores individuais de qualquer time'
-            : 'Unidade defensiva completa de um time (ex: Defesa do Flamengo)'}
-        </Typography>
       </Box>
 
       <Box

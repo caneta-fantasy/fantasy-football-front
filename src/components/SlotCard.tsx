@@ -1,4 +1,4 @@
-import { Avatar, Typography, Box, Chip, Paper, Stack, Button } from '@mui/material';
+import { Typography, Box, Chip, Paper, Stack, Button } from '@mui/material';
 import { POSITIONS_TRANSLATION } from '../utils/positions';
 import { RosterPlayer, Slot } from './userTeamRosterQueries';
 import { OpponentInfo, formatMatchTime } from '../utils/matchUtils';
@@ -68,7 +68,6 @@ export enum RosterSlotCard {
           />
           {player ? (
             <>
-              <Avatar src={player.photo} alt={player.name} />
               <Box>
                 <Typography fontWeight="bold" color="text.primary">
                   {player.name}
