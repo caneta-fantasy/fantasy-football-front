@@ -24,21 +24,22 @@ export interface OrphanedMatch extends RoundGameMatch {
 
 // ─── Queries ────────────────────────────────────────────────────────────────
 
+// Locked teams are real-life-global: keyed by the internal real League id + year.
 export const useLockedTeams = (
-  leagueExternalId: number | undefined,
+  leagueId: number | undefined,
   seasonYear: number | undefined,
   roundNumber: number | null | undefined,
 ) =>
   useQuery<{ lockedTeamIds: number[] }>({
-    queryKey: ['lockedTeams', leagueExternalId, seasonYear, roundNumber],
+    queryKey: ['lockedTeams', leagueId, seasonYear, roundNumber],
     queryFn: async () => {
       const res = await axios.get(
-        apiConfig.endpoints.fantasyRoundGames.lockedTeams(leagueExternalId!, seasonYear!, roundNumber!),
+        apiConfig.endpoints.fantasyRoundGames.lockedTeams(leagueId!, seasonYear!, roundNumber!),
         { headers: authHeader() },
       );
       return res.data;
     },
-    enabled: !!leagueExternalId && !!seasonYear && roundNumber != null,
+    enabled: !!leagueId && !!seasonYear && roundNumber != null,
     refetchInterval: REFETCH_INTERVAL.SLOW,
     staleTime: STALE_TIME.ALWAYS,
   });

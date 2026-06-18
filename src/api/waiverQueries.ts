@@ -91,16 +91,17 @@ export function useWaiverHistory(seasonId: string | undefined) {
   });
 }
 
-export function useWaiverWindowStatus(leagueExternalId: number | null | undefined, seasonYear: number | null | undefined) {
+// Waiver windows are real-life-global: keyed by the internal real League id + year.
+export function useWaiverWindowStatus(leagueId: number | null | undefined, seasonYear: number | null | undefined) {
   return useQuery<WaiverWindowStatus>({
-    queryKey: ['waiverWindowStatus', leagueExternalId, seasonYear],
+    queryKey: ['waiverWindowStatus', leagueId, seasonYear],
     queryFn: async () => {
-      const res = await axios.get(apiConfig.endpoints.waiver.windowStatus(leagueExternalId!, seasonYear!), {
+      const res = await axios.get(apiConfig.endpoints.waiver.windowStatus(leagueId!, seasonYear!), {
         headers: authHeader(),
       });
       return res.data;
     },
-    enabled: !!leagueExternalId && !!seasonYear,
+    enabled: !!leagueId && !!seasonYear,
     refetchInterval: REFETCH_INTERVAL.STANDARD,
   });
 }

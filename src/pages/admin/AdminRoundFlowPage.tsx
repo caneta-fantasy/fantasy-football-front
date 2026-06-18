@@ -41,6 +41,7 @@ import {
 import RoundGamesTab from './RoundGamesTab';
 import SquadSyncTab from './SquadSyncTab';
 import SimulatorTab from './SimulatorTab';
+import { useLeagues, useSupportedLeague } from '../../api/leaguesQueries';
 
 const STATUS_COLORS: Record<RoundFlowStatus, 'default' | 'success' | 'info' | 'warning' | 'secondary' | 'error'> = {
   PENDING: 'default',
@@ -88,6 +89,10 @@ const AdminRoundFlowPage: React.FC = () => {
 
 const RoundFlowTab: React.FC = () => {
   const { data: roundFlows = [], isLoading } = useRoundFlows();
+  const { data: leagues = [] } = useLeagues();
+  const leagueNameByExternalId = new Map(
+    leagues.map((l) => [l.externalId, l.name]),
+  );
   const activate = useActivateRoundFlow();
   const update = useUpdateRoundFlow();
   const trigger = useTriggerRoundFlowEvent();
@@ -141,7 +146,7 @@ const RoundFlowTab: React.FC = () => {
               )}
               {roundFlows.map((rf) => (
                 <TableRow key={rf.id} hover>
-                  <TableCell>{rf.leagueExternalId}</TableCell>
+                  <TableCell>{leagueNameByExternalId.get(rf.leagueExternalId) ?? rf.leagueExternalId}</TableCell>
                   <TableCell>{rf.seasonYear}</TableCell>
                   <TableCell>{rf.roundNumber}</TableCell>
                   <TableCell>
@@ -286,14 +291,14 @@ const ActivateRoundDialog: React.FC<{
   isPending: boolean;
   errorMessage?: string;
 }> = ({ open, onClose, onSubmit, isPending, errorMessage }) => {
-  const [leagueExternalId, setLeagueExternalId] = useState('71');
+  const { league } = useSupportedLeague();
   const [seasonYear, setSeasonYear] = useState(String(new Date().getFullYear()));
   const [roundNumber, setRoundNumber] = useState('');
 
   const submit = () => {
-    if (!leagueExternalId || !seasonYear || !roundNumber) return;
+    if (!league || !seasonYear || !roundNumber) return;
     onSubmit({
-      leagueExternalId: Number(leagueExternalId),
+      leagueExternalId: league.externalId,
       seasonYear: Number(seasonYear),
       roundNumber: Number(roundNumber),
     });
@@ -305,11 +310,9 @@ const ActivateRoundDialog: React.FC<{
       <DialogContent>
         <Stack spacing={2} sx={{ mt: 1 }}>
           <TextField
-            label="ID Externo da Liga"
-            type="number"
-            value={leagueExternalId}
-            onChange={(e) => setLeagueExternalId(e.target.value)}
-            helperText="71 = Brasileirão Série A"
+            label="Campeonato"
+            value={league?.name ?? 'Carregando...'}
+            InputProps={{ readOnly: true }}
             fullWidth
           />
           <TextField

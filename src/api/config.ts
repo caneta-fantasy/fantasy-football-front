@@ -18,6 +18,9 @@ const endpoints = {
     update: `${API_BASE_URL}/users/update`,
     findUserFantasyLeagueTeam: (id: number, fantasyLeagueId: number) => `${API_BASE_URL}/users/${id}/fantasy-leagues/${fantasyLeagueId}`,
   },
+  leagues: {
+    list: `${API_BASE_URL}/leagues`,
+  },
   fantasyLeagues: {
     create: `${API_BASE_URL}/fantasy-leagues`,
     get: `${API_BASE_URL}/fantasy-leagues`,
@@ -92,8 +95,9 @@ const endpoints = {
       `${API_BASE_URL}/fantasy-matchups/season/${seasonId}/unskip/${realRound}`,
   },
   fantasyRoundGames: {
-    lockedTeams: (leagueExternalId: number, seasonYear: number, roundNumber: number) =>
-      `${API_BASE_URL}/fantasy-round-games/league/${leagueExternalId}/season/${seasonYear}/round/${roundNumber}/locked-teams`,
+    // Real-life-global: keyed by the internal real League id (+ season year).
+    lockedTeams: (leagueId: number, seasonYear: number, roundNumber: number) =>
+      `${API_BASE_URL}/fantasy-round-games/league/${leagueId}/season/${seasonYear}/round/${roundNumber}/locked-teams`,
     syncAll: (leagueExternalId: number, seasonYear: number) =>
       `${API_BASE_URL}/fantasy-round-games/league/${leagueExternalId}/season/${seasonYear}/sync-all`,
     syncFromRealRound: (leagueExternalId: number, seasonYear: number, roundNumber: number) =>
@@ -141,7 +145,7 @@ const endpoints = {
     claimsBySeason: (seasonId: string) => `${API_BASE_URL}/waiver/claims/season/${seasonId}`,
     historyBySeason: (seasonId: string) => `${API_BASE_URL}/waiver/claims/season/${seasonId}/history`,
     budgetsBySeason: (seasonId: string) => `${API_BASE_URL}/waiver/budgets/season/${seasonId}`,
-    windowStatus: (leagueExternalId: number, seasonYear: number) => `${API_BASE_URL}/waiver/status/${leagueExternalId}/${seasonYear}`,
+    windowStatus: (leagueId: number, seasonYear: number) => `${API_BASE_URL}/waiver/status/league/${leagueId}/${seasonYear}`,
   },
   roundFlow: {
     list: `${API_BASE_URL}/round-flow`,

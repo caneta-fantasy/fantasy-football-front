@@ -101,7 +101,7 @@ const PlayerSelectModal: React.FC<PlayerSelectModalProps> = ({
   });
 
   const { data: filtersData } = usePlayersFilters({
-    leagueId: fantasyLeague.league.externalId,
+    leagueId: fantasyLeague.league.id,
     seasonYear,
   });
 
