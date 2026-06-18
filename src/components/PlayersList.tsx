@@ -88,7 +88,7 @@ const PlayersList: React.FC<PlayersListProps> = ({ fantasyLeague, seasonYear, us
   // Simulation leagues: locks are the admin's manual per-club toggles, not real kickoffs
   const isSimulation = !!fantasyLeague.isSimulation;
   const { data: lockedTeamsData } = useLockedTeams(
-    isSimulation ? undefined : fantasyLeague.league.externalId,
+    isSimulation ? undefined : fantasyLeague.league.id,
     seasonYear,
     activeRealRound,
   );
@@ -137,8 +137,7 @@ const PlayersList: React.FC<PlayersListProps> = ({ fantasyLeague, seasonYear, us
   const [waiverClaimOpen, setWaiverClaimOpen] = useState(false);
   const [waiverPlayer, setWaiverPlayer] = useState<null | { id: number; name: string; photo: string; position: string }>(null);
 
-  const leagueExternalId = season?.fantasyLeague?.league?.externalId;
-  const { data: waiverWindowStatus } = useWaiverWindowStatus(leagueExternalId, season?.seasonYear);
+  const { data: waiverWindowStatus } = useWaiverWindowStatus(fantasyLeague.league.id, seasonYear);
   const isWaiverWindowOpen = waiverWindowStatus?.isOpen ?? false;
 
   const { data: waiverBudgets } = useWaiverBudgets(isWaiverWindowOpen ? seasonId : undefined);
@@ -231,7 +230,7 @@ const PlayersList: React.FC<PlayersListProps> = ({ fantasyLeague, seasonYear, us
   };
 
   const { data: filters, isLoading: loadingFilters } = usePlayersFilters({
-    leagueId: fantasyLeague.league.externalId,
+    leagueId: fantasyLeague.league.id,
     seasonYear,
   });
   

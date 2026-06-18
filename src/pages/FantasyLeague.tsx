@@ -57,10 +57,9 @@ const FantasyLeaguePage = ({ currentUserId }: { currentUserId: number }) => {
   const { data: currentSeasonData } = useCurrentSeason();
   const seasonYear = fantasyLeagueSeason?.seasonYear ?? currentSeasonData?.year ?? new Date().getFullYear();
 
-  const leagueExternalId = fantasyLeagueSeason?.fantasyLeague?.league?.externalId;
   const { data: waiverWindowStatus } = useWaiverWindowStatus(
-    selectedTab === 'players' ? leagueExternalId : null,
-    selectedTab === 'players' ? fantasyLeagueSeason?.seasonYear : null,
+    selectedTab === 'players' ? (fantasyLeague?.league?.id ?? null) : null,
+    selectedTab === 'players' ? seasonYear : null,
   );
   const isWaiverWindowOpen = waiverWindowStatus?.isOpen ?? false;
 

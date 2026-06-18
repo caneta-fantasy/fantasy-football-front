@@ -27,7 +27,6 @@ interface Props {
   draftId: string;
   leagueId: number;
   realLeagueId: number | undefined;
-  realLeagueExternalId: number | undefined;
   season: number;
   currentUserId: number;
   myUserTeamId: number | undefined;
@@ -58,7 +57,6 @@ export default function DraftRoom({
   draftId,
   leagueId,
   realLeagueId,
-  realLeagueExternalId,
   season,
   currentUserId,
   myUserTeamId,
@@ -296,7 +294,6 @@ export default function DraftRoom({
               <DraftPlayerSearch
                 leagueId={leagueId}
                 realLeagueId={realLeagueId}
-                realLeagueExternalId={realLeagueExternalId}
                 season={season}
                 picks={picks}
                 onPick={(playerId) => {

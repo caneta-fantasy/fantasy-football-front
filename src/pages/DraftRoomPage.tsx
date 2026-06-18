@@ -67,7 +67,6 @@ export default function DraftRoomPage() {
         draftId={draftId}
         leagueId={leagueIdNum}
         realLeagueId={fantasyLeague?.league?.id}
-        realLeagueExternalId={fantasyLeague?.league?.externalId}
         season={seasonNum}
         currentUserId={currentUser.id}
         myUserTeamId={myUserTeam?.id}

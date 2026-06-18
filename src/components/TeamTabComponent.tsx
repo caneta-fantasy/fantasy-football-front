@@ -42,7 +42,7 @@ interface Props {
     // Simulation leagues: locks are the admin's manual per-club toggles, not real kickoffs
     const isSimulation = !!fantasyLeague.isSimulation;
     const { data: lockedTeamsData } = useLockedTeams(
-      isSimulation ? undefined : fantasyLeague.league.externalId,
+      isSimulation ? undefined : fantasyLeague.league.id,
       seasonYear,
       currentRealRound,
     );

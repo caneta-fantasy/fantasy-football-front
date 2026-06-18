@@ -34,7 +34,6 @@ import { useRosterSettings } from '../api/useRosterSettings';
 interface Props {
   leagueId: number;
   realLeagueId: number | undefined;
-  realLeagueExternalId: number | undefined;
   season: number;
   picks: DraftPick[];
   onPick: (playerId: number) => void;
@@ -42,7 +41,7 @@ interface Props {
   fullPositions?: Set<string>;
 }
 
-export default function DraftPlayerSearch({ leagueId, realLeagueId, realLeagueExternalId, picks, onPick, disabled, fullPositions }: Props) {
+export default function DraftPlayerSearch({ leagueId, realLeagueId, picks, onPick, disabled, fullPositions }: Props) {
   const [search, setSearch] = useState('');
   const [position, setPosition] = useState('ALL');
   const [teamId, setTeamId] = useState<number | ''>('');
@@ -70,7 +69,7 @@ export default function DraftPlayerSearch({ leagueId, realLeagueId, realLeagueEx
   });
 
   const { data: filters } = usePlayersFilters({
-    leagueId: realLeagueExternalId,
+    leagueId: realLeagueId,
   });
 
   const players = data?.data ?? [];
