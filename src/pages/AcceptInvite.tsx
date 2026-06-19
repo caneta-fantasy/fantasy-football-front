@@ -28,13 +28,12 @@ const InviteAcceptPage = () => {
 
       if (!res.ok) {
         const error = await res.json();
-        throw new Error(error.detail || 'Failed to accept invite');
+        throw new Error(error.detail || 'Falha ao aceitar o convite');
       }
 
       return res.json();
     },
     onSuccess: () => {
-      console.log('Invite accepted');
       localStorage.removeItem('league_invite_token');
       // setTimeout(() => navigate('/welcome'), 3000);
     },

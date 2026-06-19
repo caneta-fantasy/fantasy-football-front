@@ -11,10 +11,13 @@ vi.mock('../api/fantasyMatchupQueries', () => ({
 const mk = (over: Partial<FantasyMatchupDto>): FantasyMatchupDto => ({
   id: Math.random().toString(36),
   roundNumber: 13,
+  realRound: 13,
   homeTeamId: 1,
   homeTeamName: 'Home',
+  homeOwnerName: null,
   awayTeamId: 2,
   awayTeamName: 'Away',
+  awayOwnerName: null,
   homeScore: null,
   awayScore: null,
   winnerId: null,
@@ -24,6 +27,8 @@ const mk = (over: Partial<FantasyMatchupDto>): FantasyMatchupDto => ({
   playoffStage: 1,
   twoLegPairId: null,
   playoffSeed: { homeSeed: 1, awaySeed: 2 },
+  homeTeamSeed: 1,
+  awayTeamSeed: 2,
   ...over,
 });
 

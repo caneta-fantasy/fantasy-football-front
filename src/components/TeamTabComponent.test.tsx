@@ -9,6 +9,7 @@ const useFantasyLeagueTeams = vi.fn()
 const useFantasyLeagueSeasons = vi.fn()
 const useRealMatchesByRound = vi.fn()
 const useLockedTeams = vi.fn()
+const useSimulationLockedTeams = vi.fn()
 
 vi.mock('./userTeamRosterQueries', async (importOriginal) => {
   const actual = await importOriginal<Record<string, unknown>>()
@@ -25,6 +26,9 @@ vi.mock('../api/matchesQueries', () => ({
 }))
 vi.mock('../api/fantasyRoundGameQueries', () => ({
   useLockedTeams: (...a: unknown[]) => useLockedTeams(...a),
+}))
+vi.mock('../api/simulatorQueries', () => ({
+  useSimulationLockedTeams: (...a: unknown[]) => useSimulationLockedTeams(...a),
 }))
 
 // `POSITIONS_TRANSLATION` (imported transitively by SlotCard) lives in the
@@ -108,6 +112,7 @@ beforeEach(() => {
   useFantasyLeagueSeasons.mockReturnValue({ data: { currentFantasyRound: 12, currentRealRound: 12, numberOfRounds: 38 } })
   useRealMatchesByRound.mockReturnValue({ data: [] })
   useLockedTeams.mockReturnValue({ data: { lockedTeamIds: [] } })
+  useSimulationLockedTeams.mockReturnValue({ data: { teams: [] } })
   useRoster.mockReturnValue({
     data: [STARTER, EMPTY_STARTER, BENCH],
     isLoading: false,

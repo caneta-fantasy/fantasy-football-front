@@ -21,7 +21,7 @@ function assignPicksToSlots(slots: Slot[], myPicks: DraftPick[]): SlotWithNullab
   const usedPickIds = new Set<string>();
 
   return slots.map((slot) => {
-    const isBench = (slot.allowedPositions as string[]).includes('BN');
+    const isBench = slot.slotType === 'bench';
 
     const match = myPicks.find((p) => {
       if (usedPickIds.has(p.id)) return false;

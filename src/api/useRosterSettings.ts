@@ -9,6 +9,7 @@ export interface RosterSettingsResponse {
   tradeDeadlineRound: number;
   irSlots: number;
   playoffStartRound: number;
+  defenseType?: 'OPEN' | 'CLOSED';
 }
 
 export const useRosterSettings = (leagueId: number) => {

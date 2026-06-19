@@ -1,14 +1,19 @@
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import { apiConfig } from './config';
+import { authHeader } from './httpClient';
 
 export interface FantasyMatchupDto {
   id: string;
   roundNumber: number;
+  // Real-league round this fantasy round maps to (equals roundNumber unless skipped)
+  realRound: number;
   homeTeamId: number | null;
   homeTeamName: string | null;
+  homeOwnerName: string | null;
   awayTeamId: number | null;
   awayTeamName: string | null;
+  awayOwnerName: string | null;
   homeScore: number | null;
   awayScore: number | null;
   winnerId: number | null;
@@ -17,7 +22,11 @@ export interface FantasyMatchupDto {
   isGhost: boolean;
   playoffStage: number | null;
   twoLegPairId: string | null;
+  // Bracket POSITION of each side (drives layout/pairings) — NOT the team's identity seed.
   playoffSeed: { homeSeed: number; awaySeed: number } | null;
+  // The teams' true regular-season seeds, stable across the whole bracket.
+  homeTeamSeed: number | null;
+  awayTeamSeed: number | null;
 }
 
 export interface ScheduleByRoundDto {
@@ -25,13 +34,10 @@ export interface ScheduleByRoundDto {
   matchups: FantasyMatchupDto[];
 }
 
-const authHeader = () => ({
-  Authorization: `Bearer ${localStorage.getItem('token')}`,
-});
-
 export interface StandingDto {
   teamId: number;
   teamName: string;
+  ownerName?: string | null;
   wins: number;
   draws: number;
   losses: number;

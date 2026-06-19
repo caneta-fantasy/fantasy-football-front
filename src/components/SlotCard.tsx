@@ -8,10 +8,13 @@
 // when interactive — the legacy version was an inaccessible `Paper onClick`.
 //
 // The exported `SlotCardProps` interface and the `RosterSlotCard` enum are kept
-// verbatim (both are imported by `TeamTabComponent`).
+// (both are imported by `TeamTabComponent`). The enum carries main's #67
+// open-defense `GK` slot. `POSITIONS_TRANSLATION` is imported from its
+// centralized home (`../utils/positions`, #72/#73) — it no longer lives in
+// `PlayerSelectModal`.
 import React from 'react'
 import { Avatar, Btn } from '@/ds'
-import { POSITIONS_TRANSLATION } from './PlayerSelectModal'
+import { POSITIONS_TRANSLATION } from '../utils/positions'
 import { RosterPlayer, Slot } from './userTeamRosterQueries'
 import { OpponentInfo, formatMatchTime } from '../utils/matchUtils'
 
@@ -32,6 +35,9 @@ export interface SlotCardProps {
 }
 
 export enum RosterSlotCard {
+  // `GK` is the open-defense goalkeeper slot (#67); `GOL` is the closed-defense
+  // synthetic goalkeeper. Both are kept so either defense mode resolves a slot.
+  GK = 'GK',
   GOL = 'GOL',
   DEF = 'DEF',
   MEI = 'MEI',
@@ -40,14 +46,15 @@ export enum RosterSlotCard {
 }
 
 /**
- * Roster-taxonomy position pill (GOL/DEF/MEI/ATA/BN + the MEI/ATA combo). The
+ * Roster-taxonomy position pill (GK/GOL/DEF/MEI/ATA/BN + the MEI/ATA combo). The
  * colours follow the C3 spec, which is its OWN mapping distinct from the
  * broadcast `ds/PositionPill` (there MEI=green/ATA=gold; here the roster slots
- * read GOL=cobalt, DEF=green, MEI=gold, ATA=danger, BN=ink-muted). The combo
+ * read GK/GOL=cobalt, DEF=green, MEI=gold, ATA=danger, BN=ink-muted). The combo
  * slot `['MEI','ATA']` renders a neutral "M/A". Colour is never the only cue:
  * the 3-letter glyph is always visible and an `aria-label` spells the role out.
  */
 const POS_TONE: Record<string, { cls: string; label: string }> = {
+  GK: { cls: 'bg-cobalt text-on-cobalt', label: 'Goleiro' },
   GOL: { cls: 'bg-cobalt text-on-cobalt', label: 'Goleiro' },
   DEF: { cls: 'bg-signature text-on-green', label: 'Defensor' },
   MEI: { cls: 'bg-accent text-on-gold', label: 'Meia' },

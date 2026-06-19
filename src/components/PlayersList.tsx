@@ -15,6 +15,7 @@ import type { PlayerRow, PosTagCode } from '../ds/PlayersTableApp/types';
 import { useBreakpoint } from '../ds/PlayersTableApp/useBreakpoint';
 import { ResultsBar } from '../ds/ResultsBar/ResultsBar';
 import { usePlayers, usePlayersFilters } from '../api/playersQueries';
+import { useRosterSettings } from '../api/useRosterSettings';
 import AddPlayerModal from './AddPlayerModal';
 import PlayerStatsModal from './PlayerStatsModal';
 import WaiverClaimModal from './WaiverClaimModal';
@@ -24,38 +25,24 @@ import { useWaiverBudgets, useWaiverClaims, useWaiverWindowStatus } from '../api
 import { FantasyLeague } from '../api/fantasyLeagueQueries';
 import { useFantasyLeagueSeasons } from '../api/useFantasyLeagueSeasons';
 import { LeagueStatus } from './SeasonStatusCard';
+import {
+  POSITIONS_TRANSLATION,
+  CLOSED_POSITION_OPTIONS,
+  OPEN_POSITION_OPTIONS,
+  CLOSED_POSITIONS_BACKEND_MAP,
+  OPEN_POSITIONS_BACKEND_MAP,
+} from '../utils/positions';
 import { useRealMatchesByRound } from '../api/matchesQueries';
 import { getOpponentForTeam, formatMatchTime } from '../utils/matchUtils';
 import { useLockedTeams } from '../api/fantasyRoundGameQueries';
+import { useSimulationLockedTeams } from '../api/simulatorQueries';
 import type { SortState } from '../ds/PlayersTableApp/PlayersTableApp';
 
-
-const POSITION_OPTIONS = [
-  { value: 'ALL', label: 'TODOS' },
-  { value: 'DEF', label: 'DEF' },
-  { value: 'MEI', label: 'MEI' },
-  { value: 'ATA', label: 'ATA' },
-];
 
 const FREE_AGENTS_OPTIONS = [
   { value: false, label: 'Todos' },
   { value: true, label: 'Não escalados' },
 ];
-
-const POSITIONS_TRANSLATION = {
-  'Defender': 'Defensor',
-  'Midfielder': 'Meio-Campo',
-  'Attacker': 'Atacante',
-  'Goalkeeper': 'Goleiro',
-  'ALL': 'Todos',
-  'Defense': 'Defesa', // for synthetic team players
-};
-
-const POSITIONS_BACKEND_MAP = {
-  'DEF': 'Defense',
-  'MEI': 'Midfielder',
-  'ATA': 'Attacker',
-};
 
 // Map the backend position label → the short PosTag taxonomy {GOL,DEF,MEI,ATA}
 // the modernista list renders. Unknown/unmapped labels fall back to MEI so the
@@ -122,9 +109,26 @@ const PlayersList: React.FC<PlayersListProps> = ({ fantasyLeague, seasonYear, us
     activeRealRound ? seasonYear : undefined,
     activeRealRound ?? undefined,
   );
-  const { data: lockedTeamsData } = useLockedTeams(fantasyLeague.league.externalId, seasonYear, activeRealRound);
-  const lockedTeamIds = new Set<number>(lockedTeamsData?.lockedTeamIds ?? []);
+  // Simulation leagues: locks are the admin's manual per-club toggles, not real kickoffs
+  const isSimulation = !!fantasyLeague.isSimulation;
+  const { data: lockedTeamsData } = useLockedTeams(
+    isSimulation ? undefined : fantasyLeague.league.id,
+    seasonYear,
+    activeRealRound,
+  );
+  const { data: simLockedTeams } = useSimulationLockedTeams(isSimulation ? season?.id : null);
+  const lockedTeamIds = new Set<number>(
+    isSimulation
+      ? (simLockedTeams?.teams ?? []).filter((t) => t.locked).map((t) => t.id)
+      : lockedTeamsData?.lockedTeamIds ?? [],
+  );
   const draftCompleted = season ? POST_DRAFT_STATUSES.includes(season.status as LeagueStatus) : false;
+
+  const { data: rosterSettingsData } = useRosterSettings(fantasyLeague.id);
+  const defenseType = rosterSettingsData?.defenseType ?? 'CLOSED';
+  const isOpenDefense = defenseType === 'OPEN';
+  const positionOptions = isOpenDefense ? OPEN_POSITION_OPTIONS : CLOSED_POSITION_OPTIONS;
+  const positionsBackendMap = isOpenDefense ? OPEN_POSITIONS_BACKEND_MAP : CLOSED_POSITIONS_BACKEND_MAP;
 
   const [position, setPosition] = useState<string>('ALL');
   const [search, setSearch] = useState<string>('');
@@ -132,7 +136,9 @@ const PlayersList: React.FC<PlayersListProps> = ({ fantasyLeague, seasonYear, us
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [onlyFreeAgents, setOnlyFreeAgents] = useState(false);
   const [teamId, setTeamId] = useState<number | null>(null);
-  const [sortBy, setSortBy] = useState<string>('totalPoints');
+  // 'auto' = let the backend pick: per-league points once the season has points,
+  // global draft ranking pre-season. Explicit column clicks override it.
+  const [sortBy, setSortBy] = useState<string>('auto');
   const [order, setOrder] = useState<'asc' | 'desc'>('desc');
 
   const handleSort = (col: string) => {
@@ -149,9 +155,10 @@ const PlayersList: React.FC<PlayersListProps> = ({ fantasyLeague, seasonYear, us
   // screen owns { sortBy, order }. The Table cycles none→asc→desc→none, but the
   // screen's contract is a simple desc↔asc toggle per column. We drive that off
   // the *key* the Table reports: when `next` is null the Table just cycled the
-  // active column past descending, so the key is the current `sortBy`.
+  // active column past descending, so the key is the currently active column
+  // (`activeSort` — the column the backend resolved when sortBy is 'auto').
   const handleSortChange = (next: SortState | null) => {
-    handleSort(next ? next.key : sortBy);
+    handleSort(next ? next.key : activeSort);
   };
   const [selectedSlotId, setSelectedSlotId] = useState<number | null>(null);
   const [, setSelectedPlayerName] = useState<string>('')
@@ -160,14 +167,13 @@ const PlayersList: React.FC<PlayersListProps> = ({ fantasyLeague, seasonYear, us
 
   const [addOpen, setAddOpen] = useState(false);
   const [selectedPlayer, setSelectedPlayer] = useState<null | {
-  id: number; name: string; photo: string; position: 'Defense' | 'Midfielder' | 'Attacker'; teamCode?: string;
+    id: number; name: string; photo: string; position: 'Goalkeeper' | 'Defense' | 'Defender' | 'Midfielder' | 'Attacker'; teamCode?: string;
   }>(null);
 
   const [waiverClaimOpen, setWaiverClaimOpen] = useState(false);
   const [waiverPlayer, setWaiverPlayer] = useState<null | { id: number; name: string; photo: string; position: string }>(null);
 
-  const leagueExternalId = season?.fantasyLeague?.league?.externalId;
-  const { data: waiverWindowStatus } = useWaiverWindowStatus(leagueExternalId, season?.seasonYear);
+  const { data: waiverWindowStatus } = useWaiverWindowStatus(fantasyLeague.league.id, seasonYear);
   const isWaiverWindowOpen = waiverWindowStatus?.isOpen ?? false;
 
   const { data: waiverBudgets } = useWaiverBudgets(isWaiverWindowOpen ? seasonId : undefined);
@@ -226,7 +232,7 @@ const PlayersList: React.FC<PlayersListProps> = ({ fantasyLeague, seasonYear, us
   const { data, isLoading: isLoadingPlayers, isFetching, error: playersError, refetch: refetchPlayers } = usePlayers({
     position: position === 'ALL'
       ? undefined
-      : [POSITIONS_BACKEND_MAP[position as keyof typeof POSITIONS_BACKEND_MAP]],
+      : [positionsBackendMap[position]],
     teamId: teamId ?? undefined,        // <-- only change here
     search,
     page: page + 1,
@@ -238,6 +244,10 @@ const PlayersList: React.FC<PlayersListProps> = ({ fantasyLeague, seasonYear, us
     onlyFreeAgents,
   });
 
+
+  // When sortBy is 'auto', the backend resolves the real column (totalPoints or
+  // draftRank). Use the resolved value from meta so the right header highlights.
+  const activeSort = sortBy === 'auto' ? data?.meta?.sortBy ?? '' : sortBy;
 
   const previousDataRef = useRef<any[]>([]);
   useEffect(() => {
@@ -260,7 +270,7 @@ const PlayersList: React.FC<PlayersListProps> = ({ fantasyLeague, seasonYear, us
   };
 
   const { data: filters, isLoading: loadingFilters } = usePlayersFilters({
-    leagueId: fantasyLeague.league.externalId,
+    leagueId: fantasyLeague.league.id,
     seasonYear,
   });
 
@@ -405,7 +415,7 @@ const PlayersList: React.FC<PlayersListProps> = ({ fantasyLeague, seasonYear, us
       <PlayersFilters
         compact={isMobile}
         position={position}
-        positionOptions={POSITION_OPTIONS}
+        positionOptions={positionOptions}
         onPositionChange={(v) => setPosition(v)}
         onlyFreeAgents={onlyFreeAgents}
         freeAgentsOptions={FREE_AGENTS_OPTIONS}
@@ -433,7 +443,7 @@ const PlayersList: React.FC<PlayersListProps> = ({ fantasyLeague, seasonYear, us
             <PlayersTableApp
               bp={bp}
               rows={rows}
-              sort={toSortState(sortBy, order)}
+              sort={toSortState(activeSort, order)}
               onSortChange={handleSortChange}
               showNext={!!currentRound}
               empty={

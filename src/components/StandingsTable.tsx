@@ -57,7 +57,7 @@ const StandingsTable: React.FC<Props> = ({ seasonId, userTeamId }) => {
       <EmptyState
         icon="league"
         title="Sem classificação"
-        body="Ainda não há jogos concluídos. A tabela aparece assim que a temporada começar a pontuar."
+        body="O draft ainda não foi concluído. A tabela aparece assim que a temporada começar a pontuar."
       />
     );
   }
@@ -111,11 +111,18 @@ const StandingsTable: React.FC<Props> = ({ seasonId, userTeamId }) => {
             </span>
             <span className="flex min-w-0 items-center gap-[9px]">
               <Avatar name={row.teamName} size={26} />
-              <span
-                className="truncate font-sans text-[13.5px] text-ink"
-                style={{ fontWeight: isMe ? 800 : 600 }}
-              >
-                {row.teamName}
+              <span className="flex min-w-0 flex-col">
+                <span
+                  className="truncate font-sans text-[13.5px] text-ink"
+                  style={{ fontWeight: isMe ? 800 : 600 }}
+                >
+                  {row.teamName}
+                </span>
+                {row.ownerName && (
+                  <span className="truncate font-sans text-[11px] leading-tight text-ink-muted">
+                    {row.ownerName}
+                  </span>
+                )}
               </span>
             </span>
             <span

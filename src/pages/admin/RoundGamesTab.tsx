@@ -43,6 +43,7 @@ import {
   useSyncAllRounds,
   useSyncRound,
 } from '../../api/fantasyRoundGameQueries';
+import { SUPPORTED_LEAGUE } from '../../constants/league';
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
@@ -420,11 +421,10 @@ const OrphanedRow: React.FC<{
 const TOTAL_ROUNDS = 38;
 
 const RoundGamesTab: React.FC = () => {
-  const [leagueId, setLeagueId] = useState('71');
   const [seasonYear, setSeasonYear] = useState(String(new Date().getFullYear()));
   const [snack, setSnack] = useState<string | null>(null);
 
-  const leagueExternalId = Number(leagueId) || undefined;
+  const leagueExternalId = SUPPORTED_LEAGUE.externalId;
   const year = Number(seasonYear) || undefined;
 
   const { data: orphaned = [], isLoading: orphanedLoading } = useOrphanedMatches(
@@ -454,13 +454,11 @@ const RoundGamesTab: React.FC = () => {
       {/* Controls */}
       <Stack direction="row" spacing={2} alignItems="center" sx={{ mb: 3 }}>
         <TextField
-          label="ID Externo da Liga"
-          type="number"
-          value={leagueId}
-          onChange={(e) => setLeagueId(e.target.value)}
+          label="Campeonato"
+          value={SUPPORTED_LEAGUE.name}
           size="small"
-          sx={{ width: 160 }}
-          helperText="71 = Brasileirão"
+          sx={{ width: 200 }}
+          InputProps={{ readOnly: true }}
         />
         <TextField
           label="Ano da Temporada"

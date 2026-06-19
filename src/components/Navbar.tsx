@@ -52,13 +52,18 @@ const Navbar: React.FC = () => {
         {/* Conditional rendering based on auth */}
         {user ? (
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-            <Typography variant="body1" sx={{ fontWeight: 'bold' }}>
+            <Typography
+              variant="body1"
+              component={Link}
+              to="/profile"
+              sx={{ fontWeight: 'bold', color: '#1a1a1a', textDecoration: 'none', '&:hover': { textDecoration: 'underline' } }}
+            >
               Olá, {user.firstName}!
             </Typography>
             {user.isAdmin && (
               <Button
                 component={Link}
-                to="/admin/round-flow"
+                to="/admin"
                 variant="text"
                 sx={{ textTransform: 'none', fontWeight: 'bold', color: '#1a1a1a' }}
               >

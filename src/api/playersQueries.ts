@@ -2,6 +2,7 @@
 import axios from 'axios';
 import { useQuery } from '@tanstack/react-query';
 import { apiConfig } from './config';
+import { STALE_TIME } from './queryConfig';
 
 export interface Player {
   player_id: number;
@@ -52,6 +53,7 @@ export const usePlayers = ({
   fantasyLeagueId,
   onlyFreeAgents,
   teamId,
+  excludePlayerIds,
 }: {
   position?: string[];
   search?: string;
@@ -63,14 +65,15 @@ export const usePlayers = ({
   fantasyLeagueId?: number;
   onlyFreeAgents: boolean,
   teamId?: number,
+  excludePlayerIds?: number[],
 }) => {
   return useQuery<PlayerResponse>({
-    queryKey: ['players', { position, search, page, limit, sortBy, order, leagueId, fantasyLeagueId, onlyFreeAgents, teamId }],
+    queryKey: ['players', { position, search, page, limit, sortBy, order, leagueId, fantasyLeagueId, onlyFreeAgents, teamId, excludePlayerIds }],
     enabled: leagueId != null,
     placeholderData: (prev) => prev,
     queryFn: async () => {
       const response = await axios.get(`${apiConfig.endpoints.players.getAll}`, {
-        params: { position, search, page, limit, sortBy, order, leagueId, fantasyLeagueId, onlyFreeAgents, teamId },
+        params: { position, search, page, limit, sortBy, order, leagueId, fantasyLeagueId, onlyFreeAgents, teamId, excludePlayerIds },
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token')}`,
         },
@@ -99,6 +102,6 @@ export const usePlayersFilters = (params: UsePlayersFiltersParams) => {
       );
       return response.data;
     },
-    staleTime: 5 * 60 * 1000,
+    staleTime: STALE_TIME.STANDARD,
   });
 };

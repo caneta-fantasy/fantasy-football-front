@@ -7,10 +7,12 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 const usePlayers = vi.fn()
 const usePlayersFilters = vi.fn()
 const useRoster = vi.fn()
+const useRosterSettings = vi.fn()
 const useRemovePlayer = vi.fn()
 const useFantasyLeagueSeasons = vi.fn()
 const useRealMatchesByRound = vi.fn()
 const useLockedTeams = vi.fn()
+const useSimulationLockedTeams = vi.fn()
 const useWaiverWindowStatus = vi.fn()
 const useWaiverBudgets = vi.fn()
 const useWaiverClaims = vi.fn()
@@ -28,6 +30,9 @@ vi.mock('./userTeamRosterQueries', async (importOriginal) => {
 vi.mock('../api/userTeamRosterMutations', () => ({
   useRemovePlayer: (...a: unknown[]) => useRemovePlayer(...a),
 }))
+vi.mock('../api/useRosterSettings', () => ({
+  useRosterSettings: (...a: unknown[]) => useRosterSettings(...a),
+}))
 vi.mock('../api/useFantasyLeagueSeasons', () => ({
   useFantasyLeagueSeasons: (...a: unknown[]) => useFantasyLeagueSeasons(...a),
 }))
@@ -36,6 +41,9 @@ vi.mock('../api/matchesQueries', () => ({
 }))
 vi.mock('../api/fantasyRoundGameQueries', () => ({
   useLockedTeams: (...a: unknown[]) => useLockedTeams(...a),
+}))
+vi.mock('../api/simulatorQueries', () => ({
+  useSimulationLockedTeams: (...a: unknown[]) => useSimulationLockedTeams(...a),
 }))
 vi.mock('../api/waiverQueries', () => ({
   useWaiverWindowStatus: (...a: unknown[]) => useWaiverWindowStatus(...a),
@@ -120,6 +128,8 @@ beforeEach(() => {
   })
   useRealMatchesByRound.mockReturnValue({ data: [] })
   useLockedTeams.mockReturnValue({ data: { lockedTeamIds: [] } })
+  useSimulationLockedTeams.mockReturnValue({ data: { teams: [] } })
+  useRosterSettings.mockReturnValue({ data: { defenseType: 'CLOSED' } })
   useWaiverWindowStatus.mockReturnValue({ data: { isOpen: false } })
   useWaiverBudgets.mockReturnValue({ data: [] })
   useWaiverClaims.mockReturnValue({ data: [] })
@@ -165,7 +175,9 @@ describe('PlayersList (Jogadores)', () => {
       expect.objectContaining({
         page: 1,
         limit: 10,
-        sortBy: 'totalPoints',
+        // Default sort is 'auto' — the backend resolves the real column
+        // (totalPoints once the season has points, else avgPoints).
+        sortBy: 'auto',
         order: 'desc',
         onlyFreeAgents: false,
         // #66 reverted usePlayers to fantasyLeague.league.id (not externalId).
@@ -175,12 +187,14 @@ describe('PlayersList (Jogadores)', () => {
     )
   })
 
-  it('toggles sort args via the table sort buttons (totalPoints desc → asc)', async () => {
+  it('selects a column sort via the table sort buttons (auto → totalPoints desc)', async () => {
     renderList()
     const sortBtn = screen.getByRole('button', { name: /pts total/i })
     await userEvent.click(sortBtn)
+    // From the 'auto' default the column isn't yet active, so the first click
+    // selects it descending (rather than toggling an already-active column).
     expect(usePlayers).toHaveBeenLastCalledWith(
-      expect.objectContaining({ sortBy: 'totalPoints', order: 'asc' }),
+      expect.objectContaining({ sortBy: 'totalPoints', order: 'desc' }),
     )
   })
 

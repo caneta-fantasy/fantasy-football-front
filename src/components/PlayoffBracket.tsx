@@ -149,7 +149,7 @@ function detectByeTeams(
 // ──────────────────────────────────────────────────────────────────────────────
 
 const SLOT_HEIGHT = 84;
-const SLOT_WIDTH = 210;
+const SLOT_WIDTH = 280;
 const CONNECTOR_W = 28;
 
 const scoreStr = (score: number | null) =>
@@ -163,9 +163,10 @@ interface TeamRowProps {
   isTwoLeg: boolean;
   isWinner: boolean;
   hasBorder: boolean;
+  seed?: number | null;
 }
 
-const TeamRow: React.FC<TeamRowProps> = ({ name, score, leg1Score, leg2Score, isTwoLeg, isWinner, hasBorder }) => (
+const TeamRow: React.FC<TeamRowProps> = ({ name, score, leg1Score, leg2Score, isTwoLeg, isWinner, hasBorder, seed }) => (
   <div
     className="flex min-w-0 items-center justify-between px-2 py-[5px]"
     style={{
@@ -173,11 +174,18 @@ const TeamRow: React.FC<TeamRowProps> = ({ name, score, leg1Score, leg2Score, is
       borderBottom: hasBorder ? '1px solid var(--line)' : 'none',
     }}
   >
-    <span
-      className="mr-[6px] flex-1 truncate font-sans text-[11px] leading-[1.3]"
-      style={{ fontWeight: isWinner ? 800 : 400, color: isWinner ? 'var(--green)' : 'var(--ink)' }}
-    >
-      {name ?? '?'}
+    <span className="mr-[6px] flex min-w-0 flex-1 items-center" title={name ?? ''}>
+      {seed != null && (
+        <span className="mr-[3px] shrink-0 font-sans text-[9px] font-semibold text-ink-subtle">
+          #{seed}
+        </span>
+      )}
+      <span
+        className="truncate font-sans text-[11px] leading-[1.3]"
+        style={{ fontWeight: isWinner ? 800 : 400, color: isWinner ? 'var(--green)' : 'var(--ink)' }}
+      >
+        {name ?? '?'}
+      </span>
     </span>
     {isTwoLeg ? (
       <span className="flex shrink-0 items-center gap-[3px]">
@@ -239,6 +247,7 @@ const MatchupBox: React.FC<{ slot: BracketSlot }> = ({ slot }) => {
         isTwoLeg={isTwoLeg}
         isWinner={homeWon}
         hasBorder
+        seed={rep.homeTeamSeed ?? null}
       />
       <TeamRow
         name={rep.awayTeamName}
@@ -248,18 +257,28 @@ const MatchupBox: React.FC<{ slot: BracketSlot }> = ({ slot }) => {
         isTwoLeg={isTwoLeg}
         isWinner={awayWon}
         hasBorder={false}
+        seed={rep.awayTeamSeed ?? null}
       />
     </Card>
   );
 };
 
-const ByeBox: React.FC<{ teamName: string }> = ({ teamName }) => (
+const ByeBox: React.FC<{ teamName: string; seed?: number }> = ({ teamName, seed }) => (
   <Card tone="mist" padding="" className="overflow-hidden rounded-btn-sm" style={{ width: SLOT_WIDTH }}>
-    <div className="px-2 py-[5px]" style={{ borderBottom: '1px solid var(--line)' }}>
+    <div
+      className="flex min-w-0 items-center px-2 py-[5px]"
+      style={{ borderBottom: '1px solid var(--line)' }}
+      title={teamName}
+    >
+      {seed != null && (
+        <span className="mr-[3px] shrink-0 font-sans text-[9px] font-semibold text-ink-subtle">
+          #{seed}
+        </span>
+      )}
       <span className="truncate font-sans text-[11px] font-bold text-ink">{teamName}</span>
     </div>
     <div className="px-2 py-[5px]">
-      <span className="font-sans text-[10px] text-ink-subtle">Bye</span>
+      <span className="font-sans text-[10px] text-ink-subtle">Folga</span>
     </div>
   </Card>
 );
@@ -321,7 +340,7 @@ const BracketColumn: React.FC<ColumnProps> = ({ maxStage, slotMap, visualOrder, 
             className="absolute left-0 flex items-center"
             style={{ top: topY, width: SLOT_WIDTH, height: SLOT_HEIGHT }}
           >
-            {byeName ? <ByeBox teamName={byeName} /> : slot ? <MatchupBox slot={slot} /> : <TbdBox />}
+            {byeName ? <ByeBox teamName={byeName} seed={position} /> : slot ? <MatchupBox slot={slot} /> : <TbdBox />}
           </div>
         );
       })}

@@ -7,10 +7,13 @@ import { FantasyMatchupDto } from '../api/fantasyMatchupQueries';
 const base: FantasyMatchupDto = {
   id: 'm1',
   roundNumber: 12,
+  realRound: 12,
   homeTeamId: 1,
   homeTeamName: 'Galácticos do Bar',
+  homeOwnerName: null,
   awayTeamId: 2,
   awayTeamName: 'Os Galácticos',
+  awayOwnerName: null,
   homeScore: 92,
   awayScore: 74,
   winnerId: 1,
@@ -20,6 +23,8 @@ const base: FantasyMatchupDto = {
   playoffStage: null,
   twoLegPairId: null,
   playoffSeed: null,
+  homeTeamSeed: null,
+  awayTeamSeed: null,
 };
 
 describe('MatchupCard', () => {

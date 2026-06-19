@@ -1,4 +1,4 @@
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
 import { apiConfig } from './config';
 
@@ -8,6 +8,7 @@ interface CreateFantasyLeagueData {
   ownerId: number;
   leagueId: number;
   draftType: string;
+  numberOfRounds?: number;
 }
 
 export interface UpdateFantasyLeague {
@@ -74,7 +75,8 @@ export const inviteUserToFantasyLeague = async ({
   return res.json();
 };
 
-export const useUpdateFantasyLeague = ({ onSuccess }: { onSuccess: () => void }) => {
+export const useUpdateFantasyLeague = ({ onSuccess }: { onSuccess?: () => void } = {}) => {
+  const queryClient = useQueryClient();
   return useMutation({
     mutationFn: ({ id, updates }: UpdateFantasyLeagueData) =>
       axios.patch(`${apiConfig.endpoints.fantasyLeagues.update(id)}`, updates, {
@@ -83,12 +85,36 @@ export const useUpdateFantasyLeague = ({ onSuccess }: { onSuccess: () => void })
           Authorization: `Bearer ${localStorage.getItem('token')}`,
         },
       }),
-    onSuccess: onSuccess,
+    onSuccess: (_data, variables) => {
+      // Refresh the league name app-wide (sidebar, my-leagues list, detail).
+      queryClient.invalidateQueries({ queryKey: ['myLeagues'] });
+      queryClient.invalidateQueries({ queryKey: ['leagueId', variables.id] });
+      onSuccess?.();
+    },
   });
 };
 
-export const useDeleteFantasyLeague = () =>
-  useMutation({
+export const useJoinFantasyLeague = () => {
+  return useMutation({
+    mutationFn: async (joinCode: string) => {
+      const res = await axios.post(
+        apiConfig.endpoints.fantasyLeagues.join,
+        { joinCode },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${localStorage.getItem('token')}`,
+          },
+        },
+      );
+      return res.data as { message: string; leagueId: number };
+    },
+  });
+};
+
+export const useDeleteFantasyLeague = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
     mutationFn: (id: number) =>
       axios.delete(`${apiConfig.endpoints.fantasyLeagues.delete(id)}`, {
         headers: {
@@ -96,4 +122,10 @@ export const useDeleteFantasyLeague = () =>
           Authorization: `Bearer ${localStorage.getItem('token')}`,
         },
       }),
+    onSuccess: (_data, id) => {
+      // Drop the deleted league from the cached list so it disappears on /welcome.
+      queryClient.invalidateQueries({ queryKey: ['myLeagues'] });
+      queryClient.removeQueries({ queryKey: ['leagueId', id] });
+    },
   });
+};

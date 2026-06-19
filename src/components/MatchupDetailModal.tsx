@@ -208,7 +208,11 @@ export interface MatchupDetailProps {
 export const MatchupDetail: React.FC<MatchupDetailProps> = ({ matchup, seasonYear, seasonId }) => {
   const isCompleted = matchup.status === 'completed';
 
-  const { data: realMatches } = useRealMatchesByRound(seasonYear, matchup.roundNumber);
+  // Real-world data (games, player history) lives under the REAL round, which
+  // differs from the fantasy round when the league skipped a championship round
+  const realRound = matchup.realRound ?? matchup.roundNumber;
+
+  const { data: realMatches } = useRealMatchesByRound(seasonYear, realRound);
   const { data: pointsMap } = usePointsByRound(
     isCompleted ? undefined : seasonId,
     matchup.roundNumber,
@@ -278,7 +282,7 @@ export const MatchupDetail: React.FC<MatchupDetailProps> = ({ matchup, seasonYea
         playerName={statsSlot?.name}
         playerPhoto={statsSlot?.photo}
         seasonId={seasonId}
-        roundFilter={matchup.roundNumber}
+        roundFilter={realRound}
         opponentInfo={statsSlot?.opponentInfo}
         onClose={() => setStatsSlot(null)}
       />
@@ -314,15 +318,25 @@ const MatchupDetailModal: React.FC<ModalProps> = ({ matchup, onClose, userTeamId
       </Box>
       {matchup && (
         <Box display="flex" alignItems="center" justifyContent="center" gap={2} mt={1}>
-          <Typography variant="h6" fontWeight={700} sx={{ flex: 1, textAlign: 'right' }} noWrap>
-            {matchup.homeTeamName ?? 'Ghost'}
-          </Typography>
+          <Box sx={{ flex: 1, textAlign: 'right' }}>
+            <Typography variant="h6" fontWeight={700} noWrap>
+              {matchup.homeTeamName ?? 'Ghost'}
+            </Typography>
+            {matchup.homeOwnerName && (
+              <Typography variant="caption" color="text.secondary">{matchup.homeOwnerName}</Typography>
+            )}
+          </Box>
           <Typography variant="h5" fontWeight={800} color="text.secondary" sx={{ minWidth: 80, textAlign: 'center' }}>
             {matchup.homeScore != null ? Number(matchup.homeScore).toFixed(1) : '—'} – {matchup.awayScore != null ? Number(matchup.awayScore).toFixed(1) : '—'}
           </Typography>
-          <Typography variant="h6" fontWeight={700} sx={{ flex: 1 }} noWrap>
-            {matchup.awayTeamName ?? 'Ghost'}
-          </Typography>
+          <Box sx={{ flex: 1 }}>
+            <Typography variant="h6" fontWeight={700} noWrap>
+              {matchup.awayTeamName ?? 'Ghost'}
+            </Typography>
+            {matchup.awayOwnerName && (
+              <Typography variant="caption" color="text.secondary">{matchup.awayOwnerName}</Typography>
+            )}
+          </Box>
         </Box>
       )}
     </DialogTitle>

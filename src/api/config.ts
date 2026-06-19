@@ -1,3 +1,4 @@
+import { STALE_TIME } from './queryConfig';
 
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:4000';
 
@@ -5,17 +6,34 @@ const endpoints = {
   auth: {
     signup: `${API_BASE_URL}/users/signup`,
     signin: `${API_BASE_URL}/users/signin`,
+    login: `${API_BASE_URL}/auth/login`,
     refresh: `${API_BASE_URL}/auth/refresh`,
     profile: `${API_BASE_URL}/auth/profile`,
+    forgotPassword: `${API_BASE_URL}/auth/forgot-password`,
+    resetPassword: `${API_BASE_URL}/auth/reset-password`,
+    verifyEmail: `${API_BASE_URL}/users/verify-email`,
+    resendVerification: `${API_BASE_URL}/users/me/resend-verification`,
   },
   users: {
     update: `${API_BASE_URL}/users/update`,
     findUserFantasyLeagueTeam: (id: number, fantasyLeagueId: number) => `${API_BASE_URL}/users/${id}/fantasy-leagues/${fantasyLeagueId}`,
   },
+  leagues: {
+    list: `${API_BASE_URL}/leagues`,
+  },
+  playerRanking: {
+    list: `${API_BASE_URL}/admin/player-ranking`,
+    config: `${API_BASE_URL}/admin/player-ranking/config`,
+    availability: (playerId: number) => `${API_BASE_URL}/admin/player-ranking/${playerId}/availability`,
+    nudge: (playerId: number) => `${API_BASE_URL}/admin/player-ranking/${playerId}/nudge`,
+    recompute: `${API_BASE_URL}/admin/player-ranking/recompute`,
+  },
   fantasyLeagues: {
     create: `${API_BASE_URL}/fantasy-leagues`,
     get: `${API_BASE_URL}/fantasy-leagues`,
     myLeagues: `${API_BASE_URL}/fantasy-leagues/my-leagues`,
+    join: `${API_BASE_URL}/fantasy-leagues/join`,
+    byCode: (code: string) => `${API_BASE_URL}/fantasy-leagues/by-code/${code}`,
     getLeague: `${API_BASE_URL}/fantasy-leagues`,
     update: (id: number) => `${API_BASE_URL}/fantasy-leagues/${id}`,
     getInvitesByLeagueId: (id: number) => `${API_BASE_URL}/fantasy-leagues/${id}/invites`,
@@ -75,9 +93,18 @@ const endpoints = {
     validateConfig: `${API_BASE_URL}/fantasy-matchups/validate-config`,
     delete: (seasonId: string) => `${API_BASE_URL}/fantasy-matchups/season/${seasonId}`,
   },
+  roundMappings: {
+    calendar: (seasonId: string) =>
+      `${API_BASE_URL}/fantasy-matchups/season/${seasonId}/round-calendar`,
+    skip: (seasonId: string, realRound: number) =>
+      `${API_BASE_URL}/fantasy-matchups/season/${seasonId}/skip/${realRound}`,
+    unskip: (seasonId: string, realRound: number) =>
+      `${API_BASE_URL}/fantasy-matchups/season/${seasonId}/unskip/${realRound}`,
+  },
   fantasyRoundGames: {
-    lockedTeams: (leagueExternalId: number, seasonYear: number, roundNumber: number) =>
-      `${API_BASE_URL}/fantasy-round-games/league/${leagueExternalId}/season/${seasonYear}/round/${roundNumber}/locked-teams`,
+    // Real-life-global: keyed by the internal real League id (+ season year).
+    lockedTeams: (leagueId: number, seasonYear: number, roundNumber: number) =>
+      `${API_BASE_URL}/fantasy-round-games/league/${leagueId}/season/${seasonYear}/round/${roundNumber}/locked-teams`,
     syncAll: (leagueExternalId: number, seasonYear: number) =>
       `${API_BASE_URL}/fantasy-round-games/league/${leagueExternalId}/season/${seasonYear}/sync-all`,
     syncFromRealRound: (leagueExternalId: number, seasonYear: number, roundNumber: number) =>
@@ -125,7 +152,7 @@ const endpoints = {
     claimsBySeason: (seasonId: string) => `${API_BASE_URL}/waiver/claims/season/${seasonId}`,
     historyBySeason: (seasonId: string) => `${API_BASE_URL}/waiver/claims/season/${seasonId}/history`,
     budgetsBySeason: (seasonId: string) => `${API_BASE_URL}/waiver/budgets/season/${seasonId}`,
-    windowStatus: (leagueExternalId: number, seasonYear: number) => `${API_BASE_URL}/waiver/status/${leagueExternalId}/${seasonYear}`,
+    windowStatus: (leagueId: number, seasonYear: number) => `${API_BASE_URL}/waiver/status/league/${leagueId}/${seasonYear}`,
   },
   roundFlow: {
     list: `${API_BASE_URL}/round-flow`,
@@ -151,6 +178,15 @@ const endpoints = {
     veto: (id: string) => `${API_BASE_URL}/trades/${id}/veto`,
     process: (id: string) => `${API_BASE_URL}/trades/${id}/process`,
   },
+  simulator: {
+    leagues: `${API_BASE_URL}/simulator/leagues`,
+    league: `${API_BASE_URL}/simulator/league`,
+    deleteLeague: (leagueId: number) => `${API_BASE_URL}/simulator/leagues/${leagueId}`,
+    recreateLeague: (leagueId: number) => `${API_BASE_URL}/simulator/leagues/${leagueId}/recreate`,
+    start: (seasonId: string) => `${API_BASE_URL}/simulator/seasons/${seasonId}/start`,
+    advance: (seasonId: string) => `${API_BASE_URL}/simulator/seasons/${seasonId}/advance`,
+    lockedTeams: (seasonId: string) => `${API_BASE_URL}/simulator/seasons/${seasonId}/locked-teams`,
+  },
   currentSeason: `${API_BASE_URL}/current-season`,
   usersTeamsRoster: {
     addPlayer: `${API_BASE_URL}/user-team-rosters`,
@@ -171,7 +207,7 @@ const queryConfig = {
     queries: {
       refetchOnWindowFocus: false,
       retry: 1,
-      staleTime: 5 * 60 * 1000,
+      staleTime: STALE_TIME.STANDARD,
     },
   },
 };

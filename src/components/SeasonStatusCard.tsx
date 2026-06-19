@@ -228,9 +228,14 @@ const getErrorMessage = (err: unknown) => {
 
               {phase === 'temporada' && season.currentFantasyRound != null && (
                 <Typography variant="body2" color="text.secondary">
-                  {season.currentRealRound != null && season.currentRealRound !== season.currentFantasyRound
-                    ? `Rodada ${season.currentFantasyRound} da Liga • Rodada ${season.currentRealRound} do Campeonato`
-                    : `Rodada ${season.currentFantasyRound}`}
+                  {(() => {
+                    // Always show both rounds so users know exactly where the
+                    // league AND the championship are
+                    const realRound = season.realCurrentRound ?? season.currentRealRound;
+                    return realRound != null
+                      ? `Rodada ${season.currentFantasyRound} da Liga • Rodada ${realRound} do Campeonato`
+                      : `Rodada ${season.currentFantasyRound}`;
+                  })()}
                 </Typography>
               )}
 

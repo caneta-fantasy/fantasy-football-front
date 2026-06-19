@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import {
-  Avatar,
   Box,
   Button,
   CircularProgress,
@@ -9,7 +8,6 @@ import {
   InputLabel,
   List,
   ListItem,
-  ListItemAvatar,
   ListItemText,
   MenuItem,
   Pagination,
@@ -22,28 +20,16 @@ import {
 import SearchIcon from '@mui/icons-material/Search';
 import { usePlayers, usePlayersFilters } from '../api/playersQueries';
 import { DraftPick } from '../api/draftQueries';
-import { mapPositionToSlot } from '../utils/positions';
+import {
+  mapPositionToSlot,
+  POSITIONS_TRANSLATION,
+  CLOSED_POSITION_OPTIONS,
+  OPEN_POSITION_OPTIONS,
+  CLOSED_POSITIONS_BACKEND_MAP,
+  OPEN_POSITIONS_BACKEND_MAP,
+} from '../utils/positions';
+import { useRosterSettings } from '../api/useRosterSettings';
 
-const POSITION_OPTIONS = [
-  { value: 'ALL', label: 'TODOS' },
-  { value: 'DEF', label: 'DEF' },
-  { value: 'MEI', label: 'MEI' },
-  { value: 'ATA', label: 'ATA' },
-];
-
-const POSITIONS_BACKEND_MAP: Record<string, string> = {
-  DEF: 'Defense',
-  MEI: 'Midfielder',
-  ATA: 'Attacker',
-};
-
-const POSITIONS_TRANSLATION: Record<string, string> = {
-  Defender: 'Defensor',
-  Midfielder: 'Meio-Campo',
-  Attacker: 'Atacante',
-  Goalkeeper: 'Goleiro',
-  Defense: 'Defesa',
-};
 
 interface Props {
   leagueId: number;
@@ -61,28 +47,32 @@ export default function DraftPlayerSearch({ leagueId, realLeagueId, picks, onPic
   const [teamId, setTeamId] = useState<number | ''>('');
   const [page, setPage] = useState(1);
 
-  const draftedIds = new Set(
-    picks.filter((p) => p.player).map((p) => p.player!.id),
-  );
+  const { data: rosterSettingsData } = useRosterSettings(leagueId);
+  const isOpenDefense = rosterSettingsData?.defenseType === 'OPEN';
+  const positionOptions = isOpenDefense ? OPEN_POSITION_OPTIONS : CLOSED_POSITION_OPTIONS;
+  const positionsBackendMap = isOpenDefense ? OPEN_POSITIONS_BACKEND_MAP : CLOSED_POSITIONS_BACKEND_MAP;
+
+  const draftedIds = picks.filter((p) => p.player).map((p) => p.player!.id);
 
   const { data, isLoading } = usePlayers({
     search: search || undefined,
-    position: position === 'ALL' ? undefined : [POSITIONS_BACKEND_MAP[position]],
+    position: position === 'ALL' ? undefined : [positionsBackendMap[position]],
     teamId: teamId || undefined,
     page,
     limit: 20,
-    sortBy: 'name',
+    sortBy: 'draftRank',
     order: 'asc',
     leagueId: realLeagueId,
     fantasyLeagueId: leagueId,
     onlyFreeAgents: false,
+    excludePlayerIds: draftedIds.length > 0 ? draftedIds : undefined,
   });
 
   const { data: filters } = usePlayersFilters({
     leagueId: realLeagueId,
   });
 
-  const players = (data?.data ?? []).filter((p) => !draftedIds.has(p.player_id));
+  const players = data?.data ?? [];
 
   return (
     <Box>
@@ -94,7 +84,7 @@ export default function DraftPlayerSearch({ leagueId, realLeagueId, picks, onPic
           onChange={(_, v) => { if (v) { setPosition(v); setPage(1); } }}
           size="small"
         >
-          {POSITION_OPTIONS.map((opt) => (
+          {positionOptions.map((opt) => (
             <ToggleButton key={opt.value} value={opt.value} sx={{ px: 1.5 }}>
               {opt.label}
             </ToggleButton>
@@ -164,9 +154,6 @@ export default function DraftPlayerSearch({ leagueId, realLeagueId, picks, onPic
               </Button>
             }
           >
-            <ListItemAvatar sx={{ minWidth: 40 }}>
-              <Avatar src={player.player_photo} sx={{ width: 32, height: 32 }} />
-            </ListItemAvatar>
             <ListItemText
               primary={
                 <Typography variant="body2" fontWeight={500} noWrap>

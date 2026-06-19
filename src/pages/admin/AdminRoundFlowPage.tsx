@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Navigate, useNavigate, useParams } from 'react-router-dom';
 import {
   Box,
   Button,
@@ -40,6 +41,9 @@ import {
 } from '../../api/roundFlowQueries';
 import RoundGamesTab from './RoundGamesTab';
 import SquadSyncTab from './SquadSyncTab';
+import SimulatorTab from './SimulatorTab';
+import PlayerRankingTab from './PlayerRankingTab';
+import { useLeagues, useSupportedLeague } from '../../api/leaguesQueries';
 
 const STATUS_COLORS: Record<RoundFlowStatus, 'default' | 'success' | 'info' | 'warning' | 'secondary' | 'error'> = {
   PENDING: 'default',
@@ -63,28 +67,52 @@ function toLocalInput(iso: string): string {
   return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
 }
 
+// URL slug ↔ tab. Each admin tab is deep-linkable at /admin/<slug>.
+const ADMIN_TABS = [
+  { slug: 'round-flow', label: 'Fluxo de Rodada', render: () => <RoundFlowTab /> },
+  { slug: 'round-games', label: 'Jogos da Rodada', render: () => <RoundGamesTab /> },
+  { slug: 'squads', label: 'Elencos', render: () => <SquadSyncTab /> },
+  { slug: 'simulator', label: 'Simulador', render: () => <SimulatorTab /> },
+  { slug: 'ranking', label: 'Ranking de Jogadores', render: () => <PlayerRankingTab /> },
+] as const;
+
+const DEFAULT_TAB = ADMIN_TABS[0].slug;
+
 const AdminRoundFlowPage: React.FC = () => {
-  const [tab, setTab] = useState(0);
+  const { tab: tabSlug } = useParams<{ tab: string }>();
+  const navigate = useNavigate();
+
+  const index = ADMIN_TABS.findIndex((t) => t.slug === tabSlug);
+  // Unknown / missing slug → redirect to the default tab.
+  if (index === -1) {
+    return <Navigate to={`/admin/${DEFAULT_TAB}`} replace />;
+  }
 
   return (
     <Box sx={{ p: 3, maxWidth: 1400, mx: 'auto' }}>
       <Typography variant="h4" fontWeight="bold" sx={{ mb: 2 }}>
         Painel Admin
       </Typography>
-      <Tabs value={tab} onChange={(_, v) => setTab(v)} sx={{ mb: 3, borderBottom: 1, borderColor: 'divider' }}>
-        <Tab label="Fluxo de Rodada" />
-        <Tab label="Jogos da Rodada" />
-        <Tab label="Elencos" />
+      <Tabs
+        value={index}
+        onChange={(_, v) => navigate(`/admin/${ADMIN_TABS[v].slug}`)}
+        sx={{ mb: 3, borderBottom: 1, borderColor: 'divider' }}
+      >
+        {ADMIN_TABS.map((t) => (
+          <Tab key={t.slug} label={t.label} />
+        ))}
       </Tabs>
-      {tab === 0 && <RoundFlowTab />}
-      {tab === 1 && <RoundGamesTab />}
-      {tab === 2 && <SquadSyncTab />}
+      {ADMIN_TABS[index].render()}
     </Box>
   );
 };
 
 const RoundFlowTab: React.FC = () => {
   const { data: roundFlows = [], isLoading } = useRoundFlows();
+  const { data: leagues = [] } = useLeagues();
+  const leagueNameByExternalId = new Map(
+    leagues.map((l) => [l.externalId, l.name]),
+  );
   const activate = useActivateRoundFlow();
   const update = useUpdateRoundFlow();
   const trigger = useTriggerRoundFlowEvent();
@@ -138,7 +166,7 @@ const RoundFlowTab: React.FC = () => {
               )}
               {roundFlows.map((rf) => (
                 <TableRow key={rf.id} hover>
-                  <TableCell>{rf.leagueExternalId}</TableCell>
+                  <TableCell>{leagueNameByExternalId.get(rf.leagueExternalId) ?? rf.leagueExternalId}</TableCell>
                   <TableCell>{rf.seasonYear}</TableCell>
                   <TableCell>{rf.roundNumber}</TableCell>
                   <TableCell>
@@ -283,14 +311,14 @@ const ActivateRoundDialog: React.FC<{
   isPending: boolean;
   errorMessage?: string;
 }> = ({ open, onClose, onSubmit, isPending, errorMessage }) => {
-  const [leagueExternalId, setLeagueExternalId] = useState('71');
+  const { league } = useSupportedLeague();
   const [seasonYear, setSeasonYear] = useState(String(new Date().getFullYear()));
   const [roundNumber, setRoundNumber] = useState('');
 
   const submit = () => {
-    if (!leagueExternalId || !seasonYear || !roundNumber) return;
+    if (!league || !seasonYear || !roundNumber) return;
     onSubmit({
-      leagueExternalId: Number(leagueExternalId),
+      leagueExternalId: league.externalId,
       seasonYear: Number(seasonYear),
       roundNumber: Number(roundNumber),
     });
@@ -302,11 +330,9 @@ const ActivateRoundDialog: React.FC<{
       <DialogContent>
         <Stack spacing={2} sx={{ mt: 1 }}>
           <TextField
-            label="ID Externo da Liga"
-            type="number"
-            value={leagueExternalId}
-            onChange={(e) => setLeagueExternalId(e.target.value)}
-            helperText="71 = Brasileirão Série A"
+            label="Campeonato"
+            value={league?.name ?? 'Carregando...'}
+            InputProps={{ readOnly: true }}
             fullWidth
           />
           <TextField

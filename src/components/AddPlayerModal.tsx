@@ -6,20 +6,20 @@ import {
 } from '@mui/material';
 import { useAddPlayer, useReplacePlayer } from '../api/userTeamRosterMutations';
 import { mapPositionToSlot, RosterSlot } from '../utils/positions';
-import { POSITIONS_TRANSLATION } from './PlayerSelectModal';
+import { POSITIONS_TRANSLATION } from '../utils/positions';
 
 type SlotType = 'starter' | 'bench';
 
 export type UISlot = {
   index: number;
-  slot: 'DEF' | 'MEI' | 'ATA' | 'FLEX';
+  slot: 'GK' | 'DEF' | 'MEI' | 'ATA' | 'FLEX';
   slotType: SlotType;
   allowedPositions: RosterSlot[];
   player: null | {
     id: number;
     name: string;
     photo: string;
-    position: 'Defense' | 'Midfielder' | 'Attacker';
+    position: 'Goalkeeper' | 'Defense' | 'Defender' | 'Midfielder' | 'Attacker';
     team: { code: string };
   };
 };
@@ -34,7 +34,7 @@ type AddPlayerModalProps = {
     id: number;
     name: string;
     photo: string;
-    position: 'Defense' | 'Midfielder' | 'Attacker';
+    position: 'Goalkeeper' | 'Defense' | 'Defender' | 'Midfielder' | 'Attacker';
     teamCode?: string;
   };
   refetch: () => void;
@@ -101,7 +101,6 @@ export default function AddPlayerModal({
       <DialogContent dividers>
         <Stack spacing={2}>
           <Stack direction="row" spacing={2} alignItems="center">
-            <Avatar src={player.photo} />
             <div>
               <Typography fontWeight={700}>{player.name}</Typography>
               <Typography variant="body2" color="text.secondary">
@@ -184,7 +183,7 @@ export default function AddPlayerModal({
                         selected={pendingSlot?.index === slot.index}
                       >
                         <ListItemAvatar>
-                          <Avatar src={slot.player!.photo} />
+                          <Avatar />
                         </ListItemAvatar>
                         <ListItemText
                           primary={

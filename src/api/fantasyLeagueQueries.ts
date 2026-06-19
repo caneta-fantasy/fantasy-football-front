@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { apiConfig } from './config';
+import { STALE_TIME } from './queryConfig';
 import { useQuery } from '@tanstack/react-query';
 import { useMutation } from '@tanstack/react-query';
 import { inviteUserToFantasyLeague } from './fantasyLeagueMutations';
@@ -17,8 +18,10 @@ export interface FantasyLeague {
     id: number;
     name: string;
     numberOfTeams: number;
+    joinCode?: string | null;
     isOwner?: boolean;
     isActive?: boolean;
+    isSimulation?: boolean;
     league: {
       id: number;
       externalId: number;
@@ -61,7 +64,7 @@ export interface FantasyLeague {
         );
         return response.data;
       },
-      staleTime: 5 * 60 * 1000,
+      staleTime: STALE_TIME.STANDARD,
     });
   };
 
@@ -80,7 +83,7 @@ export interface FantasyLeague {
         );
         return response.data;
       },
-      staleTime: 5 * 60 * 1000,
+      staleTime: STALE_TIME.STANDARD,
     })
 }
 

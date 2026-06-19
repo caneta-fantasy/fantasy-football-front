@@ -25,9 +25,9 @@ import SyncIcon from '@mui/icons-material/Sync';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import { apiConfig } from '../../api/config';
+import { authHeader } from '../../api/httpClient';
 import { useSyncAllSquads, useSyncTeamSquad } from '../../api/playerSyncQueries';
-
-const authHeader = () => ({ Authorization: `Bearer ${localStorage.getItem('token')}` });
+import { useSupportedLeague } from '../../api/leaguesQueries';
 
 interface TeamFilter {
   id: number;
@@ -153,23 +153,25 @@ const TeamRow: React.FC<{
 // ─── Main tab ─────────────────────────────────────────────────────────────────
 
 const SquadSyncTab: React.FC = () => {
-  const [leagueId, setLeagueId] = useState('71');
   const [seasonYear, setSeasonYear] = useState(String(new Date().getFullYear()));
   const [snack, setSnack] = useState<string | null>(null);
 
-  const leagueExternalId = Number(leagueId) || undefined;
+  const { league } = useSupportedLeague();
+  const leagueExternalId = league?.externalId;
+  const leagueInternalId = league?.id;
   const year = Number(seasonYear) || undefined;
 
   const { data: filtersData, isLoading: teamsLoading } = useQuery<{ teams: TeamFilter[] }>({
-    queryKey: ['playerFilters', leagueExternalId, year],
+    queryKey: ['playerFilters', leagueInternalId, year],
     queryFn: async () => {
       const res = await axios.get(apiConfig.endpoints.players.getFilters, {
-        params: { leagueId: leagueExternalId, seasonYear: year },
+        // getFilters is internal-id-keyed; sync calls below use the external id.
+        params: { leagueId: leagueInternalId, seasonYear: year },
         headers: authHeader(),
       });
       return res.data;
     },
-    enabled: !!leagueExternalId && !!year,
+    enabled: !!leagueInternalId && !!year,
     staleTime: 0,
   });
 
@@ -195,13 +197,11 @@ const SquadSyncTab: React.FC = () => {
       {/* Controls */}
       <Stack direction="row" spacing={2} alignItems="center" sx={{ mb: 3 }}>
         <TextField
-          label="ID Externo da Liga"
-          type="number"
-          value={leagueId}
-          onChange={(e) => setLeagueId(e.target.value)}
+          label="Campeonato"
+          value={league?.name ?? 'Carregando...'}
           size="small"
-          sx={{ width: 160 }}
-          helperText="71 = Brasileirão"
+          sx={{ width: 200 }}
+          InputProps={{ readOnly: true }}
         />
         <TextField
           label="Ano da Temporada"

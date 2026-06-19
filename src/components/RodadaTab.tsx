@@ -25,17 +25,25 @@ interface Props {
   numberOfRounds?: number | null;
 }
 
+// Returns null when every round (regular + playoffs) is completed — season over
 function detectCurrentRound(
   regularRounds: number[],
   playoffRounds: number[],
   regularSchedule: { roundNumber: number; matchups: FantasyMatchupDto[] }[],
-): number {
+  playoffMatchups: FantasyMatchupDto[],
+): number | null {
   const activeRegular = regularSchedule.find((r) =>
     r.matchups.some((m) => m.status !== 'completed' && m.status !== 'bye'),
   );
   if (activeRegular) return activeRegular.roundNumber;
-  if (playoffRounds.length > 0) return playoffRounds[0];
-  return regularRounds[regularRounds.length - 1];
+  for (const round of playoffRounds) {
+    const matchups = playoffMatchups.filter((m) => m.roundNumber === round);
+    // No matchups yet (bracket/stage not generated) → this round is next up
+    if (matchups.length === 0) return round;
+    if (matchups.some((m) => m.status !== 'completed' && m.status !== 'bye')) return round;
+  }
+  if (playoffRounds.length === 0) return regularRounds[regularRounds.length - 1] ?? null;
+  return null;
 }
 
 // ─── Single matchup row: collapsed = score card, expanded = full detail ──────
@@ -86,30 +94,34 @@ const MatchupRow: React.FC<{
           userSelect: 'none',
         }}
       >
-        <Typography
-          variant="body2"
-          fontWeight={isHighlighted ? 700 : 400}
-          sx={{ flex: 1, textAlign: 'right' }}
-          noWrap
-        >
-          {matchup.homeTeamName ?? 'Ghost'}
-        </Typography>
+        <Box sx={{ flex: 1, textAlign: 'right' }}>
+          <Typography variant="body2" fontWeight={isHighlighted ? 700 : 400} noWrap>
+            {matchup.homeTeamName ?? 'Ghost'}
+          </Typography>
+          {matchup.homeOwnerName && (
+            <Typography variant="caption" color="text.secondary" display="block" noWrap>
+              {matchup.homeOwnerName}
+            </Typography>
+          )}
+        </Box>
         <Typography
           variant="body2"
           fontWeight={700}
           color="text.secondary"
-          sx={{ mx: 2, minWidth: 90, textAlign: 'center', fontVariantNumeric: 'tabular-nums' }}
+          sx={{ mx: 2, minWidth: 90, textAlign: 'center', fontVariantNumeric: 'tabular-nums', flexShrink: 0 }}
         >
           {homeScore} – {awayScore}
         </Typography>
-        <Typography
-          variant="body2"
-          fontWeight={isHighlighted ? 700 : 400}
-          sx={{ flex: 1 }}
-          noWrap
-        >
-          {matchup.awayTeamName ?? 'Ghost'}
-        </Typography>
+        <Box sx={{ flex: 1 }}>
+          <Typography variant="body2" fontWeight={isHighlighted ? 700 : 400} noWrap>
+            {matchup.awayTeamName ?? 'Ghost'}
+          </Typography>
+          {matchup.awayOwnerName && (
+            <Typography variant="caption" color="text.secondary" display="block" noWrap>
+              {matchup.awayOwnerName}
+            </Typography>
+          )}
+        </Box>
         <Chip
           label={STATUS_LABELS[matchup.status] ?? matchup.status}
           size="small"
@@ -167,9 +179,14 @@ const RodadaTab: React.FC<Props> = ({
   const currentRoundNumber = useMemo(() => {
     if (currentRound != null) return currentRound;
     if (regularRounds.length > 0)
-      return detectCurrentRound(regularRounds, playoffRounds, schedule ?? []);
+      return detectCurrentRound(
+        regularRounds,
+        playoffRounds,
+        schedule ?? [],
+        playoffMatchups ?? [],
+      );
     return null;
-  }, [currentRound, regularRounds, playoffRounds, schedule]);
+  }, [currentRound, regularRounds, playoffRounds, schedule, playoffMatchups]);
 
   if (!seasonId) {
     return (
@@ -195,7 +212,8 @@ const RodadaTab: React.FC<Props> = ({
     );
   }
 
-  const activeRound = selectedRound ?? currentRoundNumber ?? allRounds[0];
+  // Season over (no current round) → default to the last round played
+  const activeRound = selectedRound ?? currentRoundNumber ?? allRounds[allRounds.length - 1];
   const activeIndex = allRounds.indexOf(activeRound);
   const isPlayoffRound = playoffStartRound != null && activeRound >= playoffStartRound;
 
@@ -215,6 +233,9 @@ const RodadaTab: React.FC<Props> = ({
   const orderedMatchups = myMatchup
     ? [myMatchup, ...allMatchups.filter((m) => m.id !== myMatchup.id)]
     : allMatchups;
+
+  // Real championship round this fantasy round maps to (differs after a skip)
+  const activeRealRound = allMatchups[0]?.realRound ?? activeRound;
 
   // Default expansion: user's matchup open on mount / round change
   const defaultExpandedId = myMatchup?.id ?? orderedMatchups[0]?.id ?? null;
@@ -274,6 +295,12 @@ const RodadaTab: React.FC<Props> = ({
         >
           <ArrowForwardIosIcon fontSize="small" />
         </IconButton>
+
+        {activeRealRound !== activeRound && (
+          <Typography variant="body2" color="text.secondary">
+            {activeRealRound} do Brasileirao
+          </Typography>
+        )}
       </Stack>
 
       {/* Matchup list — stable order, expand/collapse in place */}

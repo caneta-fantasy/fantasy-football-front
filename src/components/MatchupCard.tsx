@@ -11,9 +11,10 @@ interface Props {
 /**
  * MatchupCard — modernista `MatchupRow` (Source: app-kit `MatchupRow`). A flat
  * scoreline row: team names flanking a centered tabular-figure score, the
- * winner's name + score in signature green. When `highlighted` (the user's
- * matchup) the row gets a green-pale fill, a green border, and a 4px gold
- * left-bar. A `bye` matchup renders a muted row with a ghost `BYE` chip.
+ * winner's name + score in signature green. Each team name carries an optional
+ * owner caption underneath. When `highlighted` (the user's matchup) the row gets
+ * a green-pale fill, a green border, and a 4px gold left-bar. A `bye` matchup
+ * renders a muted row with a ghost `BYE` chip.
  *
  * The public API is unchanged — `matchup` / `highlighted` / `onClick`, plus the
  * `isGhost` and `bye` (status) behaviour — so the existing consumers
@@ -23,7 +24,9 @@ interface Props {
  */
 const MatchupCard: React.FC<Props> = ({ matchup, highlighted = false, onClick }) => {
   const homeName = matchup.homeTeamName ?? 'Ghost';
+  const homeOwner = matchup.homeOwnerName;
   const awayName = matchup.awayTeamName ?? 'Ghost';
+  const awayOwner = matchup.awayOwnerName;
 
   if (matchup.status === 'bye') {
     return (
@@ -61,10 +64,11 @@ const MatchupCard: React.FC<Props> = ({ matchup, highlighted = false, onClick })
       (highlighted ? 'hover:brightness-[0.97]' : 'hover:bg-mist')
     : '';
 
-  const nameCls = (won: boolean, ghost: boolean, side: 'home' | 'away') =>
-    `min-w-0 flex-1 truncate font-sans text-[14px] ${
-      side === 'home' ? 'text-right' : ''
-    } ${won ? 'font-extrabold' : 'font-medium'} ${
+  const sideCls = (side: 'home' | 'away') =>
+    `min-w-0 flex-1 ${side === 'home' ? 'text-right' : ''}`;
+
+  const nameCls = (won: boolean, ghost: boolean) =>
+    `truncate font-sans text-[14px] ${won ? 'font-extrabold' : 'font-medium'} ${
       ghost ? 'text-ink-subtle' : 'text-ink'
     }`;
 
@@ -76,7 +80,14 @@ const MatchupCard: React.FC<Props> = ({ matchup, highlighted = false, onClick })
 
   const content = (
     <>
-      <span className={nameCls(homeWon, ghostHome, 'home')}>{homeName}</span>
+      <span className={sideCls('home')}>
+        <span className={`block ${nameCls(homeWon, ghostHome)}`}>{homeName}</span>
+        {homeOwner && (
+          <span className="block truncate font-sans text-[12px] text-ink-muted">
+            {homeOwner}
+          </span>
+        )}
+      </span>
       <span className="flex min-w-[78px] items-center justify-center gap-2">
         <span className={scoreCls(homeWon)} style={scoreStyle}>
           {homeScore}
@@ -86,7 +97,14 @@ const MatchupCard: React.FC<Props> = ({ matchup, highlighted = false, onClick })
           {awayScore}
         </span>
       </span>
-      <span className={nameCls(awayWon, ghostAway, 'away')}>{awayName}</span>
+      <span className={sideCls('away')}>
+        <span className={`block ${nameCls(awayWon, ghostAway)}`}>{awayName}</span>
+        {awayOwner && (
+          <span className="block truncate font-sans text-[12px] text-ink-muted">
+            {awayOwner}
+          </span>
+        )}
+      </span>
     </>
   );
 

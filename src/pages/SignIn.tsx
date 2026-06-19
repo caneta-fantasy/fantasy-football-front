@@ -1,5 +1,9 @@
 import React, { useContext, useState } from 'react'
-import { Link as RouterLink, useNavigate } from 'react-router-dom'
+import {
+  Link as RouterLink,
+  useLocation,
+  useNavigate,
+} from 'react-router-dom'
 import {
   QueryClient,
   QueryClientContext,
@@ -32,6 +36,8 @@ import { AuthContext } from '../context/AuthContext'
  * token utilities; the data/flow is unchanged: `useLogIn()` posts the
  * credentials and, on success, `useAuth().login` stores the session and we
  * navigate to the post-login destination (a stored redirect, else `/welcome`).
+ * A success message routed in via `location.state` (e.g. after a password reset
+ * or sign-up redirect) is surfaced above the form.
  *
  * The screen root carries `data-ds` so the scoped base layer (reset +
  * `:focus-visible` ring) applies without leaking into the un-migrated MUI
@@ -125,6 +131,8 @@ function SignInView() {
   // (or a test) supplies a provider.
   const auth = useContext(AuthContext)
   const navigate = useNavigate()
+  const location = useLocation()
+  const successMessage = (location.state as { message?: string })?.message
   const { mutate: signIn, isPending, isError, error } = useLogIn()
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -231,6 +239,17 @@ function SignInView() {
           <p className="mb-7 mt-3 font-serif text-[16px] italic text-ink-muted">
             O seu fantasy do Brasileirão.
           </p>
+
+          {/*
+            A success message routed in via navigation state (e.g. after a
+            password reset or sign-up redirect) surfaces above the form using
+            the DS success tone.
+          */}
+          {successMessage && (
+            <Help tone="success" className="mb-4">
+              {successMessage}
+            </Help>
+          )}
 
           {/*
             One live error region for the whole form (a single role="alert").

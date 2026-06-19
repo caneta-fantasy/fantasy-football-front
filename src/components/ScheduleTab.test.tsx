@@ -17,12 +17,13 @@ const standings: StandingDto[] = [
 
 const playoff: FantasyMatchupDto[] = [
   {
-    id: 'p1', roundNumber: 13,
-    homeTeamId: 1, homeTeamName: 'Galácticos do Bar',
-    awayTeamId: 2, awayTeamName: 'Os Galácticos',
+    id: 'p1', roundNumber: 13, realRound: 13,
+    homeTeamId: 1, homeTeamName: 'Galácticos do Bar', homeOwnerName: null,
+    awayTeamId: 2, awayTeamName: 'Os Galácticos', awayOwnerName: null,
     homeScore: null, awayScore: null, winnerId: null,
     status: 'scheduled', matchupType: 'playoff', isGhost: false,
     playoffStage: 1, twoLegPairId: null, playoffSeed: { homeSeed: 1, awaySeed: 2 },
+    homeTeamSeed: 1, awayTeamSeed: 2,
   },
 ];
 

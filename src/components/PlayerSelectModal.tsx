@@ -12,7 +12,6 @@ import {
   TableCell,
   TableHead,
   TableRow,
-  Avatar,
   TablePagination,
   IconButton,
   InputAdornment,
@@ -29,21 +28,13 @@ import ClearIcon from '@mui/icons-material/Clear';
 import { Player, usePlayers, usePlayersFilters } from '../api/playersQueries';
 import { useAddPlayer } from '../api/userTeamRosterMutations';
 import { FantasyLeague } from '../api/fantasyLeagueQueries';
+import { useRosterSettings } from '../api/useRosterSettings';
 import Loading from './Loading';
-
-export const POSITIONS_TRANSLATION = {
-  Defender: 'Defensor',
-  Midfielder: 'Meio-Campo',
-  Attacker: 'Atacante',
-  Goalkeeper: 'Goleiro',
-  Defense: 'Defesa',
-};
-
-const POSITIONS_BACKEND_MAP: Record<string, string> = {
-  DEF: 'Defense',
-  MEI: 'Midfielder',
-  ATA: 'Attacker',
-};
+import {
+  POSITIONS_TRANSLATION,
+  CLOSED_POSITIONS_BACKEND_MAP,
+  OPEN_POSITIONS_BACKEND_MAP,
+} from '../utils/positions';
 
 interface PlayerSelectModalProps {
   open: boolean;
@@ -73,6 +64,11 @@ const PlayerSelectModal: React.FC<PlayerSelectModalProps> = ({
 }) => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+
+  const { data: rosterSettingsData } = useRosterSettings(fantasyLeague.id);
+  const positionsBackendMap = rosterSettingsData?.defenseType === 'OPEN'
+    ? OPEN_POSITIONS_BACKEND_MAP
+    : CLOSED_POSITIONS_BACKEND_MAP;
 
   const [position, setPosition] = useState<string>('ALL');
   const [teamId, setTeamId] = useState<number | ''>('');
@@ -104,7 +100,7 @@ const PlayerSelectModal: React.FC<PlayerSelectModalProps> = ({
   });
 
   const { data: filtersData } = usePlayersFilters({
-    leagueId: fantasyLeague.league.externalId,
+    leagueId: fantasyLeague.league.id,
     seasonYear,
   });
 
@@ -124,8 +120,8 @@ const PlayerSelectModal: React.FC<PlayerSelectModalProps> = ({
   // Resolve which positions to send to the API based on the selected filter
   const resolvedPositions: string[] =
     position === 'ALL'
-      ? allowedPositions.map((pos) => POSITIONS_BACKEND_MAP[pos] ?? pos)
-      : [POSITIONS_BACKEND_MAP[position] ?? position];
+      ? allowedPositions.map((pos) => positionsBackendMap[pos] ?? pos)
+      : [positionsBackendMap[position] ?? position];
 
   const { data, isLoading } = usePlayers({
     position: resolvedPositions,
@@ -246,10 +242,7 @@ const PlayerSelectModal: React.FC<PlayerSelectModalProps> = ({
                     style={{ cursor: 'pointer' }}
                   >
                     <TableCell>
-                      <Box display="flex" alignItems="center" gap={1}>
-                        <Avatar src={player.player_photo} alt={player.player_name} />
-                        {player.player_name}
-                      </Box>
+                      {player.player_name}
                     </TableCell>
                     <TableCell>{player.team_name}</TableCell>
                     <TableCell>

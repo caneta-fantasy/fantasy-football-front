@@ -1,8 +1,8 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQueries, useQuery, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
 import { apiConfig } from './config';
-
-const authHeader = () => ({ Authorization: `Bearer ${localStorage.getItem('token')}` });
+import { authHeader } from './httpClient';
+import { STALE_TIME, REFETCH_INTERVAL } from './queryConfig';
 
 export interface RoundGameMatch {
   matchId: number;
@@ -24,23 +24,24 @@ export interface OrphanedMatch extends RoundGameMatch {
 
 // ─── Queries ────────────────────────────────────────────────────────────────
 
+// Locked teams are real-life-global: keyed by the internal real League id + year.
 export const useLockedTeams = (
-  leagueExternalId: number | undefined,
+  leagueId: number | undefined,
   seasonYear: number | undefined,
   roundNumber: number | null | undefined,
 ) =>
   useQuery<{ lockedTeamIds: number[] }>({
-    queryKey: ['lockedTeams', leagueExternalId, seasonYear, roundNumber],
+    queryKey: ['lockedTeams', leagueId, seasonYear, roundNumber],
     queryFn: async () => {
       const res = await axios.get(
-        apiConfig.endpoints.fantasyRoundGames.lockedTeams(leagueExternalId!, seasonYear!, roundNumber!),
+        apiConfig.endpoints.fantasyRoundGames.lockedTeams(leagueId!, seasonYear!, roundNumber!),
         { headers: authHeader() },
       );
       return res.data;
     },
-    enabled: !!leagueExternalId && !!seasonYear && roundNumber != null,
-    refetchInterval: 2 * 60 * 1000,
-    staleTime: 0,
+    enabled: !!leagueId && !!seasonYear && roundNumber != null,
+    refetchInterval: REFETCH_INTERVAL.SLOW,
+    staleTime: STALE_TIME.ALWAYS,
   });
 
 export const useListRoundMatches = (
@@ -58,8 +59,39 @@ export const useListRoundMatches = (
       return res.data;
     },
     enabled: !!leagueExternalId && !!seasonYear && roundNumber != null,
-    staleTime: 0,
+    staleTime: STALE_TIME.ALWAYS,
   });
+
+// Fetches all rounds in parallel and returns a map of realRound → non-PST match count.
+// Used by RoundCalendar to flag rounds with fewer than 10 confirmed games.
+export const useAllRoundsMatchCounts = (
+  leagueExternalId: number | undefined,
+  seasonYear: number | undefined,
+  realRounds: number[],
+): Map<number, number> => {
+  const results = useQueries({
+    queries: realRounds.map((round) => ({
+      queryKey: ['roundGameMatches', leagueExternalId, seasonYear, round],
+      queryFn: async () => {
+        const res = await axios.get(
+          apiConfig.endpoints.fantasyRoundGames.listMatches(leagueExternalId!, seasonYear!, round),
+          { headers: authHeader() },
+        );
+        return { round, matches: res.data as RoundGameMatch[] };
+      },
+      enabled: !!leagueExternalId && !!seasonYear,
+      staleTime: STALE_TIME.ALWAYS,
+    })),
+  });
+
+  const map = new Map<number, number>();
+  for (const r of results) {
+    if (r.data) {
+      map.set(r.data.round, r.data.matches.filter((m) => m.status !== 'PST').length);
+    }
+  }
+  return map;
+};
 
 export const useOrphanedMatches = (
   leagueExternalId: number | undefined,
@@ -75,7 +107,7 @@ export const useOrphanedMatches = (
       return res.data;
     },
     enabled: !!leagueExternalId && !!seasonYear,
-    staleTime: 0,
+    staleTime: STALE_TIME.ALWAYS,
   });
 
 // ─── Mutations ───────────────────────────────────────────────────────────────
@@ -178,7 +210,7 @@ export const useMatchVenues = (leagueExternalId: number | undefined, seasonYear:
       return res.data;
     },
     enabled: !!leagueExternalId && !!seasonYear,
-    staleTime: 5 * 60 * 1000,
+    staleTime: STALE_TIME.STANDARD,
   });
 
 export const usePatchMatch = () => {

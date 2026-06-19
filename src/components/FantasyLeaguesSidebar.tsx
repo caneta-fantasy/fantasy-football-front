@@ -1,10 +1,12 @@
 // FantasyLeaguesSidebar.tsx
-import React from 'react';
-import { Button, Stack, Typography, Divider, Paper } from '@mui/material';
+import React, { useState } from 'react';
+import { Button, Stack, Typography, Divider, Paper, Chip, Box, Tooltip, IconButton } from '@mui/material';
+import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import { FantasyLeague } from '../api/fantasyLeagueQueries';
 import SeasonStatusCard from '../components/SeasonStatusCard';
 import { useFantasyLeagueSeasons } from '../api/useFantasyLeagueSeasons';
 import { useDraftSettings } from '../api/useDraftSettings';
+import { useAuth } from '../context/AuthContext';
 import Loading from './Loading';
 
 type Props = {
@@ -22,7 +24,29 @@ const FantasyLeaguesSidebar: React.FC<Props> = ({
   onViewInvitesClick,
   onSeasonUpdated,
 }) => {
+  const { user } = useAuth();
   const isOwner = currentUserId === fantasyLeague.owner?.id;
+  const isEmailVerified = !!user?.emailVerifiedAt;
+  const [copied, setCopied] = useState(false);
+  const [copiedLink, setCopiedLink] = useState(false);
+
+  const handleCopyCode = () => {
+    if (!fantasyLeague.joinCode) return;
+    navigator.clipboard.writeText(fantasyLeague.joinCode);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
+  const joinLink = fantasyLeague.joinCode
+    ? `${window.location.origin}/join?code=${fantasyLeague.joinCode}`
+    : '';
+
+  const handleCopyLink = () => {
+    if (!joinLink) return;
+    navigator.clipboard.writeText(joinLink);
+    setCopiedLink(true);
+    setTimeout(() => setCopiedLink(false), 2000);
+  };
 
   const { data: fantasyLeagueSeason,  isLoading: isLoadingFantasyLeagueSeason, refetch: refetchFantasyLeagueSeason } = useFantasyLeagueSeasons(fantasyLeague.id);
   const { data: draftSettings, isLoading: isLoadingDraftSettings } = useDraftSettings(fantasyLeague.id);
@@ -46,6 +70,9 @@ const FantasyLeaguesSidebar: React.FC<Props> = ({
     >
       <Typography variant="h6" gutterBottom>
         {fantasyLeague.name}
+        {fantasyLeague.isSimulation && (
+          <Chip label="Simulação" color="warning" size="small" sx={{ ml: 1 }} />
+        )}
       </Typography>
 
       <Typography variant="body2" sx={{ mb: 1 }}>
@@ -58,16 +85,65 @@ const FantasyLeaguesSidebar: React.FC<Props> = ({
 
       <Divider sx={{ mb: 2 }} />
 
+      {isOwner && fantasyLeague.joinCode && (
+        <Box sx={{ mb: 2 }}>
+          <Typography variant="caption" color="text.secondary">
+            Código de convite
+          </Typography>
+          <Box
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              border: '1px solid #e0e0e0',
+              borderRadius: 1,
+              px: 1.5,
+              py: 0.5,
+              mt: 0.5,
+            }}
+          >
+            <Typography sx={{ fontFamily: 'monospace', fontWeight: 700, letterSpacing: 2 }}>
+              {fantasyLeague.joinCode}
+            </Typography>
+            <Tooltip title={copied ? 'Copiado!' : 'Copiar código'}>
+              <IconButton size="small" onClick={handleCopyCode}>
+                <ContentCopyIcon fontSize="small" />
+              </IconButton>
+            </Tooltip>
+          </Box>
+
+          <Tooltip title={copiedLink ? 'Link copiado!' : 'Copiar link de convite'}>
+            <Button
+              fullWidth
+              size="small"
+              variant="text"
+              startIcon={<ContentCopyIcon fontSize="small" />}
+              onClick={handleCopyLink}
+              sx={{ mt: 0.5, textTransform: 'none' }}
+            >
+              {copiedLink ? 'Link copiado!' : 'Copiar link de convite'}
+            </Button>
+          </Tooltip>
+        </Box>
+      )}
+
       {isOwner && (
         <Stack spacing={1.5}>
-          <Button
-            fullWidth
-            onClick={onInviteClick}
-            variant="contained"
-            sx={{ borderRadius: 50, textTransform: 'none', fontWeight: 600 }}
+          <Tooltip
+            title={isEmailVerified ? '' : 'Verifique seu email para convidar jogadores'}
           >
-            Convidar para a Liga
-          </Button>
+            <span>
+              <Button
+                fullWidth
+                onClick={onInviteClick}
+                disabled={!isEmailVerified}
+                variant="contained"
+                sx={{ borderRadius: 50, textTransform: 'none', fontWeight: 600 }}
+              >
+                Convidar para a Liga
+              </Button>
+            </span>
+          </Tooltip>
           <Button
             fullWidth
             onClick={onViewInvitesClick}

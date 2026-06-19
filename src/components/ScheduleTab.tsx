@@ -90,27 +90,27 @@ const ScheduleTab: React.FC<Props> = ({ seasonId, userTeamId, seasonYear }) => {
         }
       />
 
-      <div className="mt-7">
-        <SectionLabel as="h3" accent="var(--gold)" className="mb-[14px]">
-          Classificação
-        </SectionLabel>
-        <StandingsTable seasonId={seasonId} userTeamId={userTeamId} />
-      </div>
-
       {playoffLoading && (
-        <div className="mt-8 flex justify-center py-6">
+        <div className="mt-7 flex justify-center py-6">
           <Spinner size={28} />
         </div>
       )}
 
       {!playoffLoading && hasPlayoffMatchups && (
-        <div className="mt-9">
+        <div className="mt-7">
           <SectionLabel as="h3" accent="var(--gold)" className="mb-[14px]">
             Mata-mata
           </SectionLabel>
           <PlayoffBracket seasonId={seasonId} seasonYear={seasonYear} />
         </div>
       )}
+
+      <div className="mt-9">
+        <SectionLabel as="h3" accent="var(--gold)" className="mb-[14px]">
+          Classificação
+        </SectionLabel>
+        <StandingsTable seasonId={seasonId} userTeamId={userTeamId} />
+      </div>
     </div>
   );
 };

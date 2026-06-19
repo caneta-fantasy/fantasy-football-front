@@ -1,8 +1,8 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
 import { apiConfig } from './config';
-
-const authHeader = () => ({ Authorization: `Bearer ${localStorage.getItem('token')}` });
+import { authHeader } from './httpClient';
+import { REFETCH_INTERVAL } from './queryConfig';
 
 export interface WaiverClaim {
   id: string;
@@ -31,7 +31,7 @@ export function useWaiverClaims(seasonId: string | undefined) {
       return res.data;
     },
     enabled: !!seasonId,
-    refetchInterval: 30_000,
+    refetchInterval: REFETCH_INTERVAL.STANDARD,
   });
 }
 
@@ -91,17 +91,18 @@ export function useWaiverHistory(seasonId: string | undefined) {
   });
 }
 
-export function useWaiverWindowStatus(leagueExternalId: number | null | undefined, seasonYear: number | null | undefined) {
+// Waiver windows are real-life-global: keyed by the internal real League id + year.
+export function useWaiverWindowStatus(leagueId: number | null | undefined, seasonYear: number | null | undefined) {
   return useQuery<WaiverWindowStatus>({
-    queryKey: ['waiverWindowStatus', leagueExternalId, seasonYear],
+    queryKey: ['waiverWindowStatus', leagueId, seasonYear],
     queryFn: async () => {
-      const res = await axios.get(apiConfig.endpoints.waiver.windowStatus(leagueExternalId!, seasonYear!), {
+      const res = await axios.get(apiConfig.endpoints.waiver.windowStatus(leagueId!, seasonYear!), {
         headers: authHeader(),
       });
       return res.data;
     },
-    enabled: !!leagueExternalId && !!seasonYear,
-    refetchInterval: 30_000,
+    enabled: !!leagueId && !!seasonYear,
+    refetchInterval: REFETCH_INTERVAL.STANDARD,
   });
 }
 
