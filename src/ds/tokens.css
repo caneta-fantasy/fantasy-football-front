@@ -1,0 +1,176 @@
+:root {
+  /* ═══════════════════════════════════════════════════════════════════
+   * MODERNISTA design tokens — mid-century Brazilian graphic system on
+   * TRUE WHITE. Identity via color-blocking: bottle-green + heritage gold
+   * as geometric panels, azulejo cobalt as a restrained accent.
+   * Source of truth: fantasy-docs/design-system/tokens-modernist.jsx (C/F).
+   * ═══════════════════════════════════════════════════════════════════ */
+
+  /* ─── primitive · SURFACES (true white is the primary surface) ─── */
+  --bg: #FFFFFF;       /* page — true white */
+  --paper: #FFFFFF;    /* card surface */
+  --raised: #FFFFFF;   /* elevated card */
+  --mist: #F4F6F3;     /* faint cool inset / table stripe */
+  --mist2: #EAEEE9;    /* hover / sunken */
+  --veil: #FBFCFB;     /* hero off-white */
+
+  /* ─── primitive · GREEN (signature dark anchor — bottle green) ─── */
+  --green-deep: #0C2A1D;
+  --green: #14402C;    /* SIGNATURE — primary blocks, actions, dark surface */
+  --green-600: #1B5238;/* raised green */
+  --green-500: #27734F;/* brighter leaf (success) */
+  --green-line: #23583E;/* hairline on green */
+  --green-pale: #E4EDE7;/* tint fill on white */
+
+  /* ─── primitive · GOLD (signature accent block) ─── */
+  --gold-deep: #8A6A1E;
+  --gold: #C79A2B;     /* SIGNATURE — gold color-block, accent */
+  --gold-light: #E1C36B;
+  --gold-pale: #F4EACB;/* tint fill on white */
+
+  /* ─── primitive · COBALT (azulejo accent — restrained / interactive) ─── */
+  --cobalt-deep: #173A8C;
+  --cobalt: #2350BE;   /* azulejo cobalt */
+  --cobalt-light: #7193E2;
+  --cobalt-pale: #DEE7F9;/* tint fill on white */
+
+  /* ─── primitive · INK (warm near-black, faint green) ─── */
+  --ink: #13211A;        /* primary text */
+  --ink-muted: #566059;  /* secondary text */
+  --ink-subtle: #8B948C; /* tertiary / decorative */
+  --on-green: #F2F1E8;     /* warm-white text on green */
+  --on-green-mute: #A8C0B1;/* muted on green */
+  --on-gold: #1B1505;      /* near-black text on gold */
+  --on-cobalt: #EBF0FF;    /* text on cobalt */
+
+  /* ─── primitive · BORDERS (neutral structural hairlines) ─── */
+  --line: #E4E7E2;
+  --line-strong: #C6CBC4;
+  --line-subtle: #EEF0EC;
+
+  /* ─── primitive · CARD STATUS · RESERVED — referee only ─── */
+  --card-yellow: #F4C430;/* cartão amarelo */
+  --card-red: #D8392B;   /* cartão vermelho */
+
+  /* ─── primitive · FUNCTIONAL · own hues (NOT the card colors) ─── */
+  --success: #27734F;      /* leaf green */
+  --success-pale: #DCEBE2;
+  --warning: #C98A28;      /* amber — distinct from gold */
+  --warning-pale: #F6E6C6;
+  --danger: #B23A2B;       /* brick — distinct from card red */
+  --danger-pale: #F1D8D3;
+
+  /* ─── primitive · PITCH (green color-block diagram) ─── */
+  --pitch: #14402C;
+  --pitch-line: #9FBCA9;   /* pale chalk */
+
+  /* ═══ SEMANTIC layer — map semantic vars onto primitives ═══ */
+  /* surfaces */
+  --color-bg: var(--bg);
+  --color-surface: var(--paper);
+  --color-surface-inset: var(--mist);
+  --color-surface-sunken: var(--mist2);
+  --color-surface-hero: var(--veil);
+  /* text */
+  --color-text: var(--ink);
+  --color-text-muted: var(--ink-muted);
+  --color-text-subtle: var(--ink-subtle);
+  /* signature (green) */
+  --color-signature: var(--green);
+  --color-signature-deep: var(--green-deep);
+  --color-signature-raised: var(--green-600);
+  --color-signature-pale: var(--green-pale);
+  --color-signature-line: var(--green-line);
+  --color-on-signature: var(--on-green);
+  --color-on-signature-muted: var(--on-green-mute);
+  /* accent (gold) */
+  --color-accent: var(--gold);
+  --color-accent-deep: var(--gold-deep);
+  --color-accent-light: var(--gold-light);
+  --color-accent-pale: var(--gold-pale);
+  --color-on-accent: var(--on-gold);
+  /* interactive (cobalt) */
+  --color-interactive: var(--cobalt);
+  --color-interactive-deep: var(--cobalt-deep);
+  --color-interactive-pale: var(--cobalt-pale);
+  --color-on-interactive: var(--on-cobalt);
+  /* borders */
+  --color-border: var(--line);
+  --color-border-strong: var(--line-strong);
+  --color-border-subtle: var(--line-subtle);
+  /* functional (own hues) */
+  --color-success: var(--success);
+  --color-success-pale: var(--success-pale);
+  --color-warning: var(--warning);
+  --color-warning-pale: var(--warning-pale);
+  --color-danger: var(--danger);
+  --color-danger-pale: var(--danger-pale);
+  /* reserved — referee only */
+  --color-card-yellow: var(--card-yellow);
+  --color-card-red: var(--card-red);
+  /* pitch */
+  --color-pitch: var(--pitch);
+  --color-pitch-line: var(--pitch-line);
+
+  /* focus ring — re-keyed to cobalt on white (lime+ink had no contrast here) */
+  --focus-ring-color: var(--cobalt);
+  --focus-ring-offset: var(--bg);
+  --focus-ring: 0 0 0 2px var(--bg), 0 0 0 4px var(--cobalt);
+
+  /* fonts */
+  --font-display: 'Archivo', system-ui, sans-serif; /* poster look via fontVariationSettings, not a 2nd face */
+  --font-sans: 'Archivo', system-ui, sans-serif;
+  --font-serif: 'Spectral', Georgia, serif;
+  --font-mono: 'Spline Sans Mono', ui-monospace, Menlo, monospace;
+  --font-logo: 'Anton', Impact, sans-serif;
+
+  /* radii */
+  --radius-none: 0;
+  --radius-btn-sm: 9px;
+  --radius-btn: 11px;
+  --radius-btn-lg: 13px;
+  --radius-pill: 4px;
+  --radius-chip: 999px;
+  --radius-full: 9999px;
+
+  /* ─── infrastructure (palette-independent; consumed by overlays/motion) ─── */
+  /* spacing base 4px */
+  --space-1: 4px; --space-2: 8px; --space-3: 12px; --space-4: 16px;
+  --space-6: 24px; --space-8: 32px; --space-12: 48px; --space-16: 64px; --space-24: 96px;
+  /* elevation */
+  --elevation-1: 0 1px 2px rgba(19,33,26,.06), 0 2px 8px rgba(19,33,26,.06);
+  --elevation-2: 0 4px 12px rgba(19,33,26,.10), 0 1px 3px rgba(19,33,26,.08);
+  --elevation-3: 0 12px 32px rgba(19,33,26,.16), 0 2px 8px rgba(19,33,26,.10);
+  --elevation-4: 0 20px 56px rgba(19,33,26,.22), 0 4px 14px rgba(19,33,26,.12);
+  /* motion */
+  --dur-75: 75ms; --dur-150: 150ms; --dur-200: 200ms; --dur-300: 300ms; --dur-500: 500ms;
+  --ease-standard: cubic-bezier(.2,.6,.3,1);
+  --ease-decelerate: cubic-bezier(0,.7,.3,1);
+  --ease-accelerate: cubic-bezier(.5,0,1,.4);
+  --ease-emphasized: cubic-bezier(.3,1.3,.4,1);
+  /* z-index scale */
+  --z-base: 0; --z-dropdown: 1000; --z-sticky: 1100; --z-drawer: 1200;
+  --z-modal: 1300; --z-popover: 1400; --z-toast: 1500;
+  /* opacity scale (incl. decorative cap) */
+  --opacity-decor-max: 0.15; --opacity-disabled: 0.6;
+  /* border widths */
+  --bw-1: 1px; --bw-2: 2px;
+
+  /* ─── compat aliases ───────────────────────────────────────────────
+   * The ~55 ds components are restyled in Part B (plan tasks B1–B10).
+   * Until each is reworked it still references the prior var names; these
+   * aliases re-point those names onto modernista primitives so un-restyled
+   * components degrade to the new palette (not to an undefined var) and the
+   * build/tests stay green. Removed task-by-task as Part B lands.
+   * ───────────────────────────────────────────────────────────────── */
+  --caneta-lime: var(--green);
+  --caneta-lime-deep: var(--green-deep);
+  --clay: var(--cobalt);
+  --red: var(--danger);
+  --paper-ink: var(--ink);
+  --ink-700: var(--ink-muted);
+}
+
+[data-theme='dark'] {
+  /* Phase 1: hook present, light-only shipped. Dark map filled in a later phase. */
+}

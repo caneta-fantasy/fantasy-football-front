@@ -1,0 +1,15 @@
+/* LAT (fullback) shares the cobalt family with ZAG (centre-back) but is
+   differentiated by a STRUCTURAL cue — a faint diagonal-stripe pattern over a
+   transparent fill — so the two never read identically even in greyscale or
+   for colour-blind users. The outline (set in the component classes) plus this
+   pattern carry the distinction without relying on a hue shift alone.
+   This is static (no animation), so reduced-motion has nothing to neutralise. */
+.ds-pos-lat {
+  background-image: repeating-linear-gradient(
+    -45deg,
+    color-mix(in srgb, var(--cobalt-light) 28%, transparent) 0,
+    color-mix(in srgb, var(--cobalt-light) 28%, transparent) 2px,
+    transparent 2px,
+    transparent 5px
+  );
+}

@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { Box, CircularProgress, Paper, Tooltip, Typography } from '@mui/material';
+import { Card, EmptyState, Overline, Spinner } from '@/ds';
 import { usePlayoffMatchups, FantasyMatchupDto } from '../api/fantasyMatchupQueries';
 
 interface Props {
@@ -167,63 +167,57 @@ interface TeamRowProps {
 }
 
 const TeamRow: React.FC<TeamRowProps> = ({ name, score, leg1Score, leg2Score, isTwoLeg, isWinner, hasBorder, seed }) => (
-  <Box
-    sx={{
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'space-between',
-      px: 1,
-      py: 0.65,
-      bgcolor: isWinner ? 'action.selected' : 'transparent',
-      borderBottom: hasBorder ? '1px solid' : 'none',
-      borderColor: 'divider',
-      minWidth: 0,
+  <div
+    className="flex min-w-0 items-center justify-between px-2 py-[5px]"
+    style={{
+      background: isWinner ? 'var(--green-pale)' : 'transparent',
+      borderBottom: hasBorder ? '1px solid var(--line)' : 'none',
     }}
   >
-    <Box sx={{ display: 'flex', alignItems: 'center', flex: 1, minWidth: 0, mr: 0.75 }}>
+    <span className="mr-[6px] flex min-w-0 flex-1 items-center" title={name ?? ''}>
       {seed != null && (
-        <Typography
-          component="span"
-          variant="caption"
-          sx={{ fontSize: 9, color: 'text.disabled', fontWeight: 600, mr: 0.4, flexShrink: 0 }}
-        >
+        <span className="mr-[3px] shrink-0 font-sans text-[9px] font-semibold text-ink-subtle">
           #{seed}
-        </Typography>
+        </span>
       )}
-      <Tooltip title={name ?? ''} placement="top" disableHoverListener={(name?.length ?? 0) <= 20}>
-        <Typography
-          variant="caption"
-          fontWeight={isWinner ? 800 : 400}
-          noWrap
-          sx={{ fontSize: 11, lineHeight: 1.3 }}
-        >
-          {name ?? '?'}
-        </Typography>
-      </Tooltip>
-    </Box>
+      <span
+        className="truncate font-sans text-[11px] leading-[1.3]"
+        style={{ fontWeight: isWinner ? 800 : 400, color: isWinner ? 'var(--green)' : 'var(--ink)' }}
+      >
+        {name ?? '?'}
+      </span>
+    </span>
     {isTwoLeg ? (
-      <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.4, flexShrink: 0 }}>
-        <Typography variant="caption" sx={{ fontSize: 10, color: 'text.disabled' }}>
+      <span className="flex shrink-0 items-center gap-[3px]">
+        <span className="font-sans text-[10px] tabular-nums text-ink-subtle">
           {scoreStr(leg1Score ?? null)}
-        </Typography>
-        <Typography variant="caption" sx={{ fontSize: 9, color: 'text.disabled' }}>/</Typography>
-        <Typography variant="caption" sx={{ fontSize: 10, color: 'text.disabled' }}>
+        </span>
+        <span className="font-sans text-[9px] text-ink-subtle">/</span>
+        <span className="font-sans text-[10px] tabular-nums text-ink-subtle">
           {scoreStr(leg2Score ?? null)}
-        </Typography>
-        <Typography
-          variant="caption"
-          fontWeight={isWinner ? 800 : 600}
-          sx={{ fontSize: 11, minWidth: 34, textAlign: 'right' }}
+        </span>
+        <span
+          className="min-w-[34px] text-right font-display text-[11px] tabular-nums"
+          style={{
+            fontVariationSettings: '"wght" 800, "wdth" 106',
+            color: isWinner ? 'var(--green)' : 'var(--ink-muted)',
+          }}
         >
           {scoreStr(score)}
-        </Typography>
-      </Box>
+        </span>
+      </span>
     ) : (
-      <Typography variant="caption" fontWeight={isWinner ? 800 : 600} sx={{ fontSize: 11, flexShrink: 0 }}>
+      <span
+        className="shrink-0 font-display text-[11px] tabular-nums"
+        style={{
+          fontVariationSettings: '"wght" 800, "wdth" 106',
+          color: isWinner ? 'var(--green)' : 'var(--ink-muted)',
+        }}
+      >
         {scoreStr(score)}
-      </Typography>
+      </span>
     )}
-  </Box>
+  </div>
 );
 
 const MatchupBox: React.FC<{ slot: BracketSlot }> = ({ slot }) => {
@@ -244,15 +238,7 @@ const MatchupBox: React.FC<{ slot: BracketSlot }> = ({ slot }) => {
   const awayLeg2 = isTwoLeg && leg2 ? leg2.homeScore : null;
 
   return (
-    <Paper
-      variant="outlined"
-      sx={{
-        width: SLOT_WIDTH,
-        borderRadius: 1.5,
-        overflow: 'hidden',
-        borderColor: 'divider',
-      }}
-    >
+    <Card tone="paper" padding="" className="overflow-hidden rounded-btn-sm" style={{ width: SLOT_WIDTH }}>
       <TeamRow
         name={rep.homeTeamName}
         score={tieResult.homeTotal}
@@ -273,45 +259,39 @@ const MatchupBox: React.FC<{ slot: BracketSlot }> = ({ slot }) => {
         hasBorder={false}
         seed={rep.awayTeamSeed ?? null}
       />
-    </Paper>
+    </Card>
   );
 };
 
 const ByeBox: React.FC<{ teamName: string; seed?: number }> = ({ teamName, seed }) => (
-  <Paper
-    variant="outlined"
-    sx={{ width: SLOT_WIDTH, borderRadius: 1.5, overflow: 'hidden', borderColor: 'divider', bgcolor: 'action.hover' }}
-  >
-    <Box sx={{ px: 1, py: 0.65, borderBottom: '1px solid', borderColor: 'divider', display: 'flex', alignItems: 'center' }}>
+  <Card tone="mist" padding="" className="overflow-hidden rounded-btn-sm" style={{ width: SLOT_WIDTH }}>
+    <div
+      className="flex min-w-0 items-center px-2 py-[5px]"
+      style={{ borderBottom: '1px solid var(--line)' }}
+      title={teamName}
+    >
       {seed != null && (
-        <Typography component="span" variant="caption" sx={{ fontSize: 9, color: 'text.disabled', fontWeight: 600, mr: 0.4, flexShrink: 0 }}>
+        <span className="mr-[3px] shrink-0 font-sans text-[9px] font-semibold text-ink-subtle">
           #{seed}
-        </Typography>
+        </span>
       )}
-      <Tooltip title={teamName} placement="top" disableHoverListener={teamName.length <= 20}>
-        <Typography variant="caption" fontWeight={700} noWrap sx={{ fontSize: 11 }}>
-          {teamName}
-        </Typography>
-      </Tooltip>
-    </Box>
-    <Box sx={{ px: 1, py: 0.65 }}>
-      <Typography variant="caption" color="text.disabled" sx={{ fontSize: 10 }}>Folga</Typography>
-    </Box>
-  </Paper>
+      <span className="truncate font-sans text-[11px] font-bold text-ink">{teamName}</span>
+    </div>
+    <div className="px-2 py-[5px]">
+      <span className="font-sans text-[10px] text-ink-subtle">Folga</span>
+    </div>
+  </Card>
 );
 
 const TbdBox: React.FC = () => (
-  <Paper
-    variant="outlined"
-    sx={{ width: SLOT_WIDTH, borderRadius: 1.5, overflow: 'hidden', borderColor: 'divider', opacity: 0.4 }}
-  >
-    <Box sx={{ px: 1, py: 0.65, borderBottom: '1px solid', borderColor: 'divider' }}>
-      <Typography variant="caption" color="text.secondary" sx={{ fontSize: 11 }}>A definir</Typography>
-    </Box>
-    <Box sx={{ px: 1, py: 0.65 }}>
-      <Typography variant="caption" color="text.secondary" sx={{ fontSize: 11 }}>A definir</Typography>
-    </Box>
-  </Paper>
+  <Card tone="paper" padding="" className="overflow-hidden rounded-btn-sm opacity-40" style={{ width: SLOT_WIDTH }}>
+    <div className="px-2 py-[5px]" style={{ borderBottom: '1px solid var(--line)' }}>
+      <span className="font-sans text-[11px] text-ink-muted">A definir</span>
+    </div>
+    <div className="px-2 py-[5px]">
+      <span className="font-sans text-[11px] text-ink-muted">A definir</span>
+    </div>
+  </Card>
 );
 
 // ──────────────────────────────────────────────────────────────────────────────
@@ -347,7 +327,7 @@ const BracketColumn: React.FC<ColumnProps> = ({ maxStage, slotMap, visualOrder, 
   const slotCount = visualOrder.length;
 
   return (
-    <Box sx={{ position: 'relative', width: SLOT_WIDTH, height: canvasH, flexShrink: 0 }}>
+    <div className="relative shrink-0" style={{ width: SLOT_WIDTH, height: canvasH }}>
       {visualOrder.map((position, slotIndex) => {
         const centerY = slotCenterY(slotIndex, slotCount, maxStage);
         const topY = centerY - SLOT_HEIGHT / 2;
@@ -355,23 +335,16 @@ const BracketColumn: React.FC<ColumnProps> = ({ maxStage, slotMap, visualOrder, 
         const byeName = byeTeams.get(position);
 
         return (
-          <Box
+          <div
             key={position}
-            sx={{
-              position: 'absolute',
-              top: topY,
-              left: 0,
-              width: SLOT_WIDTH,
-              height: SLOT_HEIGHT,
-              display: 'flex',
-              alignItems: 'center',
-            }}
+            className="absolute left-0 flex items-center"
+            style={{ top: topY, width: SLOT_WIDTH, height: SLOT_HEIGHT }}
           >
             {byeName ? <ByeBox teamName={byeName} seed={position} /> : slot ? <MatchupBox slot={slot} /> : <TbdBox />}
-          </Box>
+          </div>
         );
       })}
-    </Box>
+    </div>
   );
 };
 
@@ -414,13 +387,13 @@ const ConnectorSvg: React.FC<ConnectorProps> = ({ maxStage, leftOrder, rightOrde
   });
 
   return (
-    <Box
-      component="svg"
-      sx={{ width: w, height: canvasH, flexShrink: 0, color: 'divider', overflow: 'visible' }}
+    <svg
+      className="shrink-0 overflow-visible text-line-strong"
+      style={{ width: w, height: canvasH }}
       viewBox={`0 0 ${w} ${canvasH}`}
     >
       {lines}
-    </Box>
+    </svg>
   );
 };
 
@@ -483,67 +456,60 @@ const PlayoffBracket: React.FC<Props> = ({ seasonId, seasonYear }) => {
 
   if (isLoading) {
     return (
-      <Box display="flex" justifyContent="center" py={6}>
-        <CircularProgress />
-      </Box>
+      <div className="flex justify-center py-6">
+        <Spinner size={28} />
+      </div>
     );
   }
 
   if (!matchups || matchups.length === 0) {
     return (
-      <Typography color="text.secondary" textAlign="center" py={4}>
-        O mata-mata ainda não foi gerado.
-      </Typography>
+      <EmptyState
+        icon="draft"
+        title="Mata-mata não gerado"
+        body="O mata-mata ainda não foi gerado. Ele aparece quando a fase de playoffs começar."
+      />
     );
   }
 
   return (
-    <Box>
+    <div>
       {championName && (
-        <Paper
-          elevation={0}
-          sx={{
-            p: 2.5,
-            mb: 3,
-            borderRadius: 3,
-            textAlign: 'center',
-            background: 'linear-gradient(135deg, #f59e0b22 0%, #f59e0b11 100%)',
-            border: '1.5px solid',
-            borderColor: 'warning.main',
-          }}
+        <Card
+          tone="gold"
+          padding="p-5"
+          className="mb-6 rounded-btn text-center"
         >
-          <Typography variant="h5" fontWeight={800} color="warning.main">
+          <div
+            className="font-display text-[26px] leading-none text-on-gold"
+            style={{ fontVariationSettings: '"wght" 850, "wdth" 116' }}
+          >
             🏆 {championName}
-          </Typography>
-          <Typography variant="body2" color="text.secondary" mt={0.5}>
+          </div>
+          <div className="mt-1.5 font-sans text-[13px] text-on-gold">
             Campeão{seasonYear ? ` da temporada ${seasonYear}` : ''}
-          </Typography>
-        </Paper>
+          </div>
+        </Card>
       )}
 
       {/* Column headers */}
-      <Box sx={{ display: 'flex', mb: 1 }}>
+      <div className="mb-2 flex">
         {stages.map((stage, stageIndex) => (
           <React.Fragment key={stage}>
-            <Box sx={{ width: SLOT_WIDTH, flexShrink: 0, textAlign: 'left' }}>
-              <Typography
-                variant="caption"
-                fontWeight={700}
-                color="text.secondary"
-                sx={{ fontSize: 10, textTransform: 'uppercase', letterSpacing: 0.5 }}
-              >
+            <div className="shrink-0 text-left" style={{ width: SLOT_WIDTH }}>
+              <Overline as="span">
                 {STAGE_LABELS[stage] ?? `Estágio ${stage}`}
-              </Typography>
-            </Box>
+              </Overline>
+            </div>
             {stageIndex < stages.length - 1 && (
-              <Box sx={{ width: CONNECTOR_W + 8, flexShrink: 0 }} />
+              <div className="shrink-0" style={{ width: CONNECTOR_W + 8 }} />
             )}
           </React.Fragment>
         ))}
-      </Box>
+      </div>
 
       {/* Bracket */}
-      <Box sx={{ display: 'flex', alignItems: 'flex-start', overflowX: 'auto', pb: 2 }}>
+      <div className="flex items-start overflow-x-auto pb-2">
         {stages.map((stage, stageIndex) => {
           const slotMap = slotsByStage.get(stage) ?? new Map<number, BracketSlot>();
           const visualOrder = visualOrderByStage.get(stage) ?? [];
@@ -569,14 +535,14 @@ const PlayoffBracket: React.FC<Props> = ({ seasonId, seasonYear }) => {
             </React.Fragment>
           );
         })}
-      </Box>
+      </div>
 
       {hasTwoLeg && (
-        <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mt: 0.5 }}>
+        <span className="mt-0.5 block font-sans text-[11px] text-ink-muted">
           Placar: J1 / J2 — Agregado
-        </Typography>
+        </span>
       )}
-    </Box>
+    </div>
   );
 };
 

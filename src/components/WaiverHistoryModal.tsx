@@ -1,4 +1,3 @@
-import React from 'react';
 import {
   Dialog, DialogTitle, DialogContent, IconButton, Typography,
   Box, Avatar, Chip, Divider, CircularProgress,
@@ -173,7 +172,7 @@ export default function WaiverHistoryModal({ open, onClose, transactions, isLoad
                 >
                   {new Date(day + 'T12:00:00').toLocaleDateString('pt-BR', { day: '2-digit', month: 'short', year: 'numeric' })}
                 </Typography>
-                {groupByTradeId(items).map((item, idx) =>
+                {groupByTradeId(items).map((item) =>
                   'teams' in item ? (
                     <TradeGroupRow key={item.tradeId} group={item} />
                   ) : (

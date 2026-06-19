@@ -1,11 +1,21 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
+import '@fontsource-variable/archivo/standard.css'
+import '@fontsource/spectral/400.css'
+import '@fontsource/spectral/500.css'
+import '@fontsource/spectral/600.css'
+import '@fontsource/spectral/700.css'
+import '@fontsource/spline-sans-mono/400.css'
+import '@fontsource/spline-sans-mono/500.css'
+import '@fontsource/spline-sans-mono/600.css'
+import '@fontsource/anton/400.css'
+import './ds/fonts.css'
+import './ds/tokens.css'
+import './ds/base.css'
 import './index.css';
 import App from './App';
-import reportWebVitals from './reportWebVitals';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-
-export const queryClient = new QueryClient();
+import { QueryClientProvider } from '@tanstack/react-query';
+import { queryClient } from './queryClient';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
@@ -17,8 +27,3 @@ root.render(
     </QueryClientProvider>
   </React.StrictMode>,
 );
-
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
-reportWebVitals();

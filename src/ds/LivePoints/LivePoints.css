@@ -1,0 +1,49 @@
+/* Live-status visuals for LiveChip / LivePoints.
+
+   Reduced-motion is handled GLOBALLY by the DS base layer, which neutralizes
+   animation-duration under prefers-reduced-motion. Under that media query the
+   dot and the value simply render solid (no pulse) — no per-component opt-out
+   is needed, and the components are still fully legible without the motion. */
+
+@keyframes ds-live-pulse {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.35);
+    opacity: 0.5;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes ds-live-value-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.55;
+  }
+}
+
+/* The "AO VIVO" status dot — only rendered in the live state. */
+.ds-live-dot {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  flex: none;
+  border-radius: var(--radius-full, 999px);
+  background: currentColor;
+  /* soft glow keyed off the current foreground so it reads on any tone */
+  box-shadow: 0 0 6px currentColor;
+  animation: ds-live-pulse 0.9s var(--ease-standard, ease-in-out) infinite;
+}
+
+/* The big live-points number breathes while points are live. */
+.ds-live-value--pulsing {
+  animation: ds-live-value-pulse 1.6s var(--ease-standard, ease-in-out) infinite;
+}

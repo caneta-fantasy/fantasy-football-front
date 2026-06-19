@@ -20,7 +20,7 @@ interface Props {
   fantasyLeague: FantasyLeague;
 }
 
-const FantasyLeagueSettings: React.FC<Props> = ({ isOwner = false, onEdit, fantasyLeague }) => {
+const FantasyLeagueSettings: React.FC<Props> = ({ isOwner = false, fantasyLeague }) => {
   const { data: fantasyLeagueSeason } = useFantasyLeagueSeasons(fantasyLeague.id);
   const [modalOpen, setModalOpen] = useState(false);  
   const settings = {

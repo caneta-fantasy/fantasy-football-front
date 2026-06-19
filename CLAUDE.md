@@ -22,19 +22,21 @@ React 19 application for the fantasy football platform.
 
 ## Tech Stack
 
-- React 19.0.0 + TypeScript 4.9.5
-- Material UI (MUI) 7.0.0
-- React Query (TanStack) 5.71.5
-- React Router DOM 7.4.1
-- Axios 1.8.4
-- date-fns / dayjs
+- React 19 + TypeScript 5
+- **Vite** (build + dev server) — migrated off Create React App
+- **Tailwind CSS** + a **CSS-variable design-token layer** (`src/ds/tokens.css`)
+- **`src/ds/`** — the Caneta Fantasy design-system component library, documented in **Storybook**
+- React Query (TanStack) 5 · React Router DOM 7 · Axios · date-fns / dayjs
+- **MUI 7 is still present but being removed** screen-by-screen (strangler migration — see "Design system" below)
 
 ## Commands
 
 ```bash
-npm start       # Dev server on http://localhost:3000
-npm test        # Run tests
-npm run build   # Production build
+npm start             # Vite dev server on http://localhost:3000
+npm run build         # tsc + vite production build
+npm test              # Vitest (use: npm test -- --run for a single pass)
+npm run storybook     # Storybook dev (component docs)
+npm run build-storybook  # Static Storybook build
 ```
 
 ## Project Structure
@@ -42,12 +44,23 @@ npm run build   # Production build
 ```
 src/
 ├── api/           # API queries, mutations, config
-├── components/    # Reusable React components
+├── ds/            # Design-system library: tokens (.css/.ts), base layer, primitives + domain patterns, Storybook stories
+├── components/    # Legacy MUI components (being migrated to src/ds)
 ├── context/       # React Context (AuthContext)
 ├── pages/         # Page components (routes)
 ├── utils/         # Utility functions
 └── App.tsx        # Main app with routing
 ```
+
+## Design system (read before building any UI)
+
+The new visual system (INK/CANETA palette, Anton + Space Grotesk + JetBrains Mono) is codified in `src/ds/`:
+
+- **Tokens:** `src/ds/tokens.css` defines semantic CSS variables on `:root` (a `[data-theme="dark"]` hook exists but only light ships today); `src/ds/tokens.ts` is the typed mirror. They're mapped into the Tailwind theme — style with token-backed utilities (`bg-surface`, `text-text`, `font-display`, `rounded-sm`, `shadow-e2`, `z-modal`), never hardcoded hex.
+- **Components:** import from `@/ds` (the barrel). Browse them in Storybook (`npm run storybook`). Each is real semantic HTML with a documented a11y contract.
+- **Base layer:** `src/ds/base.css` is scoped to `[data-ds]`. Wrap a migrated screen's root in a `data-ds` element so the reset + `:focus-visible` ring apply (this scoping keeps Tailwind/DS styles from leaking into un-migrated MUI screens — Tailwind preflight is off for the same reason).
+- **Migration is incremental (strangler):** new or reworked screens use `src/ds`; MUI remains only on screens not yet migrated. Per-screen ritual: swap MUI primitives → `src/ds` components, remove `@mui` imports from the file, verify `build`/`test`. `SignIn` is the reference migration.
+- **Design + plan:** `../fantasy-docs/work/2026-05-design-system-migration/`. Remaining phases tracked as GitHub issues (Phase 2/3/4).
 
 ## Key Patterns
 
@@ -72,16 +85,13 @@ const mutation = useMutation({ mutationFn: createLeague, onSuccess: () => queryC
 - `PublicRoute` redirects logged-in users away from login/signup
 
 ### API Configuration
-Backend URL configured in `src/api/config.ts`:
-```typescript
-export const API_BASE_URL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:4000';
-```
+Backend URL is read in `src/api/config.ts` with a `http://localhost:4000` fallback. Note: under Vite, `process.env.REACT_APP_*` is not auto-injected (a `vite.config.ts` define-shim covers it for local dev) — before deploying against a real backend, reconcile the env var and move to `import.meta.env` / `VITE_` (tracked on issue #51).
 
 ## Component Conventions
 
 - Pages in `src/pages/` correspond to routes
-- Modals are separate components (e.g., `CreateLeagueModal`, `AddPlayerModal`)
-- Forms use MUI components with controlled inputs
+- New UI is built from `src/ds` (overlays, forms, etc.); MUI is legacy-only
+- Legacy modals are separate components (e.g., `CreateLeagueModal`, `AddPlayerModal`)
 
 ## Environment Variables
 
@@ -92,6 +102,7 @@ REACT_APP_BACKEND_URL=http://localhost:4000
 
 ## Testing
 
-- Jest + React Testing Library
-- Test files: `*.test.tsx`
+- **Vitest** + React Testing Library (jsdom)
+- Run a single pass with `npm test -- --run`
+- Test files: `*.test.tsx` (co-located; `src/ds` components ship with tests + stories)
 - Setup in `src/setupTests.ts`

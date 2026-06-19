@@ -1,6 +1,6 @@
 // pages/invite/accept.tsx
 
-import React, { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { CircularProgress, Box, Typography } from '@mui/material';
 import { apiConfig } from '../api/config';

@@ -205,7 +205,7 @@ export interface MatchupDetailProps {
   seasonId?: string;
 }
 
-export const MatchupDetail: React.FC<MatchupDetailProps> = ({ matchup, userTeamId, seasonYear, seasonId }) => {
+export const MatchupDetail: React.FC<MatchupDetailProps> = ({ matchup, seasonYear, seasonId }) => {
   const isCompleted = matchup.status === 'completed';
 
   // Real-world data (games, player history) lives under the REAL round, which

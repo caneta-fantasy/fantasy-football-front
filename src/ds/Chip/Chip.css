@@ -1,0 +1,27 @@
+/* Live-status pulse dot. Reduced-motion is handled globally by the DS base
+   layer, which neutralizes animation-duration under prefers-reduced-motion;
+   under that media query the dot simply renders solid (no pulse). */
+@keyframes ds-chip-pulse {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.35);
+    opacity: 0.55;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.ds-chip-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: var(--radius-full, 999px);
+  background: currentColor;
+  /* soft glow keyed off the current foreground so it works on any tone */
+  box-shadow: 0 0 6px currentColor;
+  animation: ds-chip-pulse var(--dur-500, 500ms) var(--ease-standard) infinite;
+}

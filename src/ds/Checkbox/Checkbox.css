@@ -1,0 +1,76 @@
+/* Checkbox — the real <input> is overlaid invisibly on the decorative box so
+   the box reflects the input's :checked / :indeterminate / :focus-visible /
+   :disabled state via sibling selectors. Transitions are neutralized under
+   prefers-reduced-motion globally by the DS base layer. */
+
+.ds-checkbox {
+  position: relative;
+}
+
+/* The real control: covers the box, transparent, but fully interactive. */
+.ds-checkbox-input {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 20px;
+  height: 20px;
+  margin: 0;
+  opacity: 0;
+  cursor: inherit;
+}
+
+.ds-checkbox-box {
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+  border-radius: var(--radius-pill);
+  border: 1.5px solid var(--color-border-strong);
+  background: var(--color-surface);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color var(--dur-150, 150ms) var(--ease-standard),
+    border-color var(--dur-150, 150ms) var(--ease-standard);
+}
+
+/* Checkmark + indeterminate dash hidden until the matching state. The glyph
+   sits on the filled signature-green box, so it carries the warm on-green ink. */
+.ds-checkbox-check {
+  color: var(--color-on-signature);
+  opacity: 0;
+}
+
+.ds-checkbox-dash {
+  position: absolute;
+  width: 10px;
+  height: 2.5px;
+  background: var(--color-on-signature);
+  opacity: 0;
+}
+
+/* checked → signature green fill + visible check */
+.ds-checkbox-input:checked ~ .ds-checkbox-box {
+  background: var(--color-signature);
+  border-color: var(--color-signature-line);
+}
+.ds-checkbox-input:checked ~ .ds-checkbox-box .ds-checkbox-check {
+  opacity: 1;
+}
+
+/* indeterminate → signature green fill + dash, no check */
+.ds-checkbox-input:indeterminate ~ .ds-checkbox-box {
+  background: var(--color-signature);
+  border-color: var(--color-signature-line);
+}
+.ds-checkbox-input:indeterminate ~ .ds-checkbox-box .ds-checkbox-check {
+  opacity: 0;
+}
+.ds-checkbox-input:indeterminate ~ .ds-checkbox-box .ds-checkbox-dash {
+  opacity: 1;
+}
+
+/* Focus ring uses the single --focus-ring token, surfaced on the visible box. */
+.ds-checkbox-input:focus-visible ~ .ds-checkbox-box {
+  outline: none;
+  box-shadow: var(--focus-ring);
+}

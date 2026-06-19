@@ -1,4 +1,3 @@
-import React from 'react';
 import {
   Box, Typography, Table, TableHead, TableRow, TableCell, TableBody,
   Chip, Avatar, IconButton, Tooltip, Paper, Alert,
@@ -22,10 +21,8 @@ interface Props {
   isWindowOpen: boolean;
 }
 
-export default function WaiverClaimsPanel({ seasonId, currentUserId, claims, budgets, isWindowOpen }: Props) {
+export default function WaiverClaimsPanel({ seasonId, currentUserId, claims, isWindowOpen }: Props) {
   const cancelClaim = useCancelWaiverClaim(seasonId);
-
-  const myBudget = budgets.find((b) => b.userTeam.user.id === currentUserId);
 
   const handleCancel = async (claimId: string) => {
     try {

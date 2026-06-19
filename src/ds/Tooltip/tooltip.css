@@ -1,0 +1,11 @@
+/* Tooltip entry animation. Opacity-only so it never fights the translate-based
+   placement utilities on the panel. Reduced-motion is neutralized globally by
+   the DS base layer, so under prefers-reduced-motion it appears in place. */
+@keyframes ds-tooltip-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}

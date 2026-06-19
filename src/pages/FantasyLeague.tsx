@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { useGetFantasyLeague } from '../api/fantasyLeagueQueries';
 import LeagueSidebar from '../components/FantasyLeaguesSidebar';

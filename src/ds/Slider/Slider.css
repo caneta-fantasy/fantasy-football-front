@@ -1,0 +1,68 @@
+/* Slider — a real <input type="range"> styled to the modernista look:
+   a 4px track that fills bottle-green up to the value, and an 18px round thumb
+   with a 2px ink border. The fill is driven by the --ds-slider-fill custom
+   property the component computes from value/min/max, so the visual position is
+   value-accurate (not decorative).
+
+   Cross-browser: the track and thumb pseudo-elements have to be declared
+   separately for WebKit and Firefox — they cannot be combined in one rule. */
+
+.ds-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 18px; /* room for the thumb; the visible track is the gradient below */
+  background: transparent;
+  cursor: pointer;
+  /* value-driven track fill: green up to the value, then the neutral rail */
+  --ds-slider-track: linear-gradient(
+    to right,
+    var(--green) 0%,
+    var(--green) var(--ds-slider-fill, 0%),
+    var(--line) var(--ds-slider-fill, 0%),
+    var(--line) 100%
+  );
+}
+
+.ds-slider:disabled {
+  cursor: not-allowed;
+  opacity: var(--opacity-disabled, 0.6);
+}
+
+/* ── WebKit / Blink ── */
+.ds-slider::-webkit-slider-runnable-track {
+  height: 4px;
+  border-radius: var(--radius-full, 999px);
+  background: var(--ds-slider-track);
+}
+.ds-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  margin-top: -7px; /* center the 18px thumb on the 4px track */
+  border-radius: var(--radius-full, 999px);
+  background: var(--color-surface);
+  border: var(--bw-2, 2px) solid var(--ink);
+  box-shadow: 0 2px 6px rgba(19, 33, 26, 0.2);
+}
+
+/* ── Firefox ── */
+.ds-slider::-moz-range-track {
+  height: 4px;
+  border-radius: var(--radius-full, 999px);
+  background: var(--line);
+}
+.ds-slider::-moz-range-progress {
+  height: 4px;
+  border-radius: var(--radius-full, 999px);
+  background: var(--green);
+}
+.ds-slider::-moz-range-thumb {
+  width: 18px;
+  height: 18px;
+  border-radius: var(--radius-full, 999px);
+  background: var(--color-surface);
+  border: var(--bw-2, 2px) solid var(--ink);
+  box-shadow: 0 2px 6px rgba(19, 33, 26, 0.2);
+}

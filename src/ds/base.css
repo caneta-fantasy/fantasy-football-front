@@ -1,0 +1,35 @@
+/* Scoped reset: only inside the DS root marker, so MUI screens are untouched. */
+[data-ds] *, [data-ds] *::before, [data-ds] *::after { box-sizing: border-box; }
+/* base body voice — Archivo (modernista); color/bg from the semantic layer */
+[data-ds] { font-family: var(--font-sans); color: var(--color-text); background: var(--color-bg); }
+/* focus ring — cobalt on white (the single source of truth, --focus-ring) */
+[data-ds] :focus-visible { outline: none; box-shadow: var(--focus-ring); }
+
+/* Tailwind preflight is disabled globally (MUI-safety), so restore its <button>
+   reset within the DS scope. Without it, native buttons keep the browser's
+   default light background + border — which made transparent-styled buttons
+   (e.g. the sortable table headers on the green band) render as white pills with
+   invisible warm-white text. border-style stays solid so `border-*` utilities
+   (e.g. the secondary button outline) still render; width defaults to 0. */
+[data-ds] button,
+[data-ds] [type='button'],
+[data-ds] [type='submit'],
+[data-ds] [type='reset'] {
+  appearance: none;
+  -webkit-appearance: none;
+  background-color: transparent;
+  background-image: none;
+  border-width: 0;
+  border-style: solid;
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+}
+
+/* robust reduced-motion kill-switch (class/animation agnostic). */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: .001ms !important; animation-iteration-count: 1 !important;
+    transition-duration: .001ms !important; scroll-behavior: auto !important;
+  }
+}

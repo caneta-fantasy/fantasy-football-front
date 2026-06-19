@@ -61,7 +61,7 @@ const TradeCard: React.FC<{
   seasonId: string;
   seasonYear: number;
   onAccept: (trade: Trade) => void;
-}> = ({ trade, myUserTeamId, isOwner, seasonId, seasonYear, onAccept }) => {
+}> = ({ trade, myUserTeamId, isOwner, seasonId, onAccept }) => {
   const cancelTrade = useCancelTrade(seasonId);
   const rejectTrade = useRejectTrade(seasonId);
   const vetoTrade = useVetoTrade(seasonId);
