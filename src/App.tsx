@@ -44,7 +44,7 @@ const AppRoutes: React.FC = () => {
 
           <Route element={<RequireAdmin />}>
             <Route path="/admin" element={<Navigate to="/admin/round-flow" replace />} />
-            <Route path="/admin/round-flow" element={<AdminRoundFlowPage />} />
+            <Route path="/admin/:tab" element={<AdminRoundFlowPage />} />
           </Route>
 
           {/* Accessible whether or not the user is logged in (clicked from email) */}

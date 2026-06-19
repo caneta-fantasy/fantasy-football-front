@@ -21,6 +21,13 @@ const endpoints = {
   leagues: {
     list: `${API_BASE_URL}/leagues`,
   },
+  playerRanking: {
+    list: `${API_BASE_URL}/admin/player-ranking`,
+    config: `${API_BASE_URL}/admin/player-ranking/config`,
+    availability: (playerId: number) => `${API_BASE_URL}/admin/player-ranking/${playerId}/availability`,
+    nudge: (playerId: number) => `${API_BASE_URL}/admin/player-ranking/${playerId}/nudge`,
+    recompute: `${API_BASE_URL}/admin/player-ranking/recompute`,
+  },
   fantasyLeagues: {
     create: `${API_BASE_URL}/fantasy-leagues`,
     get: `${API_BASE_URL}/fantasy-leagues`,

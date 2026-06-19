@@ -58,7 +58,7 @@ const Navbar: React.FC = () => {
             {user.isAdmin && (
               <Button
                 component={Link}
-                to="/admin/round-flow"
+                to="/admin"
                 variant="text"
                 sx={{ textTransform: 'none', fontWeight: 'bold', color: '#1a1a1a' }}
               >

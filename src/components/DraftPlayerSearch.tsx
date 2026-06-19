@@ -60,7 +60,7 @@ export default function DraftPlayerSearch({ leagueId, realLeagueId, picks, onPic
     teamId: teamId || undefined,
     page,
     limit: 20,
-    sortBy: 'name',
+    sortBy: 'draftRank',
     order: 'asc',
     leagueId: realLeagueId,
     fantasyLeagueId: leagueId,

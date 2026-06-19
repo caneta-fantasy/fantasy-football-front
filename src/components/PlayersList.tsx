@@ -112,7 +112,9 @@ const PlayersList: React.FC<PlayersListProps> = ({ fantasyLeague, seasonYear, us
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [onlyFreeAgents, setOnlyFreeAgents] = useState(false);
   const [teamId, setTeamId] = useState<number | null>(null);
-  const [sortBy, setSortBy] = useState<string>('totalPoints');
+  // 'auto' = let the backend pick: per-league points once the season has points,
+  // global draft ranking pre-season. Explicit column clicks override it.
+  const [sortBy, setSortBy] = useState<string>('auto');
   const [order, setOrder] = useState<'asc' | 'desc'>('desc');
 
   const handleSort = (col: string) => {
@@ -208,6 +210,10 @@ const PlayersList: React.FC<PlayersListProps> = ({ fantasyLeague, seasonYear, us
     onlyFreeAgents,
   });
 
+
+  // When sortBy is 'auto', the backend resolves the real column (totalPoints or
+  // draftRank). Use the resolved value from meta so the right header highlights.
+  const activeSort = sortBy === 'auto' ? data?.meta?.sortBy ?? '' : sortBy;
 
   const previousDataRef = useRef<any[]>([]);
   useEffect(() => {
@@ -348,8 +354,8 @@ const PlayersList: React.FC<PlayersListProps> = ({ fantasyLeague, seasonYear, us
         {currentRound && <TableCell>Próx.</TableCell>}
         <TableCell align="right">
           <TableSortLabel
-            active={sortBy === 'goals'}
-            direction={sortBy === 'goals' ? order : 'desc'}
+            active={activeSort === 'goals'}
+            direction={activeSort === 'goals' ? order : 'desc'}
             onClick={() => handleSort('goals')}
           >
             Gols
@@ -357,8 +363,8 @@ const PlayersList: React.FC<PlayersListProps> = ({ fantasyLeague, seasonYear, us
         </TableCell>
         <TableCell align="right">
           <TableSortLabel
-            active={sortBy === 'totalPoints'}
-            direction={sortBy === 'totalPoints' ? order : 'desc'}
+            active={activeSort === 'totalPoints'}
+            direction={activeSort === 'totalPoints' ? order : 'desc'}
             onClick={() => handleSort('totalPoints')}
           >
             Pts Total
@@ -366,8 +372,8 @@ const PlayersList: React.FC<PlayersListProps> = ({ fantasyLeague, seasonYear, us
         </TableCell>
         <TableCell align="right">
           <TableSortLabel
-            active={sortBy === 'avgPoints'}
-            direction={sortBy === 'avgPoints' ? order : 'desc'}
+            active={activeSort === 'avgPoints'}
+            direction={activeSort === 'avgPoints' ? order : 'desc'}
             onClick={() => handleSort('avgPoints')}
           >
             Média
