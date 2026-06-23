@@ -305,7 +305,10 @@ const MatchupDetailModal: React.FC<ModalProps> = ({ matchup, onClose, userTeamId
     <DialogTitle>
       <Box display="flex" alignItems="center" justifyContent="space-between">
         <Box display="flex" alignItems="center" gap={1}>
-          <Typography fontWeight={700}>Rodada {matchup?.roundNumber}</Typography>
+          <Typography fontWeight={700}>
+            Rodada {matchup?.roundNumber} da Liga • Rodada{' '}
+            {matchup?.realRound ?? matchup?.roundNumber} do Brasileirão
+          </Typography>
           {matchup && (
             <Chip
               label={STATUS_LABELS[matchup.status] ?? matchup.status}

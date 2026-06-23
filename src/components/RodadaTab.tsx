@@ -14,6 +14,7 @@ import {
 import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import { useScheduleBySeason, usePlayoffMatchups, FantasyMatchupDto } from '../api/fantasyMatchupQueries';
+import { useRoundCalendar } from '../api/roundMappingQueries';
 import { MatchupDetail } from './MatchupDetailModal';
 
 interface Props {
@@ -159,6 +160,18 @@ const RodadaTab: React.FC<Props> = ({
 }) => {
   const { data: schedule, isLoading: scheduleLoading } = useScheduleBySeason(seasonId);
   const { data: playoffMatchups, isLoading: playoffLoading } = usePlayoffMatchups(seasonId);
+  const { data: roundCalendar } = useRoundCalendar(seasonId);
+
+  // Authoritative fantasy→real round map (covers regular AND playoff rounds).
+  // Matchup rows don't always carry realRound (e.g. playoff brackets), so we
+  // resolve the real round from the calendar mapping instead of the matchups.
+  const fantasyToRealRound = useMemo(() => {
+    const map = new Map<number, number>();
+    (roundCalendar?.rows ?? []).forEach((r) => {
+      if (r.fantasyRound != null) map.set(r.fantasyRound, r.realRound);
+    });
+    return map;
+  }, [roundCalendar]);
   const [selectedRound, setSelectedRound] = useState<number | null>(null);
   const [expandedMatchupId, setExpandedMatchupId] = useState<string | null>(null);
 
@@ -234,8 +247,13 @@ const RodadaTab: React.FC<Props> = ({
     ? [myMatchup, ...allMatchups.filter((m) => m.id !== myMatchup.id)]
     : allMatchups;
 
-  // Real championship round this fantasy round maps to (differs after a skip)
-  const activeRealRound = allMatchups[0]?.realRound ?? activeRound;
+  // Real championship round this fantasy round maps to. Prefer the authoritative
+  // calendar mapping (works for playoff rounds too); fall back to matchup data,
+  // then to the fantasy round itself.
+  const activeRealRound =
+    fantasyToRealRound.get(activeRound) ??
+    allMatchups[0]?.realRound ??
+    activeRound;
 
   // Default expansion: user's matchup open on mount / round change
   const defaultExpandedId = myMatchup?.id ?? orderedMatchups[0]?.id ?? null;
@@ -296,11 +314,9 @@ const RodadaTab: React.FC<Props> = ({
           <ArrowForwardIosIcon fontSize="small" />
         </IconButton>
 
-        {activeRealRound !== activeRound && (
-          <Typography variant="body2" color="text.secondary">
-            {activeRealRound} do Brasileirao
-          </Typography>
-        )}
+        <Typography variant="body2" color="text.secondary">
+          Rodada {activeRound} da Liga • Rodada {activeRealRound} do Brasileirão
+        </Typography>
       </Stack>
 
       {/* Matchup list — stable order, expand/collapse in place */}

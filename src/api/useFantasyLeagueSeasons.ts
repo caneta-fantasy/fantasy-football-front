@@ -10,6 +10,9 @@ export interface FantasyLeagueSeason {
   irSlots: number;
   playoffStartRound: number;
   numberOfRounds: number;
+  // Originally-requested round count if the season was shortened at schedule
+  // generation to fit the real league's remaining rounds; null otherwise.
+  roundsShortenedFrom: number | null;
   playoffFormat: string;
   seasonKickoffAt: string;
   activatedAt: string;
