@@ -189,8 +189,8 @@ const RoundCalendar: React.FC<Props> = ({ fantasyLeagueSeason, isOwner }) => {
           <TableHead>
             <TableRow>
               <TableCell padding="checkbox" />
-              <TableCell>Liga</TableCell>
-              <TableCell>Brasileirao</TableCell>
+              <TableCell>Rodada da Liga</TableCell>
+              <TableCell>Rodada do Brasileirão</TableCell>
               <TableCell>Status</TableCell>
               <TableCell>Início</TableCell>
               {isOwner && <TableCell align="right">Ações</TableCell>}

@@ -44,11 +44,11 @@ const FantasyLeagueInfo: React.FC<Props> = ({ currentUserId, fantasyLeague}) => 
                         : ''}.
                 </Alert>
             )}
-            <FantasyLeagueTeams fantasyLeague={fantasyLeague} />
+            <FantasyLeagueSettings isOwner={isOwner} fantasyLeague={fantasyLeague} />
             {fantasyLeagueSeason && (
                 <RoundCalendar fantasyLeagueSeason={fantasyLeagueSeason} isOwner={isOwner} />
             )}
-            <FantasyLeagueSettings isOwner={isOwner} fantasyLeague={fantasyLeague} />
+            <FantasyLeagueTeams fantasyLeague={fantasyLeague} />
         </>
     );
 };

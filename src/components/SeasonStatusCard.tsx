@@ -245,6 +245,14 @@ const getErrorMessage = (err: unknown) => {
                 </Typography>
               )}
 
+              {season.roundsShortenedFrom != null && (
+                <Typography variant="body2" color="warning.main">
+                  ⚠️ Sua liga foi reduzida de {season.roundsShortenedFrom} para{' '}
+                  {season.numberOfRounds} rodadas porque o campeonato real está
+                  perto do fim. Os playoffs foram ajustados.
+                </Typography>
+              )}
+
               <Typography variant="caption" color="text.secondary">
                 {/* PT-BR UI */}
                 Janela de ativação: {windowStr}
