@@ -43,6 +43,37 @@ const RosterSettingsForm: React.FC<Props> = ({ values, onChange, id, refetchRost
   const totalStarterMin = values.minStarterMidfielders + values.minStarterForwards;
   const isStarterTotalExceeded = totalStarterMin > values.starterSkillSlots;
 
+  // A position limit (total roster cap) cannot be below the starters that position
+  // needs, or the lineup can't be filled. null = no limit. Mirrors the backend.
+  const isOpenDefense = values.defenseType === 'OPEN';
+  const belowFloor = (max: number | null | undefined, floor: number) =>
+    max != null && max < floor;
+
+  const maxGkError = belowFloor(values.maxGk, values.starterGkSlots);
+  const maxDefendersError = belowFloor(values.maxDefenders, values.starterDefenderSlots);
+  const maxDefError = belowFloor(values.maxDef, values.starterDefenseSlots);
+  const maxMidFloorError = belowFloor(values.maxMid, values.minStarterMidfielders);
+  const maxFwdFloorError = belowFloor(values.maxFwd, values.minStarterForwards);
+
+  // Combined MEI+ATA capacity must cover all skill starter slots (incl. flex).
+  // Only fires when both limits are set.
+  const skillCombinedError =
+    values.maxMid != null &&
+    values.maxFwd != null &&
+    values.maxMid + values.maxFwd < values.starterSkillSlots;
+
+  const maxMidError = maxMidFloorError || skillCombinedError;
+  const maxFwdError = maxFwdFloorError || skillCombinedError;
+
+  const floorMsg = (floor: number) =>
+    `Não pode ser menor que os ${floor} titulares dessa posição.`;
+  const skillCombinedMsg = `A soma de meio-campistas + atacantes não pode ser menor que ${values.starterSkillSlots} (titulares de ataque, incluindo vagas coringa).`;
+
+  const hasLimitError =
+    (isOpenDefense ? maxGkError || maxDefendersError : maxDefError) ||
+    maxMidError ||
+    maxFwdError;
+
   return (
     <>
       {isLocked && (
@@ -223,6 +254,8 @@ const RosterSettingsForm: React.FC<Props> = ({ values, onChange, id, refetchRost
               placeholder="Sem limite"
               value={values.maxGk ?? ''}
               onChange={(e) => onChange('maxGk', e.target.value === '' ? null : Number(e.target.value))}
+              error={maxGkError}
+              helperText={maxGkError ? floorMsg(values.starterGkSlots) : ''}
             />
           </Box>
         )}
@@ -237,6 +270,8 @@ const RosterSettingsForm: React.FC<Props> = ({ values, onChange, id, refetchRost
               placeholder="Sem limite"
               value={values.maxDefenders ?? ''}
               onChange={(e) => onChange('maxDefenders', e.target.value === '' ? null : Number(e.target.value))}
+              error={maxDefendersError}
+              helperText={maxDefendersError ? floorMsg(values.starterDefenderSlots) : ''}
             />
           </Box>
         ) : (
@@ -250,6 +285,8 @@ const RosterSettingsForm: React.FC<Props> = ({ values, onChange, id, refetchRost
               placeholder="Sem limite"
               value={values.maxDef ?? ''}
               onChange={(e) => onChange('maxDef', e.target.value === '' ? null : Number(e.target.value))}
+              error={maxDefError}
+              helperText={maxDefError ? floorMsg(values.starterDefenseSlots) : ''}
             />
           </Box>
         )}
@@ -263,6 +300,14 @@ const RosterSettingsForm: React.FC<Props> = ({ values, onChange, id, refetchRost
             placeholder="Sem limite"
             value={values.maxMid ?? ''}
             onChange={(e) => onChange('maxMid', e.target.value === '' ? null : Number(e.target.value))}
+            error={maxMidError}
+            helperText={
+              maxMidFloorError
+                ? floorMsg(values.minStarterMidfielders)
+                : skillCombinedError
+                  ? skillCombinedMsg
+                  : ''
+            }
           />
         </Box>
         <Box>
@@ -275,6 +320,14 @@ const RosterSettingsForm: React.FC<Props> = ({ values, onChange, id, refetchRost
             placeholder="Sem limite"
             value={values.maxFwd ?? ''}
             onChange={(e) => onChange('maxFwd', e.target.value === '' ? null : Number(e.target.value))}
+            error={maxFwdError}
+            helperText={
+              maxFwdFloorError
+                ? floorMsg(values.minStarterForwards)
+                : skillCombinedError
+                  ? skillCombinedMsg
+                  : ''
+            }
           />
         </Box>
       </Box>
@@ -290,7 +343,7 @@ const RosterSettingsForm: React.FC<Props> = ({ values, onChange, id, refetchRost
         <Button
           variant="contained"
           onClick={() => updateRoster.mutate({ id, updates: values })}
-          disabled={updateRoster.isPending || isStarterTotalExceeded || isLocked}
+          disabled={updateRoster.isPending || isStarterTotalExceeded || hasLimitError || isLocked}
         >
           Salvar
         </Button>
