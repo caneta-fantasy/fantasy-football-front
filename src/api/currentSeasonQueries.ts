@@ -3,8 +3,13 @@ import axios from 'axios';
 import { apiConfig } from './config';
 import { STALE_TIME } from './queryConfig';
 
-interface CurrentSeason {
+export interface CurrentSeason {
   year: number;
+  realCurrentRound: number | null;
+  maxRealRound: number;
+  minRounds: number; // floor for a fantasy season (12)
+  maxRounds: number; // real rounds left to play (shrinks as the season advances)
+  canCreate: boolean; // false once the real season is past the creation cutoff
 }
 
 export const useCurrentSeason = () => {

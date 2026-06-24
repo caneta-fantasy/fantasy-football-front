@@ -18,6 +18,7 @@ import {
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useCreateFantasyLeague } from '../api/fantasyLeagueMutations';
+import { useCurrentSeason } from '../api/currentSeasonQueries';
 import {
   CREATION_CUTOFF_ROUND,
   DEFAULT_ROUNDS,
@@ -47,8 +48,6 @@ const modalStyle = {
 interface CreateLeagueModalProps {
   open: boolean;
   handleClose: () => void;
-  realCurrentRound?: number | null;
-  maxRealRound?: number | null;
 }
 
 const draftTypes = [
@@ -64,7 +63,7 @@ const draftTypes = [
   },
 ];
 
-const CreateLeagueModal: React.FC<CreateLeagueModalProps> = ({ open, handleClose, realCurrentRound, maxRealRound }) => {
+const CreateLeagueModal: React.FC<CreateLeagueModalProps> = ({ open, handleClose }) => {
   const { user } = useAuth();
   const navigate = useNavigate();
   const [leagueName, setLeagueName] = useState('');
@@ -72,30 +71,29 @@ const CreateLeagueModal: React.FC<CreateLeagueModalProps> = ({ open, handleClose
   const [draftType, setDraftType] = useState('snake');
   const { mutate: createFantasyLeague, isPending, isError, error } = useCreateFantasyLeague();
 
-  const maxAllowed = useMemo(() => {
-    if (maxRealRound != null && realCurrentRound != null) {
-      return maxRealRound - realCurrentRound + 1;
-    }
-    return null;
-  }, [maxRealRound, realCurrentRound]);
+  // Round budget comes straight from the backend so it's correct even for a brand
+  // new user with no leagues yet. maxRounds shrinks as the real season advances.
+  const { data: currentSeason } = useCurrentSeason();
+  const minAllowed = currentSeason?.minRounds ?? MIN_ROUNDS;
+  const maxAllowed = currentSeason?.maxRounds ?? null;
 
   const roundOptions = useMemo(() => {
-    const all = Array.from({ length: 20 }, (_, i) => MIN_ROUNDS + i);
+    const all = Array.from({ length: 20 }, (_, i) => minAllowed + i);
     return maxAllowed != null ? all.filter((v) => v <= maxAllowed) : all;
-  }, [maxAllowed]);
+  }, [minAllowed, maxAllowed]);
 
   const [numberOfRounds, setNumberOfRounds] = useState(() =>
     Math.min(DEFAULT_ROUNDS, maxAllowed ?? DEFAULT_ROUNDS),
   );
 
-  // Recalculate default when real round info loads
+  // Recalculate default when the round budget loads
   React.useEffect(() => {
     if (maxAllowed != null) {
       setNumberOfRounds((prev) => Math.min(prev, maxAllowed));
     }
   }, [maxAllowed]);
 
-  const isPastCutoff = realCurrentRound != null && realCurrentRound > CREATION_CUTOFF_ROUND;
+  const isPastCutoff = currentSeason ? !currentSeason.canCreate : false;
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
