@@ -13,6 +13,7 @@ import {
   Typography,
 } from '@mui/material';
 import { useUpdateFantasyLeagueSeason } from '../api/fantasyLeagueSeasonsMutation';
+import { useCurrentSeason } from '../api/currentSeasonQueries';
 
 const SEASON_LOCKED_STATUSES = [
   'DRAFT_SCHEDULED', 'DRAFT_LIVE', 'DRAFT_DONE',
@@ -25,17 +26,20 @@ interface Props {
   id: any;
   refetchFantasyLeagueSeason: () => void;
   seasonStatus?: string;
-  maxRealRound?: number | null;
 }
 
-const FantasyLeagueSeasonForm: React.FC<Props> = ({ values, onChange, id, refetchFantasyLeagueSeason, seasonStatus, maxRealRound }) => {
+const FantasyLeagueSeasonForm: React.FC<Props> = ({ values, onChange, id, refetchFantasyLeagueSeason, seasonStatus }) => {
   const isLocked = !!seasonStatus && SEASON_LOCKED_STATUSES.includes(seasonStatus);
   const [openSnackbar, setOpenSnackbar] = useState(false);
-  // The fantasy season can't need more rounds than the championship has left
+  // The fantasy season can't need more rounds than the championship has LEFT (the
+  // available count, not the absolute last round). Comes from the backend budget.
+  const { data: currentSeason } = useCurrentSeason();
+  const minRounds = currentSeason?.minRounds ?? 12;
+  const maxRounds = currentSeason?.maxRounds ?? null;
   const roundOptions = useMemo(() => {
-    const all = Array.from({ length: 20 }, (_, i) => 12 + i);
-    return maxRealRound ? all.filter((v) => v <= maxRealRound) : all;
-  }, [maxRealRound]);
+    const all = Array.from({ length: 20 }, (_, i) => minRounds + i);
+    return maxRounds != null ? all.filter((v) => v <= maxRounds) : all;
+  }, [minRounds, maxRounds]);
   const tradeDeadlineOptions = useMemo(() => {
     const start = Math.max(1, values.numberOfRounds - 8);
     const end = values.numberOfRounds - 3;
@@ -98,9 +102,9 @@ const FantasyLeagueSeasonForm: React.FC<Props> = ({ values, onChange, id, refetc
       {/* Número de Rodadas */}
       <Box>
         <Typography fontWeight={600}>Número de Rodadas</Typography>
-        {maxRealRound != null && (
+        {maxRounds != null && (
           <Typography variant="body2" color="text.secondary">
-            Máximo permitido pelo calendário do campeonato: {maxRealRound}.
+            Máximo disponível no campeonato: {maxRounds} rodadas.
           </Typography>
         )}
         <FormControl fullWidth>

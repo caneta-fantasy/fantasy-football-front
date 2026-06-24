@@ -7,7 +7,6 @@ import CreateLeagueModal from '../components/CreateLeagueModal';
 import JoinLeagueModal from '../components/JoinLeagueModal';
 import { UserFantasyLeaguesList } from '../components/UserFantasyLeaguesList';
 import { useGetMyLeagues } from '../api/fantasyLeagueQueries';
-import { useFantasyLeagueSeasons } from '../api/useFantasyLeagueSeasons';
 import { apiConfig } from '../api/config';
 import { useMutation } from '@tanstack/react-query';
 import Loading from '../components/Loading';
@@ -28,10 +27,6 @@ const Welcome = () => {
   
   // Use the React Query hook
   const { data: fantasyLeagues, isLoading, isError, error } = useGetMyLeagues();
-
-  // Use first available league's season to get real-round budget info for CreateLeagueModal
-  const firstLeagueId = fantasyLeagues?.[0]?.id ?? 0; // 0 disables the query (enabled: !!leagueId)
-  const { data: firstLeagueSeason } = useFantasyLeagueSeasons(firstLeagueId);
 
 const acceptInviteMutation = useMutation({
   mutationFn: async (token: string) => {
@@ -180,8 +175,6 @@ const acceptInviteMutation = useMutation({
       <CreateLeagueModal
         open={isModalOpen}
         handleClose={() => setIsModalOpen(false)}
-        realCurrentRound={firstLeagueSeason?.realCurrentRound ?? null}
-        maxRealRound={firstLeagueSeason?.maxRealRound ?? null}
       />
 
       <JoinLeagueModal

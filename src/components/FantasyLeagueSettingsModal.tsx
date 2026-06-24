@@ -114,7 +114,6 @@ const FantasyLeagueSettingsModal: React.FC<Props> = ({ open, onClose, fantasyLea
             id={fantasyLeagueSeason?.id!}
             refetchFantasyLeagueSeason={refetchFantasyLeagueSeason}
             seasonStatus={fantasyLeagueSeason?.status}
-            maxRealRound={fantasyLeagueSeason?.maxRealRound}
           />
         );
       case 'roster':
