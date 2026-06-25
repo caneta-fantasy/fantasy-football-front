@@ -30,11 +30,11 @@ describe('SignIn', () => {
 
   // ── modernista re-skin additions ──────────────────────────────────────────
 
-  it('renders the green hero headline + both display headings', () => {
+  it('renders the green hero brand logo + form heading', () => {
     renderSignIn()
-    // Hero headline (h1) and form heading (h2) both present in the outline.
+    // Hero now carries the Caneta brand wordmark (image) instead of a text h1.
     expect(
-      screen.getByRole('heading', { level: 1, name: /fantasy\s*brasileir/i }),
+      screen.getByRole('img', { name: /caneta fantasy/i }),
     ).toBeInTheDocument()
     expect(
       screen.getByRole('heading', { level: 2, name: /entrar na\s*sua conta/i }),

@@ -15,6 +15,7 @@ import dayjs, { Dayjs } from 'dayjs';
 import 'dayjs/locale/pt-br';
 import { useMutation } from '@tanstack/react-query';
 import { useSignUp } from '../api/authQueries';
+import { BrandCrest } from '../ds';
 import Loading from '../components/Loading';
 
 dayjs.locale('pt-br');
@@ -122,6 +123,9 @@ const SignUp: React.FC = () => {
           maxWidth: 400,
           mx: 'auto'
         }}>
+          <Box sx={{ mb: 2 }}>
+            <BrandCrest size={72} />
+          </Box>
           <Typography variant="h4" component="h1" sx={{ mb: 2, fontWeight: 'bold' }}>
             Crie sua conta
           </Typography>

@@ -12,6 +12,10 @@ export type { OverlineProps } from './Overline/Overline'
 export { Azulejo } from './Azulejo/Azulejo'
 export type { AzulejoProps } from './Azulejo/Azulejo'
 
+// ----- Brand (app logo / crest / wordmark) -----
+export { BrandCrest, Wordmark, BrandLockup } from './Brand/Brand'
+export type { BrandCrestProps, WordmarkProps, BrandLockupProps } from './Brand/Brand'
+
 export { AzulejoBand } from './AzulejoBand/AzulejoBand'
 export type { AzulejoBandProps } from './AzulejoBand/AzulejoBand'
 

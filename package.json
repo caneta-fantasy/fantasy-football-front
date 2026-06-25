@@ -2,6 +2,7 @@
   "name": "fantasy-football-front",
   "version": "0.1.0",
   "private": true,
+  "description": "Caneta Fantasy — fantasy do Brasileirão (frontend).",
   "type": "module",
   "dependencies": {
     "@emotion/react": "^11.14.0",

@@ -7,6 +7,7 @@ import CreateLeagueModal from '../components/CreateLeagueModal';
 import JoinLeagueModal from '../components/JoinLeagueModal';
 import { UserFantasyLeaguesList } from '../components/UserFantasyLeaguesList';
 import { useGetMyLeagues } from '../api/fantasyLeagueQueries';
+import { BrandCrest } from '../ds';
 import { apiConfig } from '../api/config';
 import { useMutation } from '@tanstack/react-query';
 import Loading from '../components/Loading';
@@ -118,6 +119,9 @@ const acceptInviteMutation = useMutation({
         mx: 'auto',
         textAlign: 'center'
       }}>
+        <Box sx={{ display: 'flex', justifyContent: 'center', mb: 3 }}>
+          <BrandCrest size={96} />
+        </Box>
         <Typography variant="h3" component="h1" sx={{ mb: 3, fontSize: { xs: '2rem', md: '3rem' } }}>
           Bem-vindo, {user.firstName} {user.lastName}!
         </Typography>
