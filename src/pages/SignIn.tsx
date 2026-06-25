@@ -19,6 +19,7 @@ import {
   Icon,
   Overline,
   TextInput,
+  Wordmark,
 } from '@/ds'
 import { useLogIn } from '../api/authQueries'
 import { AuthContext } from '../context/AuthContext'
@@ -199,21 +200,13 @@ function SignInView() {
           <Overline color="var(--gold-light)" accent="var(--gold)" as="span">
             Temporada 2026 · Brasileirão
           </Overline>
-          <h1
-            className="mt-3 font-display uppercase"
-            style={displayStyle(56, {
-              wght: 900,
-              wdth: 122,
-              lh: 0.9,
-              ls: -1.5,
-              color: 'var(--on-green)',
-            })}
-          >
-            Fantasy
-            <br />
-            Brasileirão
-          </h1>
-          <p className="mt-3 font-serif text-[16px] italic text-on-green-mute sm:text-[18px]">
+          <Wordmark
+            variant="dark"
+            height={92}
+            className="mt-4 -ml-1"
+            alt="Caneta Fantasy"
+          />
+          <p className="mt-4 font-serif text-[16px] italic text-on-green-mute sm:text-[18px]">
             Monte o time. Vença a rodada.
           </p>
         </div>

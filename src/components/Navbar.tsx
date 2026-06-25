@@ -1,6 +1,7 @@
 import React from 'react';
 import { AppBar, Toolbar, Typography, Button, Box, Chip } from '@mui/material';
 import { Link } from 'react-router-dom';
+import { BrandLockup } from '../ds';
 import { useAuth } from '../context/AuthContext';
 import { useCurrentSeason } from '../api/currentSeasonQueries';
 
@@ -25,19 +26,8 @@ const Navbar: React.FC = () => {
     >
       <Toolbar sx={{ justifyContent: 'space-between' }}>
         {/* Logo on the left */}
-        <Link to="/" style={{ textDecoration: 'none', color: 'inherit' }}>
-          <Typography 
-            variant="h6" 
-            component="div" 
-            sx={{ 
-              fontWeight: 'bold',
-              fontFamily: '"Helvetica Neue", Arial, sans-serif',
-              fontSize: '1.5rem',
-              color: '#1a1a1a',
-            }}
-          >
-            Fantasy Brasileirão
-          </Typography>
+        <Link to="/" style={{ textDecoration: 'none', color: 'inherit', display: 'inline-flex' }}>
+          <BrandLockup size={34} />
         </Link>
         
         {/* Current season badge */}
