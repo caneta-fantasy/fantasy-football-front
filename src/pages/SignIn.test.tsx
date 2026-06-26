@@ -11,12 +11,12 @@ describe('SignIn', () => {
     renderSignIn()
     expect(screen.getByLabelText(/e-?mail/i)).toBeInTheDocument()
     expect(screen.getByLabelText(/senha/i)).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: /entrar na liga/i })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /^entrar$/i })).toBeInTheDocument()
   })
 
   it('shows a validation error when submitting empty', async () => {
     renderSignIn()
-    await userEvent.click(screen.getByRole('button', { name: /entrar na liga/i }))
+    await userEvent.click(screen.getByRole('button', { name: /^entrar$/i }))
     expect(await screen.findByRole('alert')).toBeInTheDocument()
   })
 
@@ -60,7 +60,7 @@ describe('SignIn', () => {
   it('surfaces a single alert region on validation failure', async () => {
     renderSignIn()
     expect(screen.queryByRole('alert')).not.toBeInTheDocument()
-    await userEvent.click(screen.getByRole('button', { name: /entrar na liga/i }))
+    await userEvent.click(screen.getByRole('button', { name: /^entrar$/i }))
     const alerts = await screen.findAllByRole('alert')
     // Exactly one form-level alert region (FieldGroup errors are not used here).
     expect(alerts).toHaveLength(1)

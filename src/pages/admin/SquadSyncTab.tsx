@@ -7,7 +7,6 @@ import {
   Box,
   Button,
   CircularProgress,
-  IconButton,
   Snackbar,
   Stack,
   Table,
@@ -17,7 +16,6 @@ import {
   TableHead,
   TableRow,
   TextField,
-  Tooltip,
   Typography,
 } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
@@ -26,7 +24,7 @@ import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import { apiConfig } from '../../api/config';
 import { authHeader } from '../../api/httpClient';
-import { useSyncAllSquads, useSyncTeamSquad } from '../../api/playerSyncQueries';
+import { useSyncAllSquads } from '../../api/playerSyncQueries';
 import { useSupportedLeague } from '../../api/leaguesQueries';
 
 interface TeamFilter {
@@ -53,12 +51,8 @@ function formatSyncDate(iso: string | null): string {
 
 const TeamRow: React.FC<{
   team: TeamFilter;
-  leagueId: number;
-  seasonYear: number;
-  onMessage: (msg: string) => void;
-}> = ({ team, leagueId, seasonYear, onMessage }) => {
+}> = ({ team }) => {
   const [expanded, setExpanded] = useState(false);
-  const syncTeam = useSyncTeamSquad();
 
   const { data: roster = [], isLoading: rosterLoading } = useQuery<RosterPlayer[]>({
     queryKey: ['squadRoster', team.id],
@@ -71,20 +65,6 @@ const TeamRow: React.FC<{
     enabled: expanded,
     staleTime: 0,
   });
-
-  const handleSync = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    syncTeam.mutate(
-      { teamExternalId: team.externalId, leagueExternalId: leagueId, seasonYear },
-      {
-        onSuccess: (d) =>
-          onMessage(
-            `${team.name}: ${d.inserted} inserido(s), ${d.updated} atualizado(s)`,
-          ),
-        onError: (err) => onMessage(`Erro: ${err.message}`),
-      },
-    );
-  };
 
   const players = roster;
 
@@ -99,17 +79,6 @@ const TeamRow: React.FC<{
             Última atualização: {formatSyncDate(team.lastSquadSyncAt)}
           </Typography>
           <Box sx={{ flexGrow: 1 }} />
-          <Tooltip title="Sincronizar elenco deste time">
-            <span>
-              <IconButton
-                size="small"
-                disabled={syncTeam.isPending}
-                onClick={handleSync}
-              >
-                {syncTeam.isPending ? <CircularProgress size={16} /> : <SyncIcon fontSize="small" />}
-              </IconButton>
-            </span>
-          </Tooltip>
         </Stack>
       </AccordionSummary>
       <AccordionDetails sx={{ p: 0 }}>
@@ -231,13 +200,7 @@ const SquadSyncTab: React.FC = () => {
       ) : (
         <Box>
           {teams.map((team) => (
-            <TeamRow
-              key={team.id}
-              team={team}
-              leagueId={leagueExternalId ?? 0}
-              seasonYear={year ?? 0}
-              onMessage={setSnack}
-            />
+            <TeamRow key={team.id} team={team} />
           ))}
         </Box>
       )}

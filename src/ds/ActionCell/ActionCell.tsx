@@ -30,6 +30,7 @@ export type ActionKind =
   | 'escalado'
   | 'bloqueado'
   | 'draft'
+  | 'novo'
 
 export interface ActionCellProps {
   kind: ActionKind
@@ -54,6 +55,7 @@ const DEFAULT_TOOLTIP: Record<ActionKind, string> = {
   escalado: 'Jogador já escalado',
   bloqueado: 'Jogador bloqueado — partida em andamento nesta rodada',
   draft: 'Disponível após o draft',
+  novo: 'Jogador novo — precisa passar por um mercado para ser adicionado',
 }
 
 const ACT_BTN = { height: 30, padding: '0 12px' } as const
@@ -136,11 +138,13 @@ export function ActionCell({
       ? 'Bloqueado'
       : kind === 'draft'
         ? 'Draft pendente'
-        : 'Escalado'
+        : kind === 'novo'
+          ? 'Mercado'
+          : 'Escalado'
 
   return (
     <span title={typeof tip === 'string' ? tip : undefined} className="inline-flex">
-      <Chip tone={kind === 'bloqueado' ? 'gold' : 'ghost'} aria-label={`${lockedLabel} — ${tip}`}>
+      <Chip tone={kind === 'bloqueado' || kind === 'novo' ? 'gold' : 'ghost'} aria-label={`${lockedLabel} — ${tip}`}>
         <Icon name="lock" size={16} aria-hidden /> {lockedLabel}
       </Chip>
     </span>

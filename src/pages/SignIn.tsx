@@ -307,7 +307,7 @@ function SignInView() {
               loading={isPending}
               className="w-full !justify-between"
             >
-              <span>Entrar na liga</span>
+              <span>Entrar</span>
               <span
                 aria-hidden="true"
                 className="font-display text-[22px] tracking-[-1px]"
