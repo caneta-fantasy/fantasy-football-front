@@ -130,8 +130,7 @@ const endpoints = {
       `${API_BASE_URL}/sync/matches/league/${leagueExternalId}/season/${seasonYear}/round/${roundNumber}/refresh-info`,
   },
   syncPlayers: {
-    syncTeam: (teamExternalId: number) =>
-      `${API_BASE_URL}/sync/players/team/${teamExternalId}`,
+    // Per-team sync retired — only the full-league sync detects transfers.
     syncAll: (leagueExternalId: number, seasonYear: number) =>
       `${API_BASE_URL}/sync/players/league/${leagueExternalId}/season/${seasonYear}`,
   },

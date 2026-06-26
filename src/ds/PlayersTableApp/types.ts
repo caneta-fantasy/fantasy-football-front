@@ -34,6 +34,8 @@ export interface PlayerRow {
   /** Next-opponent cell (the `Próx.` column the prototype omits). */
   next?: React.ReactNode
   action: PlayerRowAction
+  /** New/returning player: shows a "Novo" badge next to the name. */
+  isNew?: boolean
   /** Opens the player stats (row/card activation). */
   onOpen?: () => void
 }

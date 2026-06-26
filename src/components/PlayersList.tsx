@@ -135,6 +135,7 @@ const PlayersList: React.FC<PlayersListProps> = ({ fantasyLeague, seasonYear, us
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [onlyFreeAgents, setOnlyFreeAgents] = useState(false);
+  const [onlyNewPlayers, setOnlyNewPlayers] = useState(false);
   const [teamId, setTeamId] = useState<number | null>(null);
   // 'auto' = let the backend pick: per-league points once the season has points,
   // global draft ranking pre-season. Explicit column clicks override it.
@@ -242,6 +243,7 @@ const PlayersList: React.FC<PlayersListProps> = ({ fantasyLeague, seasonYear, us
     leagueId: fantasyLeague.league.id,
     fantasyLeagueId: fantasyLeague.id,
     onlyFreeAgents,
+    onlyNewPlayers,
   });
 
 
@@ -258,7 +260,7 @@ const PlayersList: React.FC<PlayersListProps> = ({ fantasyLeague, seasonYear, us
 
   useEffect(() => {
     setPage(0);
-  }, [position, search, onlyFreeAgents]);
+  }, [position, search, onlyFreeAgents, onlyNewPlayers]);
 
   const players = data?.data?.length ? data.data : previousDataRef.current;
   const totalCount = data?.meta?.total || previousDataRef.current.length;
@@ -299,6 +301,15 @@ const PlayersList: React.FC<PlayersListProps> = ({ fantasyLeague, seasonYear, us
             });
             setWaiverClaimOpen(true);
           },
+        };
+      }
+      // New/returning player with no window open: direct add is blocked — they
+      // must clear one mercado (waiver) first. Locked "Mercado" chip + hover tip.
+      if (player.isNew) {
+        return {
+          kind: 'novo',
+          tooltip:
+            'Este jogador é novo. Ele precisa passar por um mercado para ser adicionado.',
         };
       }
       return {
@@ -365,6 +376,7 @@ const PlayersList: React.FC<PlayersListProps> = ({ fantasyLeague, seasonYear, us
       total: player.totalPoints != null ? Number(player.totalPoints).toFixed(1) : '—',
       avg: player.avgPoints != null ? Number(player.avgPoints).toFixed(1) : '—',
       next: nextNode,
+      isNew: !!player.isNew,
       action: actionFor(player),
       onOpen: () => {
         const slotId = playerIdToSlotId.get(player.player_id);
@@ -411,6 +423,23 @@ const PlayersList: React.FC<PlayersListProps> = ({ fantasyLeague, seasonYear, us
           A seleção de jogadores estará disponível após a realização do draft.
         </div>
       )}
+
+      {/* New-players quick filter — players who just (re)entered the Brasileirão
+          and must clear one waiver window before a direct add. */}
+      <div className="mb-3">
+        <button
+          type="button"
+          onClick={() => setOnlyNewPlayers((v) => !v)}
+          aria-pressed={onlyNewPlayers}
+          className={`inline-flex items-center gap-1.5 rounded-pill border px-3 py-1.5 font-sans text-[13px] font-semibold transition-colors ${
+            onlyNewPlayers
+              ? 'border-gold bg-gold text-on-gold'
+              : 'border-line-strong bg-surface text-ink-muted hover:border-ink-muted'
+          }`}
+        >
+          Novos jogadores
+        </button>
+      </div>
 
       <PlayersFilters
         compact={isMobile}

@@ -10,7 +10,8 @@ export type RosterPlayer = {
   name: string;
   photo: string;
   position: string;
-  team: { id: number; name: string; code: string };
+  // null when the player has left the league (team cleared by the squad sync).
+  team: { id: number; name: string; code: string } | null;
 }
 
 export type Slot = {

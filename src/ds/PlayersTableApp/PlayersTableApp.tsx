@@ -71,6 +71,14 @@ function NameCell({ row, seed }: { row: PlayerRow; seed: number }) {
       <span className="truncate font-sans text-[13.5px] font-semibold text-ink">
         {row.name}
       </span>
+      {row.isNew && (
+        <span
+          className="shrink-0 rounded-pill bg-gold px-1.5 py-0.5 font-sans text-[10px] font-bold uppercase tracking-wide text-on-gold"
+          title="Jogador novo — precisa passar por um mercado para ser adicionado"
+        >
+          Novo
+        </span>
+      )}
     </span>
   )
 }

@@ -18,6 +18,9 @@ export interface Player {
   is_rostered: boolean;
   rostered_by_user_team_id?: number;
   rostered_by_user_team_name?: string;
+  // True when the player just (re)entered the league and must clear one waiver
+  // window before a direct add (drives the "Novo" badge).
+  isNew?: boolean;
 }
 
 export interface PlayersFiltersResponse {
@@ -52,6 +55,7 @@ export const usePlayers = ({
   leagueId,
   fantasyLeagueId,
   onlyFreeAgents,
+  onlyNewPlayers,
   teamId,
   excludePlayerIds,
 }: {
@@ -64,16 +68,17 @@ export const usePlayers = ({
   leagueId?: number;
   fantasyLeagueId?: number;
   onlyFreeAgents: boolean,
+  onlyNewPlayers?: boolean,
   teamId?: number,
   excludePlayerIds?: number[],
 }) => {
   return useQuery<PlayerResponse>({
-    queryKey: ['players', { position, search, page, limit, sortBy, order, leagueId, fantasyLeagueId, onlyFreeAgents, teamId, excludePlayerIds }],
+    queryKey: ['players', { position, search, page, limit, sortBy, order, leagueId, fantasyLeagueId, onlyFreeAgents, onlyNewPlayers, teamId, excludePlayerIds }],
     enabled: leagueId != null,
     placeholderData: (prev) => prev,
     queryFn: async () => {
       const response = await axios.get(`${apiConfig.endpoints.players.getAll}`, {
-        params: { position, search, page, limit, sortBy, order, leagueId, fantasyLeagueId, onlyFreeAgents, teamId, excludePlayerIds },
+        params: { position, search, page, limit, sortBy, order, leagueId, fantasyLeagueId, onlyFreeAgents, onlyNewPlayers, teamId, excludePlayerIds },
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token')}`,
         },

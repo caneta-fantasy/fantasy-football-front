@@ -153,7 +153,7 @@ export const SlotCard: React.FC<SlotCardProps> = ({
                 {player.name}
               </div>
               <div className="mt-0.5 font-sans text-[11.5px] text-ink-muted">
-                {player.team.code} ·{' '}
+                {player.team?.code ?? 'Fora do Brasileirão'} ·{' '}
                 {POSITIONS_TRANSLATION[
                   player.position as keyof typeof POSITIONS_TRANSLATION
                 ] ?? player.position}
