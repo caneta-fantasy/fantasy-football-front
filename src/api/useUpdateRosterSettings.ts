@@ -1,4 +1,5 @@
 import { useMutation } from '@tanstack/react-query';
+import { getToken } from '../utils/session';
 import axios from 'axios';
 import { apiConfig } from './config';
 
@@ -27,7 +28,7 @@ export const useUpdateRosterSettings = ({ onSuccess, onError }: { onSuccess: () 
       axios.patch(`${apiConfig.endpoints.rosterSettings.update(id)}`, updates, {
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
+          Authorization: `Bearer ${getToken()}`,
         },
       }),
     onSuccess,

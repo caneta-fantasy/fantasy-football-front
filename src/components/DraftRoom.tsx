@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import { getToken } from '../utils/session';
 import {
   Alert,
   Box,
@@ -66,7 +67,7 @@ export default function DraftRoom({
   const countdown = useCountdown(draftDate);
   const { draftState, isConnected, error, isComplete, connectedUserIds, submitPick } = useDraftSocket({
     draftId,
-    token: localStorage.getItem('token'),
+    token: getToken(),
   });
 
   const [frozen, setFrozen] = useState(false);
@@ -96,7 +97,7 @@ export default function DraftRoom({
     queryFn: async () => {
       const res = await axios.get(
         apiConfig.endpoints.usersTeamsRoster.getRoster(myUserTeamId!, season),
-        { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } },
+        { headers: { Authorization: `Bearer ${getToken()}` } },
       );
       return res.data;
     },

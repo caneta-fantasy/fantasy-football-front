@@ -1,22 +1,31 @@
-import React, { useState } from 'react';
-import { 
-  Box, 
-  TextField, 
-  Button, 
-  Typography, 
+import React, { useContext, useState } from 'react';
+import {
+  Box,
+  TextField,
+  Button,
+  Typography,
   Link,
-  CircularProgress
+  CircularProgress,
+  IconButton,
+  InputAdornment,
 } from '@mui/material';
+import VisibilityIcon from '@mui/icons-material/Visibility';
+import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import dayjs, { Dayjs } from 'dayjs';
 import 'dayjs/locale/pt-br';
-import { useMutation } from '@tanstack/react-query';
-import { useSignUp } from '../api/authQueries';
+import { useSignUp, useLogIn } from '../api/authQueries';
+import { AuthContext } from '../context/AuthContext';
 import { BrandCrest } from '../ds';
 import Loading from '../components/Loading';
+import {
+  evaluatePassword,
+  isPasswordAcceptable,
+  passwordRulesEnforced,
+} from '../utils/passwordPolicy';
 
 dayjs.locale('pt-br');
 
@@ -33,6 +42,7 @@ const SignUp: React.FC = () => {
   const [formData, setFormData] = useState({
     email: '',
     password: '',
+    confirmPassword: '',
     firstName: '',
     lastName: '',
     birthDate: null as Dayjs | null,
@@ -42,51 +52,40 @@ const SignUp: React.FC = () => {
   const [errors, setErrors] = useState({
     email: false,
     password: false,
+    confirmPassword: false,
     firstName: false,
     lastName: false,
     birthDate: false,
     username: false,
   });
+  const [showPassword, setShowPassword] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
 
   const navigate = useNavigate();
+  const auth = useContext(AuthContext);
   const { mutate: signUp, isPending } = useSignUp();
-
-  const signUpMutation = useMutation({
-    mutationFn: async (userData: SignUpFormData) => {
-      const response = await fetch('http://localhost:4000/users/signup', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(userData),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || 'Falha no cadastro');
-      }
-      return response.json();
-    },
-    onSuccess: () => {
-      navigate('/signin', {
-        state: { message: 'Cadastro realizado com sucesso! Faça login.' }
-      });
-    },
-  });
+  const { mutateAsync: logIn, isPending: isLoggingIn } = useLogIn();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
     setErrors(prev => ({ ...prev, [name]: false }));
+    setSubmitError(null);
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
+    setSubmitError(null);
+
+    const passwordsMismatch =
+      !!formData.password && formData.password !== formData.confirmPassword;
+    const passwordWeak = !isPasswordAcceptable(formData.password);
+
     // Validate all fields
     const newErrors = {
       email: !formData.email,
-      password: !formData.password,
+      password: !formData.password || passwordWeak,
+      confirmPassword: !formData.confirmPassword || passwordsMismatch,
       firstName: !formData.firstName,
       lastName: !formData.lastName,
       birthDate: !formData.birthDate,
@@ -94,21 +93,54 @@ const SignUp: React.FC = () => {
     };
 
     setErrors(newErrors);
-
+    if (formData.password && passwordWeak) {
+      setSubmitError('A senha não atende aos requisitos.');
+      return;
+    }
+    if (passwordsMismatch) {
+      setSubmitError('As senhas não coincidem.');
+      return;
+    }
     if (Object.values(newErrors).some(error => error)) return;
-    signUp({
-      ...formData,
+
+    const payload: SignUpFormData = {
+      firstName: formData.firstName,
+      lastName: formData.lastName,
+      email: formData.email,
+      password: formData.password,
+      username: formData.username,
       birthDate: formData.birthDate?.format('YYYY-MM-DD') || '',
-    }, {
-      onSuccess: () => {
-        navigate('/signin', {
-          state: { message: 'Cadastro realizado com sucesso! Faça login.' }
-        });
-      }
+    };
+
+    signUp(payload, {
+      onSuccess: async () => {
+        // Auto-login right after signup instead of bouncing to /signin.
+        try {
+          const data = await logIn({
+            email: formData.email,
+            password: formData.password,
+          });
+          auth?.login(data.access_token, data.user);
+          navigate('/welcome');
+        } catch {
+          // Account was created but auto-login failed — fall back to /signin.
+          navigate('/signin', {
+            state: {
+              message: 'Cadastro realizado com sucesso! Faça login.',
+            },
+          });
+        }
+      },
+      onError: (err) => {
+        setSubmitError(
+          err instanceof Error ? err.message : 'Falha ao criar sua conta, tente novamente.',
+        );
+      },
     });
   };
 
-  if (isPending) return <Loading message="Criando sua conta..." fullScreen />;
+  if (isPending || isLoggingIn)
+    return <Loading message="Criando sua conta..." fullScreen />;
 
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
@@ -130,11 +162,9 @@ const SignUp: React.FC = () => {
             Crie sua conta
           </Typography>
           
-          {signUpMutation.isError && (
+          {submitError && (
             <Typography color="error" sx={{ mb: 2 }}>
-              {signUpMutation.error instanceof Error 
-                ? signUpMutation.error.message 
-                : 'Falha ao criar sua conta, tente novamente.'}
+              {submitError}
             </Typography>
           )}
           
@@ -202,7 +232,7 @@ const SignUp: React.FC = () => {
             <TextField
               name="password"
               label="Senha"
-              type="password"
+              type={showPassword ? 'text' : 'password'}
               variant="outlined"
               fullWidth
               margin="normal"
@@ -212,8 +242,63 @@ const SignUp: React.FC = () => {
               error={errors.password}
               helperText={errors.password ? "Senha é obrigatória" : ""}
               required
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton
+                      aria-label={showPassword ? 'Ocultar senha' : 'Mostrar senha'}
+                      onClick={() => setShowPassword((v) => !v)}
+                      edge="end"
+                    >
+                      {showPassword ? <VisibilityOffIcon /> : <VisibilityIcon />}
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              }}
             />
-            
+
+            {/* Live requirements checklist — only when rules are enforced (prod). */}
+            {passwordRulesEnforced() && formData.password.length > 0 && (
+              <Box sx={{ mt: 0.5, mb: 0.5 }}>
+                {evaluatePassword(formData.password).requirements.map((req) => (
+                  <Typography
+                    key={req.key}
+                    variant="caption"
+                    component="div"
+                    sx={{
+                      color: req.met ? 'success.main' : 'text.secondary',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: 0.5,
+                    }}
+                  >
+                    {req.met ? '✓' : '○'} {req.label}
+                  </Typography>
+                ))}
+              </Box>
+            )}
+
+            <TextField
+              name="confirmPassword"
+              label="Repita a senha"
+              type={showPassword ? 'text' : 'password'}
+              variant="outlined"
+              fullWidth
+              margin="normal"
+              placeholder="Repita sua senha"
+              value={formData.confirmPassword}
+              onChange={handleChange}
+              error={errors.confirmPassword}
+              helperText={
+                errors.confirmPassword
+                  ? formData.confirmPassword
+                    ? 'As senhas não coincidem'
+                    : 'Confirme sua senha'
+                  : ''
+              }
+              required
+            />
+
             <DatePicker
               label="Data de Nascimento"
               value={formData.birthDate}
@@ -234,7 +319,7 @@ const SignUp: React.FC = () => {
               type="submit"
               fullWidth
               variant="contained"
-              disabled={signUpMutation.isPending}
+              disabled={isPending || isLoggingIn}
               sx={{
                 mt: 3,
                 mb: 2,
@@ -243,7 +328,7 @@ const SignUp: React.FC = () => {
                 '&:hover': { backgroundColor: '#333' }
               }}
             >
-              {signUpMutation.isPending ? (
+              {isPending || isLoggingIn ? (
                 <CircularProgress size={24} color="inherit" />
               ) : (
                 'Criar Conta'

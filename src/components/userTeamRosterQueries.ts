@@ -1,6 +1,7 @@
 // src/api/userTeamRosterQueries.ts
 
 import { useQuery } from '@tanstack/react-query';
+import { getToken } from '../utils/session';
 import axios from 'axios';
 import { apiConfig } from '../api/config';
 import { RosterSlot } from '../utils/positions';
@@ -38,7 +39,7 @@ export const useRoster = ({
         apiConfig.endpoints.usersTeamsRoster.getRoster(userTeamId!, seasonYear!),
         {
           headers: {
-            Authorization: `Bearer ${localStorage.getItem('token')}`,
+            Authorization: `Bearer ${getToken()}`,
           },
         }
       );

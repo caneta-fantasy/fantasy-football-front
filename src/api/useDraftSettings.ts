@@ -1,4 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
+import { getToken } from '../utils/session';
 import axios from 'axios';
 import { apiConfig } from './config';
 
@@ -19,7 +20,7 @@ export const useDraftSettings = (leagueId: number) => {
         `${apiConfig.endpoints.fantasyLeagues.getDraftSettings(leagueId)}`,
         {
           headers: {
-            Authorization: `Bearer ${localStorage.getItem('token')}`,
+            Authorization: `Bearer ${getToken()}`,
           },
         }
       );

@@ -1,4 +1,5 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { getToken } from '../utils/session';
 import axios from 'axios';
 import { apiConfig } from './config';
 
@@ -10,7 +11,7 @@ export const useScheduleDraft = (leagueId: number) => {
       axios.post(
         apiConfig.endpoints.fantasyLeagueSeasons.scheduleDraft(seasonId),
         {},
-        { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } },
+        { headers: { Authorization: `Bearer ${getToken()}` } },
       ),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['fantasyLeagueSeasons', leagueId] });

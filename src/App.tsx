@@ -14,6 +14,7 @@ import Welcome from './pages/Welcome';
 import Profile from './pages/Profile';
 import FantasyLeague from './pages/FantasyLeague';
 import AcceptInvite from './pages/AcceptInvite';
+import AuthCallback from './pages/AuthCallback';
 import DraftRoomPage from './pages/DraftRoomPage';
 import AdminRoundFlowPage from './pages/admin/AdminRoundFlowPage';
 
@@ -49,6 +50,9 @@ const AppRoutes: React.FC = () => {
 
           {/* Accessible whether or not the user is logged in (clicked from email) */}
           <Route path="/verify-email" element={<VerifyEmail />} />
+
+          {/* Google OAuth redirect target — reads the token from the URL fragment */}
+          <Route path="/auth/callback" element={<AuthCallback />} />
 
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>

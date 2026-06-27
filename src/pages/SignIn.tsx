@@ -23,6 +23,7 @@ import {
 } from '@/ds'
 import { useLogIn } from '../api/authQueries'
 import { AuthContext } from '../context/AuthContext'
+import { apiConfig } from '../api/config'
 
 /**
  * SignIn — modernista re-skin (Plan Task C1).
@@ -333,7 +334,15 @@ function SignInView() {
           </div>
 
           <div className="flex gap-2">
-            <Btn type="button" variant="secondary" size="md" className="flex-1">
+            <Btn
+              type="button"
+              variant="secondary"
+              size="md"
+              className="flex-1"
+              onClick={() => {
+                window.location.href = apiConfig.endpoints.auth.googleAuth
+              }}
+            >
               Google
             </Btn>
             <Btn type="button" variant="secondary" size="md" className="flex-1">

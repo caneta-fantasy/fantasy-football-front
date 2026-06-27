@@ -229,7 +229,8 @@ const CreateLeagueModal: React.FC<CreateLeagueModalProps> = ({ open, handleClose
 
         {isError && (
           <Typography color="error" sx={{ mt: 2 }}>
-            {error instanceof Error ? error.message : 'Algo deu errado ao criar a liga.'}
+            {(error as any)?.response?.data?.message ??
+              'Algo deu errado ao criar a liga.'}
           </Typography>
         )}
       </Box>

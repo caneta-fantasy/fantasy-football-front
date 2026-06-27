@@ -1,4 +1,5 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { getToken } from '../utils/session';
 import axios from 'axios';
 import { apiConfig } from './config';
 
@@ -14,7 +15,7 @@ export const useSetDraftOrder = (leagueId: number) => {
     mutationFn: (payload: SetDraftOrderPayload) =>
       axios.post(apiConfig.endpoints.draftOrder.set(leagueId), payload, {
         headers: {
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
+          Authorization: `Bearer ${getToken()}`,
         },
       }),
     onSuccess: (_, variables) => {

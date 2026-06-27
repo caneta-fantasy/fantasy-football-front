@@ -1,4 +1,5 @@
 import { useMutation } from '@tanstack/react-query';
+import { getToken } from '../utils/session';
 import axios from 'axios';
 import { apiConfig } from './config';
 
@@ -17,7 +18,7 @@ export const useAddPlayer = ({ onSuccess }: { onSuccess: () => void }) => {
       axios.post(`${apiConfig.endpoints.usersTeamsRoster.addPlayer}`, body, {
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
+          Authorization: `Bearer ${getToken()}`,
         },
       }),
     onSuccess,
@@ -38,7 +39,7 @@ export const useReplacePlayer = ({ onSuccess, onError }: { onSuccess: () => void
       axios.post(`${apiConfig.endpoints.usersTeamsRoster.replacePlayer}`, body, {
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
+          Authorization: `Bearer ${getToken()}`,
         },
       }),
     onSuccess,
@@ -58,7 +59,7 @@ export const useRemovePlayer = ({
       axios.delete(`${apiConfig.endpoints.usersTeamsRoster.deletePlayer(rosterId)}`, {
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
+          Authorization: `Bearer ${getToken()}`,
         },
       }),
     onSuccess,
@@ -81,7 +82,7 @@ export const useRemovePlayer = ({
           {
             headers: {
               'Content-Type': 'application/json',
-              Authorization: `Bearer ${localStorage.getItem('token')}`,
+              Authorization: `Bearer ${getToken()}`,
             },
           }
         ),

@@ -1,4 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { getToken } from '../utils/session';
 import axios from 'axios';
 import { apiConfig } from './config';
 
@@ -16,7 +17,7 @@ export type FantasyLeagueInvite = {
     queryFn: async () => {
       const res = await axios.get(apiConfig.endpoints.fantasyLeagues.getInvitesByLeagueId(leagueId), {
         headers: {
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
+          Authorization: `Bearer ${getToken()}`,
         },
       });
       return res.data;
@@ -32,7 +33,7 @@ export const useCancelInvite = (leagueId: number) => {
     mutationFn: async (inviteId: number) => {
       await axios.delete(apiConfig.endpoints.fantasyLeagueInvites.cancel(inviteId), {
         headers: {
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
+          Authorization: `Bearer ${getToken()}`,
         },
       });
     },

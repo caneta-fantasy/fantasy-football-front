@@ -1,5 +1,6 @@
+import { getToken } from './session';
 export const isAuthenticated = (): boolean => {
-    const token = localStorage.getItem('token');
+    const token = getToken();
     if (!token) return false;
   
     try {

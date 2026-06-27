@@ -35,6 +35,12 @@ const FantasyLeagueForm: React.FC<Props> = ({ values, onChange, id, refetchFanta
           onChange={(e) => onChange('name', e.target.value)}
         />
       </Box>
+          {updateFantasyLeague.isError && (
+            <Alert severity="error" sx={{ mt: 1 }}>
+              {(updateFantasyLeague.error as any)?.response?.data?.message ??
+                'Não foi possível salvar as configurações.'}
+            </Alert>
+          )}
           <Button
             variant="contained"
             onClick={() => updateFantasyLeague.mutate({ id, updates: values })}

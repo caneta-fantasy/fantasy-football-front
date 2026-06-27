@@ -1,15 +1,19 @@
 import { createContext, useContext, useState, ReactNode } from 'react';
 import { queryClient } from '../queryClient';
+import {
+  loadSession,
+  setSession,
+  setUser as persistUser,
+  clearSession,
+  SessionUser,
+} from '../utils/session';
 
-interface User {
-  id: string;
+type User = SessionUser & {
+  id: string | number;
   email: string;
   firstName: string;
   lastName: string;
-  username?: string;
-  isAdmin?: boolean;
-  emailVerifiedAt?: string | null;
-}
+};
 
 interface AuthContextType {
   user: User | null;
@@ -22,18 +26,17 @@ interface AuthContextType {
 export const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
-  const [user, setUser] = useState<User | null>(() => {
-    const storedUser = localStorage.getItem('user');
-    return storedUser ? JSON.parse(storedUser) : null;
-  });
-  
-  const [token, setToken] = useState<string | null>(() => {
-    return localStorage.getItem('token');
-  });
+  // Hydrate from the VALIDATED session: a stale/foreign/expired/inconsistent
+  // session is rejected (loadSession clears it) so we never start half-logged-in.
+  const initial = loadSession();
+
+  const [user, setUser] = useState<User | null>(
+    (initial?.user as User) ?? null,
+  );
+  const [token, setToken] = useState<string | null>(initial?.token ?? null);
 
   const login = (newToken: string, newUser: User) => {
-    localStorage.setItem('token', newToken);
-    localStorage.setItem('user', JSON.stringify(newUser));
+    setSession(newToken, newUser);
     setToken(newToken);
     setUser(newUser);
   };
@@ -42,14 +45,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     setUser((prev) => {
       if (!prev) return prev;
       const next = { ...prev, ...partial };
-      localStorage.setItem('user', JSON.stringify(next));
+      persistUser(next);
       return next;
     });
   };
 
   const logout = () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
+    clearSession();
     setToken(null);
     setUser(null);
     queryClient.clear();

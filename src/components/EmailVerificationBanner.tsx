@@ -2,9 +2,10 @@ import React, { useState } from 'react';
 import { Alert, Button, Snackbar } from '@mui/material';
 import { useAuth } from '../context/AuthContext';
 import { useResendVerification } from '../api/authQueries';
+import { SUPPORT_EMAIL } from '../utils/support';
 
 const EmailVerificationBanner: React.FC = () => {
-  const { user } = useAuth();
+  const { user, updateUser } = useAuth();
   const { mutate: resend, isPending } = useResendVerification();
   const [feedback, setFeedback] = useState<string | null>(null);
 
@@ -14,8 +15,16 @@ const EmailVerificationBanner: React.FC = () => {
   const handleResend = () => {
     resend(undefined, {
       onSuccess: () => setFeedback('Email de verificação reenviado.'),
-      onError: (e) =>
-        setFeedback(e instanceof Error ? e.message : 'Falha ao reenviar.'),
+      onError: (e) => {
+        const msg = e instanceof Error ? e.message : 'Falha ao reenviar.';
+        // If the backend says it's already verified, our local session is stale —
+        // reconcile so the banner disappears instead of nagging.
+        if (/já verificad/i.test(msg)) {
+          updateUser({ emailVerifiedAt: new Date().toISOString() });
+          return;
+        }
+        setFeedback(`${msg} Em caso de problemas: ${SUPPORT_EMAIL}`);
+      },
     });
   };
 

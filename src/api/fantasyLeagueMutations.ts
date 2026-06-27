@@ -1,4 +1,5 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { getToken } from '../utils/session';
 import axios from 'axios';
 import { apiConfig } from './config';
 
@@ -45,7 +46,7 @@ export const useCreateFantasyLeague = () => {
       axios.post(apiConfig.endpoints.fantasyLeagues.create, fantasyLeagueData, {
         headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${localStorage.getItem('token')}`,
+        Authorization: `Bearer ${getToken()}`,
       },
     }),
   });
@@ -62,7 +63,7 @@ export const inviteUserToFantasyLeague = async ({
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      Authorization: `Bearer ${localStorage.getItem('token')}`,
+      Authorization: `Bearer ${getToken()}`,
     },
     body: JSON.stringify({ email, id }),
   });
@@ -82,7 +83,7 @@ export const useUpdateFantasyLeague = ({ onSuccess }: { onSuccess?: () => void }
       axios.patch(`${apiConfig.endpoints.fantasyLeagues.update(id)}`, updates, {
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
+          Authorization: `Bearer ${getToken()}`,
         },
       }),
     onSuccess: (_data, variables) => {
@@ -103,7 +104,7 @@ export const useJoinFantasyLeague = () => {
         {
           headers: {
             'Content-Type': 'application/json',
-            Authorization: `Bearer ${localStorage.getItem('token')}`,
+            Authorization: `Bearer ${getToken()}`,
           },
         },
       );
@@ -119,7 +120,7 @@ export const useDeleteFantasyLeague = () => {
       axios.delete(`${apiConfig.endpoints.fantasyLeagues.delete(id)}`, {
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
+          Authorization: `Bearer ${getToken()}`,
         },
       }),
     onSuccess: (_data, id) => {

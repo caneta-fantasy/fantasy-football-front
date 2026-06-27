@@ -1,5 +1,6 @@
 // pages/Welcome.tsx
 import { useEffect, useState } from 'react';
+import { getToken } from '../utils/session';
 import { Box, Typography, Button, Stack, Alert } from '@mui/material';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate, useSearchParams } from 'react-router-dom';
@@ -34,7 +35,7 @@ const acceptInviteMutation = useMutation({
     const res = await fetch(`${apiConfig.endpoints.fantasyLeagueInvites.accept}?token=${token}`, {
       method: 'POST',
       headers: {
-        Authorization: `Bearer ${localStorage.getItem('token')}`,
+        Authorization: `Bearer ${getToken()}`,
       },
     });
 
@@ -123,7 +124,7 @@ const acceptInviteMutation = useMutation({
           <BrandCrest size={96} />
         </Box>
         <Typography variant="h3" component="h1" sx={{ mb: 3, fontSize: { xs: '2rem', md: '3rem' } }}>
-          Bem-vindo, {user.firstName} {user.lastName}!
+          Bem-vindo, {[user.firstName, user.lastName].filter(Boolean).join(' ') || user.username || 'jogador'}!
         </Typography>
         
         <Typography variant="body1" sx={{ mb: 4 }}>

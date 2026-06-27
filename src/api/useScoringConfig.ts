@@ -1,4 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
+import { getToken } from '../utils/session';
 import axios from 'axios';
 import { apiConfig } from './config';
 
@@ -30,7 +31,7 @@ export const useScoringConfig = (seasonId: string | undefined) => {
     queryFn: async () => {
       const res = await axios.get(
         apiConfig.endpoints.scoringConfig.getBySeason(seasonId!),
-        { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } },
+        { headers: { Authorization: `Bearer ${getToken()}` } },
       );
       return res.data;
     },
