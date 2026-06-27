@@ -7,6 +7,7 @@ const endpoints = {
     signup: `${API_BASE_URL}/users/signup`,
     signin: `${API_BASE_URL}/users/signin`,
     login: `${API_BASE_URL}/auth/login`,
+    googleAuth: `${API_BASE_URL}/auth/google`,
     refresh: `${API_BASE_URL}/auth/refresh`,
     profile: `${API_BASE_URL}/auth/profile`,
     forgotPassword: `${API_BASE_URL}/auth/forgot-password`,

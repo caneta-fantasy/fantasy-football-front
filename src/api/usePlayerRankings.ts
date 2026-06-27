@@ -1,4 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
+import { getToken } from '../utils/session';
 import axios from 'axios';
 import { apiConfig } from './config';
 
@@ -39,7 +40,7 @@ export const usePlayerRankings = (
         apiConfig.endpoints.playerFantasyPoints.rankings(seasonId!),
         {
           params,
-          headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+          headers: { Authorization: `Bearer ${getToken()}` },
         },
       );
       return res.data;

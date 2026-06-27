@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { getToken } from '../utils/session';
 import { apiConfig } from './config';
 import { STALE_TIME } from './queryConfig';
 import { useQuery } from '@tanstack/react-query';
@@ -58,7 +59,7 @@ export interface FantasyLeague {
           {
             withCredentials: true,
             headers: {
-              Authorization: `Bearer ${localStorage.getItem('token')}`,
+              Authorization: `Bearer ${getToken()}`,
             },
           }
         );
@@ -77,7 +78,7 @@ export interface FantasyLeague {
           {
             withCredentials: true,
             headers: {
-              Authorization: `Bearer ${localStorage.getItem('token')}`,
+              Authorization: `Bearer ${getToken()}`,
             },
           }
         );
@@ -101,7 +102,7 @@ export const useFantasyLeagueTeams = (id: number) => {
     queryFn: async () => {
       const res = await axios.get(apiConfig.endpoints.fantasyLeagues.getLeagueTeams(id), {
         headers: {
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
+          Authorization: `Bearer ${getToken()}`,
         },
       });
       return res.data;

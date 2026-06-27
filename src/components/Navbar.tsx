@@ -48,7 +48,7 @@ const Navbar: React.FC = () => {
               to="/profile"
               sx={{ fontWeight: 'bold', color: '#1a1a1a', textDecoration: 'none', '&:hover': { textDecoration: 'underline' } }}
             >
-              Olá, {user.firstName}!
+              Olá, {user.firstName || user.username || 'jogador'}!
             </Typography>
             {user.isAdmin && (
               <Button

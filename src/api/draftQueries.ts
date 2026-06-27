@@ -1,4 +1,5 @@
 import { useMutation, useQuery } from '@tanstack/react-query';
+import { getToken } from '../utils/session';
 import axios from 'axios';
 import { apiConfig } from './config';
 import { authHeader } from './httpClient';
@@ -41,7 +42,7 @@ export const useDraftPresence = (draftId: string | undefined) => {
     queryKey: ['draftPresence', draftId],
     queryFn: async () => {
       const res = await axios.get(apiConfig.endpoints.drafts.presence(draftId!), {
-        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+        headers: { Authorization: `Bearer ${getToken()}` },
       });
       return res.data;
     },
@@ -73,7 +74,7 @@ export const useDraft = (leagueId: number, season: number | undefined) => {
     queryKey: ['draft', leagueId, season],
     queryFn: async () => {
       const res = await axios.get(apiConfig.endpoints.drafts.get(leagueId, season!), {
-        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+        headers: { Authorization: `Bearer ${getToken()}` },
       });
       return res.data ?? null;
     },

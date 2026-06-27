@@ -1,4 +1,5 @@
 import { useMutation } from '@tanstack/react-query';
+import { getToken } from '../utils/session';
 import axios from 'axios';
 import { apiConfig } from './config';
 
@@ -16,7 +17,7 @@ export const useUpdateDraftSettings = ({ onSuccess }: { onSuccess: () => void })
       axios.patch(`${apiConfig.endpoints.draftSettings.update(id)}`, updates, {
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
+          Authorization: `Bearer ${getToken()}`,
         },
       }),
     onSuccess: onSuccess,

@@ -1,4 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
+import { getToken } from '../utils/session';
 import axios from 'axios';
 import { apiConfig } from './config';
 
@@ -21,7 +22,7 @@ export const useDraftOrder = (leagueId: number, season: number) => {
         apiConfig.endpoints.draftOrder.get(leagueId, season),
         {
           headers: {
-            Authorization: `Bearer ${localStorage.getItem('token')}`,
+            Authorization: `Bearer ${getToken()}`,
           },
         },
       );

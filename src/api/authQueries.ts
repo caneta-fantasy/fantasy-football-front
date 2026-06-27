@@ -1,4 +1,5 @@
 import { useMutation, useQuery } from '@tanstack/react-query';
+import { getToken } from '../utils/session';
 import { apiConfig } from './config';
 import axios from 'axios';
 import { User } from './fantasyLeagueQueries';
@@ -114,7 +115,7 @@ export const useResendVerification = () => {
         method: 'POST',
         headers: {
           ...apiConfig.headers,
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
+          Authorization: `Bearer ${getToken()}`,
         },
       });
       if (!response.ok) {
@@ -135,7 +136,7 @@ export const useGetCurrentUser = () => {
         {
           withCredentials: true,
           headers: {
-            Authorization: `Bearer ${localStorage.getItem('token')}`,
+            Authorization: `Bearer ${getToken()}`,
           },
         }
       );

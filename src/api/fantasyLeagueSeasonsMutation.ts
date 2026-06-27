@@ -1,5 +1,6 @@
 // src/api/fantasyLeagueSeasonsMutation.ts
 import { useMutation } from '@tanstack/react-query';
+import { getToken } from '../utils/session';
 import { apiConfig } from './config';
 import axios from 'axios';
 
@@ -44,7 +45,7 @@ export async function activateSeasonRequest(
       {
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
+          Authorization: `Bearer ${getToken()}`,
         },
       }
     );
@@ -64,7 +65,7 @@ export const useUpdateFantasyLeagueSeason = ({ onSuccess }: { onSuccess: () => v
       axios.patch(`${apiConfig.endpoints.fantasyLeagueSeasons.update(id)}`, updates, {
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
+          Authorization: `Bearer ${getToken()}`,
         },
       }),
     onSuccess: onSuccess,

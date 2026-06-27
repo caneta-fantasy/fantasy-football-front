@@ -1,4 +1,5 @@
 import { useMemo } from 'react';
+import { getToken } from '../utils/session';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import { Box, CircularProgress, Divider, Stack, Typography, Alert } from '@mui/material';
@@ -55,7 +56,7 @@ export default function DraftMyTeam({ picks, myUserTeamId, totalRounds, seasonYe
     queryFn: async () => {
       const res = await axios.get(
         apiConfig.endpoints.usersTeamsRoster.getRoster(myUserTeamId!, seasonYear),
-        { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } },
+        { headers: { Authorization: `Bearer ${getToken()}` } },
       );
       return res.data;
     },

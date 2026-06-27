@@ -1,5 +1,6 @@
 // api/playersQueries.ts
 import axios from 'axios';
+import { getToken } from '../utils/session';
 import { useQuery } from '@tanstack/react-query';
 import { apiConfig } from './config';
 import { STALE_TIME } from './queryConfig';
@@ -80,7 +81,7 @@ export const usePlayers = ({
       const response = await axios.get(`${apiConfig.endpoints.players.getAll}`, {
         params: { position, search, page, limit, sortBy, order, leagueId, fantasyLeagueId, onlyFreeAgents, onlyNewPlayers, teamId, excludePlayerIds },
         headers: {
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
+          Authorization: `Bearer ${getToken()}`,
         },
         withCredentials: true,
       });
@@ -100,7 +101,7 @@ export const usePlayersFilters = (params: UsePlayersFiltersParams) => {
         {
           params, // e.g. { leagueId, seasonYear }
           headers: {
-            Authorization: `Bearer ${localStorage.getItem('token')}`,
+            Authorization: `Bearer ${getToken()}`,
           },
           withCredentials: true,
         }

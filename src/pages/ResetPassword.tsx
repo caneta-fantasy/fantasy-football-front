@@ -10,6 +10,11 @@ import {
 } from '@mui/material';
 import { Link as RouterLink, useNavigate, useSearchParams } from 'react-router-dom';
 import { useResetPassword } from '../api/authQueries';
+import {
+  evaluatePassword,
+  isPasswordAcceptable,
+  passwordRulesEnforced,
+} from '../utils/passwordPolicy';
 
 const ResetPassword: React.FC = () => {
   const [searchParams] = useSearchParams();
@@ -25,8 +30,12 @@ const ResetPassword: React.FC = () => {
     e.preventDefault();
     setLocalError('');
 
-    if (password.length < 8) {
-      setLocalError('A senha deve ter no mínimo 8 caracteres.');
+    if (!isPasswordAcceptable(password)) {
+      setLocalError(
+        passwordRulesEnforced()
+          ? 'A senha não atende aos requisitos.'
+          : 'A senha é obrigatória.',
+      );
       return;
     }
     if (password !== confirm) {
@@ -98,6 +107,22 @@ const ResetPassword: React.FC = () => {
             onChange={(e) => setPassword(e.target.value)}
             required
           />
+
+          {passwordRulesEnforced() && password.length > 0 && (
+            <Box sx={{ mt: 0.5, mb: 0.5 }}>
+              {evaluatePassword(password).requirements.map((req) => (
+                <Typography
+                  key={req.key}
+                  variant="caption"
+                  component="div"
+                  sx={{ color: req.met ? 'success.main' : 'text.secondary' }}
+                >
+                  {req.met ? '✓' : '○'} {req.label}
+                </Typography>
+              ))}
+            </Box>
+          )}
+
           <TextField
             name="confirm"
             label="Confirmar senha"

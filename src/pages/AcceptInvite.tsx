@@ -1,6 +1,7 @@
 // pages/invite/accept.tsx
 
 import { useEffect, useRef, useState } from 'react';
+import { getToken } from '../utils/session';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { CircularProgress, Box, Typography } from '@mui/material';
 import { apiConfig } from '../api/config';
@@ -22,7 +23,7 @@ const InviteAcceptPage = () => {
       const res = await fetch(`${apiConfig.endpoints.fantasyLeagueInvites.accept}?token=${token}`, {
         method: 'POST',
         headers: {
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
+          Authorization: `Bearer ${getToken()}`,
         },
       });
 
