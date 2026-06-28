@@ -43,17 +43,19 @@ describe('SignIn', () => {
     expect(screen.getByText(/monte o time/i)).toBeInTheDocument()
   })
 
-  it('keeps the richer affordances (remember-me, forgot-password, OU, social)', () => {
+  it('keeps the richer affordances (forgot-password, OU, social)', () => {
     renderSignIn()
     expect(
-      screen.getByRole('checkbox', { name: /manter conectado/i }),
-    ).toBeInTheDocument()
+      screen.queryByRole('checkbox', { name: /manter conectado/i }),
+    ).not.toBeInTheDocument()
     expect(
       screen.getByRole('link', { name: /esqueci a senha/i }),
     ).toBeInTheDocument()
     expect(screen.getByText(/^ou$/i)).toBeInTheDocument()
     expect(screen.getByRole('button', { name: /^google$/i })).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: /^apple$/i })).toBeInTheDocument()
+    expect(
+      screen.queryByRole('button', { name: /^apple$/i }),
+    ).not.toBeInTheDocument()
     expect(screen.getByRole('link', { name: /cadastre-se/i })).toBeInTheDocument()
   })
 

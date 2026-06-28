@@ -27,7 +27,7 @@ type S = StoryObj<typeof RadioGroup>
 
 const DRAFT_OPTIONS = (
   <>
-    <Radio value="snake" label="Snake" />
+    <Radio value="snake" label="Vai e Vem" />
     <Radio value="linear" label="Linear" />
     <Radio value="auction" label="Auction" />
   </>
@@ -100,7 +100,7 @@ export const WithDisabledOption: S = {
         value={value}
         onChange={setValue}
       >
-        <Radio value="snake" label="Snake" />
+        <Radio value="snake" label="Vai e Vem" />
         <Radio value="linear" label="Linear" />
         <Radio value="auction" label="Auction (em breve)" disabled />
       </RadioGroup>

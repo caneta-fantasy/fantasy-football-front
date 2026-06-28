@@ -11,7 +11,9 @@ export interface DraftSettings {
     season: number;
   };
 
-export const useUpdateDraftSettings = ({ onSuccess }: { onSuccess: () => void }) => {
+export const useUpdateDraftSettings = (
+  { onSuccess }: { onSuccess?: () => void } = {},
+) => {
   return useMutation({
     mutationFn: ({ id, updates }: { id: number; updates: DraftSettings }) =>
       axios.patch(`${apiConfig.endpoints.draftSettings.update(id)}`, updates, {
@@ -20,6 +22,6 @@ export const useUpdateDraftSettings = ({ onSuccess }: { onSuccess: () => void })
           Authorization: `Bearer ${getToken()}`,
         },
       }),
-    onSuccess: onSuccess,
+    onSuccess,
   });
 };

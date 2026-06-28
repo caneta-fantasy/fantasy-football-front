@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useSearchParams } from 'react-router-dom';
 import { useGetFantasyLeague } from '../api/fantasyLeagueQueries';
 import LeagueSidebar from '../components/FantasyLeaguesSidebar';
 import InviteToLeagueModal from '../components/InviteToFantasyLeagueModal';
@@ -24,6 +24,19 @@ import { useTrades } from '../api/tradeQueries';
 import ScoringConfigForm from '../components/ScoringConfigForm';
 import RodadaTab from '../components/RodadaTab';
 
+// Tab keys mirror FantasyLeagueTabs.tsx — kept in sync so an unknown ?tab= value
+// falls back to the default instead of rendering a blank panel.
+const VALID_TAB_KEYS = [
+  'draft',
+  'team',
+  'schedule',
+  'rodada',
+  'league',
+  'players',
+  'trades',
+  'scores',
+];
+
 const FantasyLeaguePage = ({ currentUserId }: { currentUserId: number }) => {
   const { fantasyLeagueId } = useParams<{ fantasyLeagueId: string }>();
   const { data: fantasyLeague, isLoading, isError, error } = useGetFantasyLeague(Number(fantasyLeagueId));
@@ -33,8 +46,27 @@ const FantasyLeaguePage = ({ currentUserId }: { currentUserId: number }) => {
     message: '',
     severity: 'success' as 'success' | 'error',
   });
-  const [selectedTab, setSelectedTab] = useState('draft');
-  const [defaultTabSet, setDefaultTabSet] = useState(false);
+  // Persist the active tab in the URL (?tab=) so a refresh / shared link keeps
+  // the user where they were instead of snapping back to the default.
+  const [searchParams, setSearchParams] = useSearchParams();
+  const urlTab = searchParams.get('tab');
+  const initialTab = urlTab && VALID_TAB_KEYS.includes(urlTab) ? urlTab : 'draft';
+  const [selectedTab, setSelectedTab] = useState(initialTab);
+  // If the URL already pins a valid tab, the smart-default effect must not override it.
+  const [defaultTabSet, setDefaultTabSet] = useState(
+    !!urlTab && VALID_TAB_KEYS.includes(urlTab),
+  );
+
+  const handleTabChange = (key: string) => {
+    setSelectedTab(key);
+    setSearchParams(
+      (prev) => {
+        prev.set('tab', key);
+        return prev;
+      },
+      { replace: true },
+    );
+  };
   const [viewInvitesModalOpen, setViewInvitesModalOpen] = useState(false);
   const [historyOpen, setHistoryOpen] = useState(false);
   const theme = useTheme();
@@ -47,8 +79,9 @@ const FantasyLeaguePage = ({ currentUserId }: { currentUserId: number }) => {
   const POST_DRAFT_STATUSES = ['DRAFT_DONE', 'SCHEDULED', 'ACTIVE', 'SEASON_ENDED', 'ARCHIVED'];
   useEffect(() => {
     if (!defaultTabSet && fantasyLeagueSeason?.status) {
+      // Only applies when the URL didn't already pin a tab (defaultTabSet guards that).
       if (POST_DRAFT_STATUSES.includes(fantasyLeagueSeason.status)) {
-        setSelectedTab('rodada');
+        handleTabChange('rodada');
       }
       setDefaultTabSet(true);
     }
@@ -132,7 +165,7 @@ const FantasyLeaguePage = ({ currentUserId }: { currentUserId: number }) => {
         px={isMobile ? 2 : 4}
         py={isMobile ? 2 : 4}
       >
-        <LeagueTabs selected={selectedTab} onChange={setSelectedTab} pendingTradesCount={pendingTradesCount} />
+        <LeagueTabs selected={selectedTab} onChange={handleTabChange} pendingTradesCount={pendingTradesCount} />
 
         <Box mt={4}>
           {selectedTab === 'draft' && <DraftTab fantasyLeague={fantasyLeague} currentUserId={currentUserId} />}

@@ -65,7 +65,9 @@ export const inviteUserToFantasyLeague = async ({
       'Content-Type': 'application/json',
       Authorization: `Bearer ${getToken()}`,
     },
-    body: JSON.stringify({ email, id }),
+    // BE DTO expects { email, fantasyLeagueId: int } — send the right field name,
+    // coerced to a number (route params arrive as strings).
+    body: JSON.stringify({ email, fantasyLeagueId: Number(id) }),
   });
 
   if (!res.ok) {
