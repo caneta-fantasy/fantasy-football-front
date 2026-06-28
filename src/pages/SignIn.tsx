@@ -13,7 +13,6 @@ import {
   ArchShape,
   Azulejo,
   Btn,
-  Checkbox,
   FieldGroup,
   Help,
   Icon,
@@ -70,6 +69,37 @@ function displayStyle(
   }
 }
 
+/** The official multicolor Google "G" brand mark (inline so it keeps its colors
+ * on the neutral outline button — the monochrome DS Icon set can't carry it). */
+function GoogleLogo() {
+  return (
+    <svg
+      width={18}
+      height={18}
+      viewBox="0 0 18 18"
+      aria-hidden="true"
+      className="shrink-0"
+    >
+      <path
+        fill="#4285F4"
+        d="M17.64 9.2c0-.64-.06-1.25-.16-1.84H9v3.48h4.84a4.14 4.14 0 0 1-1.8 2.72v2.26h2.92c1.71-1.57 2.68-3.88 2.68-6.62Z"
+      />
+      <path
+        fill="#34A853"
+        d="M9 18c2.43 0 4.47-.8 5.96-2.18l-2.92-2.26c-.8.54-1.84.86-3.04.86-2.34 0-4.32-1.58-5.02-3.7H.96v2.34A9 9 0 0 0 9 18Z"
+      />
+      <path
+        fill="#FBBC05"
+        d="M3.98 10.72A5.4 5.4 0 0 1 3.7 9c0-.6.1-1.18.28-1.72V4.94H.96A9 9 0 0 0 0 9c0 1.45.35 2.82.96 4.06l3.02-2.34Z"
+      />
+      <path
+        fill="#EA4335"
+        d="M9 3.58c1.32 0 2.5.45 3.44 1.35l2.58-2.58C13.46.89 11.43 0 9 0A9 9 0 0 0 .96 4.94L3.98 7.28C4.68 5.16 6.66 3.58 9 3.58Z"
+      />
+    </svg>
+  )
+}
+
 interface PasswordFieldProps
   extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'type'> {
   invalid?: boolean
@@ -94,7 +124,7 @@ function PasswordField({ invalid, ...inputProps }: PasswordFieldProps) {
         {...inputProps}
         type={visible ? 'text' : 'password'}
         invalid={invalid}
-        className="pr-[78px]"
+        className="!pr-11"
       />
       <button
         type="button"
@@ -102,10 +132,9 @@ function PasswordField({ invalid, ...inputProps }: PasswordFieldProps) {
         aria-label={label}
         title={label}
         onClick={() => setVisible((v) => !v)}
-        className="absolute right-2 top-1/2 inline-flex -translate-y-1/2 items-center gap-1 rounded-pill font-sans text-[11px] font-bold uppercase tracking-[1px] text-ink-muted transition-colors duration-150 hover:text-ink"
+        className="absolute right-3 top-1/2 inline-flex -translate-y-1/2 items-center justify-center rounded-pill p-1 text-ink-muted transition-colors duration-150 hover:text-ink"
       >
-        <Icon name={visible ? 'eye-off' : 'eye'} size={16} aria-hidden="true" />
-        {label}
+        <Icon name={visible ? 'eye-off' : 'eye'} size={20} aria-hidden="true" />
       </button>
     </div>
   )
@@ -291,8 +320,7 @@ function SignInView() {
               />
             </FieldGroup>
 
-            <div className="mb-7 flex items-center justify-between">
-              <Checkbox name="remember" label="Manter conectado" />
+            <div className="mb-7 flex items-center justify-end">
               <RouterLink
                 to="/forgot-password"
                 className="font-sans text-[12px] font-semibold text-signature underline underline-offset-[3px]"
@@ -301,22 +329,26 @@ function SignInView() {
               </RouterLink>
             </div>
 
-            <Btn
+            <button
               type="submit"
-              variant="primary"
-              size="lg"
-              loading={isPending}
-              className="w-full !justify-between"
+              disabled={isPending}
+              className="flex w-full items-center justify-between rounded-btn-lg px-[30px] font-sans text-[15px] font-bold tracking-[0.3px] transition-transform duration-150 hover:-translate-y-px active:translate-y-px disabled:opacity-60"
+              style={{
+                height: '56px',
+                backgroundColor: '#14402C', // green (signature)
+                color: '#F2F1E8', // cream (on-green)
+                border: '2px solid #C79A2B', // gold border
+              }}
             >
-              <span>Entrar</span>
+              <span>{isPending ? 'Entrando…' : 'Entrar'}</span>
               <span
                 aria-hidden="true"
                 className="font-display text-[22px] tracking-[-1px]"
-                style={{ color: 'var(--gold-light)' }}
+                style={{ color: '#E1C36B' }}
               >
                 →
               </span>
-            </Btn>
+            </button>
           </form>
 
           <div className="my-6 flex items-center gap-3">
@@ -333,22 +365,18 @@ function SignInView() {
             />
           </div>
 
-          <div className="flex gap-2">
-            <Btn
-              type="button"
-              variant="secondary"
-              size="md"
-              className="flex-1"
-              onClick={() => {
-                window.location.href = apiConfig.endpoints.auth.googleAuth
-              }}
-            >
-              Google
-            </Btn>
-            <Btn type="button" variant="secondary" size="md" className="flex-1">
-              Apple
-            </Btn>
-          </div>
+          <Btn
+            type="button"
+            variant="secondary"
+            size="md"
+            className="w-full"
+            onClick={() => {
+              window.location.href = apiConfig.endpoints.auth.googleAuth
+            }}
+          >
+            <GoogleLogo />
+            Google
+          </Btn>
 
           <p className="mt-8 text-center font-sans text-[13px] text-ink-muted">
             Não tem uma conta?{' '}

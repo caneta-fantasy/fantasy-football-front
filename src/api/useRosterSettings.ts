@@ -8,7 +8,6 @@ export interface RosterSettingsResponse {
   numberOfTeams: number;
   playoffTeams: number;
   tradeDeadlineRound: number;
-  irSlots: number;
   playoffStartRound: number;
   defenseType?: 'OPEN' | 'CLOSED';
 }

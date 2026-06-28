@@ -8,7 +8,6 @@ export interface FantasyLeagueSeason {
   numberOfTeams: number;
   playoffTeams: number;
   tradeDeadlineRound: number;
-  irSlots: number;
   playoffStartRound: number;
   numberOfRounds: number;
   // Originally-requested round count if the season was shortened at schedule

@@ -27,7 +27,6 @@ const FantasyLeagueSettings: React.FC<Props> = ({ isOwner = false, fantasyLeague
     numberOfTeams: fantasyLeagueSeason?.numberOfTeams,
     playoffs: fantasyLeagueSeason?.playoffTeams,
     tradeDeadline: fantasyLeagueSeason?.tradeDeadlineRound,
-    irSlots: fantasyLeagueSeason?.irSlots,
     playoffStartRound: fantasyLeagueSeason?.playoffStartRound,
   };
 
@@ -69,10 +68,6 @@ const FantasyLeagueSettings: React.FC<Props> = ({ isOwner = false, fantasyLeague
           <TableRow>
             <TableCell sx={{ color: 'text.secondary' }}>Rodada Limite para Trocas</TableCell>
             <TableCell>{settings.tradeDeadline}a</TableCell>
-          </TableRow>
-          <TableRow>
-            <TableCell sx={{ color: 'text.secondary' }}>Vagas para Lesionados</TableCell>
-            <TableCell>{settings.irSlots}</TableCell>
           </TableRow>
         </TableBody>
       </Table>

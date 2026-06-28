@@ -162,24 +162,6 @@ const FantasyLeagueSeasonForm: React.FC<Props> = ({ values, onChange, id, refetc
         </FormControl>
       </Box>
 
-      {/* Reservas por Lesão */}
-      <Box>
-        <Typography fontWeight={600}>Reservas por Lesão</Typography>
-        <FormControl fullWidth>
-          <Select
-            value={values.irSlots ?? ''}
-            onChange={(e) => onChange('irSlots', e.target.value)}
-            disabled={isLocked}
-          >
-            {Array.from({ length: 9 }, (_, i) => (
-              <MenuItem key={i} value={i}>
-                {i}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
-      </Box>
-
       {/* Formato dos Playoffs */}
       <Box>
         <Typography fontWeight={600}>Formato dos Playoffs</Typography>

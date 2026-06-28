@@ -57,7 +57,7 @@ const DraftSettingsForm: React.FC<Props> = ({
             onChange={(e) => onChange('draftType', e.target.value)}
             disabled={isLocked}
           >
-            <MenuItem value="snake">Snake</MenuItem>
+            <MenuItem value="snake">Vai e Vem</MenuItem>
             <MenuItem value="linear">Linear</MenuItem>
           </Select>
         </FormControl>

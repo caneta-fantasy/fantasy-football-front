@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Box, Button, CircularProgress, Divider, Stack, Typography } from '@mui/material';
+import { Alert, AlertTitle, Box, Button, CircularProgress, Divider, Stack, Typography } from '@mui/material';
 import { FantasyLeague, useFantasyLeagueTeams } from '../api/fantasyLeagueQueries';
 import { useFantasyLeagueSeasons } from '../api/useFantasyLeagueSeasons';
 import { useDraftSettings } from '../api/useDraftSettings';
@@ -50,6 +50,17 @@ export default function DraftTab({ fantasyLeague, currentUserId }: Props) {
   if (status === LeagueStatus.ACTIVATED_PRESEASON) {
     return (
       <Box>
+        {isOwner && (
+          <Alert severity="warning" sx={{ mb: 1 }}>
+            <AlertTitle sx={{ fontWeight: 700 }}>
+              Antes de agendar o draft, revise as configurações
+            </AlertTitle>
+            Após o draft ser realizado, várias configurações da liga não poderão
+            mais ser alteradas. Recomendamos conferir as configurações desta liga
+            (aba <strong>Liga</strong>) e do draft abaixo antes de agendar.
+          </Alert>
+        )}
+
         {isOwner && draftSettings && (
           <>
             <Divider sx={{ my: 3 }} />
