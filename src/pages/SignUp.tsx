@@ -1,43 +1,35 @@
-import React, { useContext, useState } from 'react';
-import {
-  Box,
-  TextField,
-  Button,
-  Typography,
-  Link,
-  CircularProgress,
-  IconButton,
-  InputAdornment,
-} from '@mui/material';
-import VisibilityIcon from '@mui/icons-material/Visibility';
-import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
-import { Link as RouterLink, useNavigate } from 'react-router-dom';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-import dayjs, { Dayjs } from 'dayjs';
-import 'dayjs/locale/pt-br';
-import { useSignUp, useLogIn } from '../api/authQueries';
-import { AuthContext } from '../context/AuthContext';
-import { BrandCrest } from '../ds';
-import Loading from '../components/Loading';
+import React, { useContext, useState } from 'react'
+import { Link as RouterLink, useNavigate } from 'react-router-dom'
+import { Btn, DateInput, FieldGroup, Help, Spinner, TextInput } from '@/ds'
+import { AuthLayout } from '../components/auth/AuthLayout'
+import { PasswordField } from '../components/auth/PasswordField'
+import { useSignUp, useLogIn } from '../api/authQueries'
+import { AuthContext } from '../context/AuthContext'
 import {
   evaluatePassword,
   isPasswordAcceptable,
   passwordRulesEnforced,
-} from '../utils/passwordPolicy';
-
-dayjs.locale('pt-br');
+} from '../utils/passwordPolicy'
 
 interface SignUpFormData {
-  firstName: string;
-  lastName: string;
-  email: string;
-  password: string;
-  username: string;
-  birthDate: string;
+  firstName: string
+  lastName: string
+  email: string
+  password: string
+  username: string
+  birthDate: string
 }
 
+/**
+ * SignUp — modernista re-skin of the account-creation screen.
+ *
+ * View rebuilt on the shared `AuthLayout` + DS pieces, removing MUI (including
+ * the MUI x-date-pickers/dayjs stack — `birthDate` is now a plain YYYY-MM-DD
+ * string via the DS `DateInput`). Data/flow preserved: per-field required
+ * validation, the shared `passwordPolicy` gate + live requirements checklist,
+ * confirm-password match, and success auto-login (create account → log in →
+ * /welcome; on login failure, fall back to /signin with a success message).
+ */
 const SignUp: React.FC = () => {
   const [formData, setFormData] = useState({
     email: '',
@@ -45,9 +37,9 @@ const SignUp: React.FC = () => {
     confirmPassword: '',
     firstName: '',
     lastName: '',
-    birthDate: null as Dayjs | null,
+    birthDate: '',
     username: '',
-  });
+  })
 
   const [errors, setErrors] = useState({
     email: false,
@@ -57,31 +49,31 @@ const SignUp: React.FC = () => {
     lastName: false,
     birthDate: false,
     username: false,
-  });
-  const [showPassword, setShowPassword] = useState(false);
-  const [submitError, setSubmitError] = useState<string | null>(null);
+  })
+  const [submitError, setSubmitError] = useState<string | null>(null)
 
-  const navigate = useNavigate();
-  const auth = useContext(AuthContext);
-  const { mutate: signUp, isPending } = useSignUp();
-  const { mutateAsync: logIn, isPending: isLoggingIn } = useLogIn();
+  const navigate = useNavigate()
+  const auth = useContext(AuthContext)
+  const { mutate: signUp, isPending } = useSignUp()
+  const { mutateAsync: logIn, isPending: isLoggingIn } = useLogIn()
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
-    setErrors(prev => ({ ...prev, [name]: false }));
-    setSubmitError(null);
-  };
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement>,
+  ) => {
+    const { name, value } = e.target
+    setFormData((prev) => ({ ...prev, [name]: value }))
+    setErrors((prev) => ({ ...prev, [name]: false }))
+    setSubmitError(null)
+  }
 
   const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    setSubmitError(null);
+    e.preventDefault()
+    setSubmitError(null)
 
     const passwordsMismatch =
-      !!formData.password && formData.password !== formData.confirmPassword;
-    const passwordWeak = !isPasswordAcceptable(formData.password);
+      !!formData.password && formData.password !== formData.confirmPassword
+    const passwordWeak = !isPasswordAcceptable(formData.password)
 
-    // Validate all fields
     const newErrors = {
       email: !formData.email,
       password: !formData.password || passwordWeak,
@@ -90,18 +82,18 @@ const SignUp: React.FC = () => {
       lastName: !formData.lastName,
       birthDate: !formData.birthDate,
       username: !formData.username,
-    };
+    }
 
-    setErrors(newErrors);
+    setErrors(newErrors)
     if (formData.password && passwordWeak) {
-      setSubmitError('A senha não atende aos requisitos.');
-      return;
+      setSubmitError('A senha não atende aos requisitos.')
+      return
     }
     if (passwordsMismatch) {
-      setSubmitError('As senhas não coincidem.');
-      return;
+      setSubmitError('As senhas não coincidem.')
+      return
     }
-    if (Object.values(newErrors).some(error => error)) return;
+    if (Object.values(newErrors).some((err) => err)) return
 
     const payload: SignUpFormData = {
       firstName: formData.firstName,
@@ -109,8 +101,8 @@ const SignUp: React.FC = () => {
       email: formData.email,
       password: formData.password,
       username: formData.username,
-      birthDate: formData.birthDate?.format('YYYY-MM-DD') || '',
-    };
+      birthDate: formData.birthDate,
+    }
 
     signUp(payload, {
       onSuccess: async () => {
@@ -119,233 +111,224 @@ const SignUp: React.FC = () => {
           const data = await logIn({
             email: formData.email,
             password: formData.password,
-          });
-          auth?.login(data.access_token, data.user);
-          navigate('/welcome');
+          })
+          auth?.login(data.access_token, data.user)
+          navigate('/welcome')
         } catch {
-          // Account was created but auto-login failed — fall back to /signin.
+          // Account created but auto-login failed — fall back to /signin.
           navigate('/signin', {
-            state: {
-              message: 'Cadastro realizado com sucesso! Faça login.',
-            },
-          });
+            state: { message: 'Cadastro realizado com sucesso! Faça login.' },
+          })
         }
       },
       onError: (err) => {
         setSubmitError(
-          err instanceof Error ? err.message : 'Falha ao criar sua conta, tente novamente.',
-        );
+          err instanceof Error
+            ? err.message
+            : 'Falha ao criar sua conta, tente novamente.',
+        )
       },
-    });
-  };
+    })
+  }
 
-  if (isPending || isLoggingIn)
-    return <Loading message="Criando sua conta..." fullScreen />;
+  if (isPending || isLoggingIn) {
+    return (
+      <div
+        data-ds
+        className="flex min-h-screen w-full flex-col items-center justify-center gap-4 bg-bg font-sans text-ink-muted"
+      >
+        <Spinner size={32} />
+        <span className="font-sans text-[14px]">Criando sua conta…</span>
+      </div>
+    )
+  }
+
+  const requirements =
+    passwordRulesEnforced() && formData.password.length > 0
+      ? evaluatePassword(formData.password).requirements
+      : null
 
   return (
-    <LocalizationProvider dateAdapter={AdapterDayjs}>
-      <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
-        <Box sx={{
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          justifyContent: 'center',
-          flexGrow: 1,
-          p: 3,
-          maxWidth: 400,
-          mx: 'auto'
-        }}>
-          <Box sx={{ mb: 2 }}>
-            <BrandCrest size={72} />
-          </Box>
-          <Typography variant="h4" component="h1" sx={{ mb: 2, fontWeight: 'bold' }}>
-            Crie sua conta
-          </Typography>
-          
-          {submitError && (
-            <Typography color="error" sx={{ mb: 2 }}>
-              {submitError}
-            </Typography>
-          )}
-          
-          <Box component="form" sx={{ width: '100%' }} onSubmit={handleSubmit}>
-            <Box sx={{ display: 'flex', gap: 2 }}>
-              <TextField
-                name="firstName"
-                label="Nome"
-                variant="outlined"
-                fullWidth
-                margin="normal"
-                placeholder="Digite seu nome"
-                value={formData.firstName}
-                onChange={handleChange}
-                error={errors.firstName}
-                helperText={errors.firstName ? "Nome é obrigatório" : ""}
-                required
-              />
-              
-              <TextField
-                name="lastName"
-                label="Sobrenome"
-                variant="outlined"
-                fullWidth
-                margin="normal"
-                placeholder="Digite seu sobrenome"
-                value={formData.lastName}
-                onChange={handleChange}
-                error={errors.lastName}
-                helperText={errors.lastName ? "Sobrenome é obrigatório" : ""}
-                required
-              />
-            </Box>
+    <AuthLayout
+      title={
+        <>
+          Crie sua
+          <br />
+          conta
+        </>
+      }
+      lead="Entre na sua liga do Brasileirão."
+    >
+      {submitError && (
+        <Help tone="error" className="mb-4">
+          {submitError}
+        </Help>
+      )}
 
-            <TextField
-              name="username"
-              label="Apelido"
-              type="text"
-              variant="outlined"
-              fullWidth
-              margin="normal"
-              placeholder="Apelido"
-              value={formData.username}
+      <form onSubmit={handleSubmit} noValidate>
+        <div className="grid grid-cols-2 gap-3">
+          <FieldGroup
+            label="Nome"
+            htmlFor="signup-firstName"
+            required
+            className="mb-4"
+            error={errors.firstName ? 'Nome é obrigatório' : undefined}
+          >
+            <TextInput
+              name="firstName"
+              placeholder="Pedro"
+              autoComplete="given-name"
+              value={formData.firstName}
               onChange={handleChange}
-              error={errors.username}
-              helperText={errors.email ? "Email é obrigatório" : ""}
-              required
+              invalid={errors.firstName}
             />
-            
-            <TextField
-              name="email"
-              label="Email"
-              type="email"
-              variant="outlined"
-              fullWidth
-              margin="normal"
-              placeholder="Digite seu email"
-              value={formData.email}
+          </FieldGroup>
+
+          <FieldGroup
+            label="Sobrenome"
+            htmlFor="signup-lastName"
+            required
+            className="mb-4"
+            error={errors.lastName ? 'Sobrenome é obrigatório' : undefined}
+          >
+            <TextInput
+              name="lastName"
+              placeholder="Silva"
+              autoComplete="family-name"
+              value={formData.lastName}
               onChange={handleChange}
-              error={errors.email}
-              helperText={errors.email ? "Email é obrigatório" : ""}
-              required
+              invalid={errors.lastName}
             />
-            
-            <TextField
-              name="password"
-              label="Senha"
-              type={showPassword ? 'text' : 'password'}
-              variant="outlined"
-              fullWidth
-              margin="normal"
-              placeholder="Digite sua senha"
-              value={formData.password}
-              onChange={handleChange}
-              error={errors.password}
-              helperText={errors.password ? "Senha é obrigatória" : ""}
-              required
-              InputProps={{
-                endAdornment: (
-                  <InputAdornment position="end">
-                    <IconButton
-                      aria-label={showPassword ? 'Ocultar senha' : 'Mostrar senha'}
-                      onClick={() => setShowPassword((v) => !v)}
-                      edge="end"
-                    >
-                      {showPassword ? <VisibilityOffIcon /> : <VisibilityIcon />}
-                    </IconButton>
-                  </InputAdornment>
-                ),
-              }}
-            />
+          </FieldGroup>
+        </div>
 
-            {/* Live requirements checklist — only when rules are enforced (prod). */}
-            {passwordRulesEnforced() && formData.password.length > 0 && (
-              <Box sx={{ mt: 0.5, mb: 0.5 }}>
-                {evaluatePassword(formData.password).requirements.map((req) => (
-                  <Typography
-                    key={req.key}
-                    variant="caption"
-                    component="div"
-                    sx={{
-                      color: req.met ? 'success.main' : 'text.secondary',
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: 0.5,
-                    }}
-                  >
-                    {req.met ? '✓' : '○'} {req.label}
-                  </Typography>
-                ))}
-              </Box>
-            )}
+        <FieldGroup
+          label="Apelido"
+          htmlFor="signup-username"
+          required
+          className="mb-4"
+          error={errors.username ? 'Apelido é obrigatório' : undefined}
+        >
+          <TextInput
+            name="username"
+            placeholder="pedrinho"
+            autoComplete="username"
+            value={formData.username}
+            onChange={handleChange}
+            invalid={errors.username}
+          />
+        </FieldGroup>
 
-            <TextField
-              name="confirmPassword"
-              label="Repita a senha"
-              type={showPassword ? 'text' : 'password'}
-              variant="outlined"
-              fullWidth
-              margin="normal"
-              placeholder="Repita sua senha"
-              value={formData.confirmPassword}
-              onChange={handleChange}
-              error={errors.confirmPassword}
-              helperText={
-                errors.confirmPassword
-                  ? formData.confirmPassword
-                    ? 'As senhas não coincidem'
-                    : 'Confirme sua senha'
-                  : ''
-              }
-              required
-            />
+        <FieldGroup
+          label="E-mail"
+          htmlFor="signup-email"
+          required
+          className="mb-4"
+          error={errors.email ? 'E-mail é obrigatório' : undefined}
+        >
+          <TextInput
+            name="email"
+            type="email"
+            placeholder="pedro@caneta.fc"
+            autoComplete="email"
+            value={formData.email}
+            onChange={handleChange}
+            invalid={errors.email}
+          />
+        </FieldGroup>
 
-            <DatePicker
-              label="Data de Nascimento"
-              value={formData.birthDate}
-              onChange={(newValue) => setFormData(prev => ({ ...prev, birthDate: newValue }))}
-              format="DD/MM/YYYY"
-              slotProps={{
-                textField: {
-                  fullWidth: true,
-                  margin: 'normal',
-                  error: errors.birthDate,
-                  helperText: errors.birthDate ? "Data de nascimento é obrigatória" : "",
-                  required: true,
-                },
-              }}
-            />
-            
-            <Button
-              type="submit"
-              fullWidth
-              variant="contained"
-              disabled={isPending || isLoggingIn}
-              sx={{
-                mt: 3,
-                mb: 2,
-                py: 1.5,
-                backgroundColor: '#1a1a1a',
-                '&:hover': { backgroundColor: '#333' }
-              }}
-            >
-              {isPending || isLoggingIn ? (
-                <CircularProgress size={24} color="inherit" />
-              ) : (
-                'Criar Conta'
-              )}
-            </Button>
-          </Box>
-          
-          <Typography variant="body1" sx={{ mt: 2 }}>
-            Já tem uma conta?{' '}
-            <Link component={RouterLink} to="/signin" sx={{ fontWeight: 'bold' }}>
-              Entrar
-            </Link>
-          </Typography>
-        </Box>
-      </Box>
-    </LocalizationProvider>
-  );
-};
+        <FieldGroup
+          label="Senha"
+          htmlFor="signup-password"
+          required
+          className="mb-2"
+          error={
+            errors.password && !formData.password
+              ? 'Senha é obrigatória'
+              : undefined
+          }
+        >
+          <PasswordField
+            name="password"
+            autoComplete="new-password"
+            placeholder="••••••••••"
+            value={formData.password}
+            onChange={handleChange}
+            invalid={errors.password}
+          />
+        </FieldGroup>
 
-export default SignUp;
+        {requirements && (
+          <ul className="mb-4 mt-1 space-y-1">
+            {requirements.map((req) => (
+              <li
+                key={req.key}
+                className={`font-sans text-[12px] ${
+                  req.met ? 'text-success' : 'text-ink-subtle'
+                }`}
+              >
+                {req.met ? '✓' : '○'} {req.label}
+              </li>
+            ))}
+          </ul>
+        )}
+
+        <FieldGroup
+          label="Repita a senha"
+          htmlFor="signup-confirmPassword"
+          required
+          className="mb-4"
+          error={
+            errors.confirmPassword
+              ? formData.confirmPassword
+                ? 'As senhas não coincidem'
+                : 'Confirme sua senha'
+              : undefined
+          }
+        >
+          <PasswordField
+            name="confirmPassword"
+            autoComplete="new-password"
+            placeholder="••••••••••"
+            value={formData.confirmPassword}
+            onChange={handleChange}
+            invalid={errors.confirmPassword}
+          />
+        </FieldGroup>
+
+        <FieldGroup
+          label="Data de nascimento"
+          htmlFor="signup-birthDate"
+          required
+          className="mb-6"
+          error={
+            errors.birthDate ? 'Data de nascimento é obrigatória' : undefined
+          }
+        >
+          <DateInput
+            name="birthDate"
+            value={formData.birthDate}
+            onChange={handleChange}
+            invalid={errors.birthDate}
+          />
+        </FieldGroup>
+
+        <Btn type="submit" variant="primary" size="lg" className="w-full">
+          Criar conta
+        </Btn>
+      </form>
+
+      <p className="mt-8 text-center font-sans text-[13px] text-ink-muted">
+        Já tem uma conta?{' '}
+        <RouterLink
+          to="/signin"
+          className="font-bold text-signature underline underline-offset-[3px]"
+        >
+          Entrar
+        </RouterLink>
+      </p>
+    </AuthLayout>
+  )
+}
+
+export default SignUp

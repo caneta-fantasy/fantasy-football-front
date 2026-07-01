@@ -47,7 +47,7 @@ export function AuthLayout({ title, lead, children }: AuthLayoutProps) {
   return (
     <div
       data-ds
-      className="grid min-h-screen w-full grid-cols-1 overflow-hidden bg-bg font-sans text-ink sm:grid-cols-2"
+      className="grid min-h-screen w-full grid-cols-1 bg-bg font-sans text-ink sm:grid-cols-2"
     >
       {/* LEFT / TOP — green color-block brand hero (constant across auth pages) */}
       <section className="relative flex min-h-[180px] flex-col justify-end overflow-hidden bg-signature p-7 sm:min-h-0 sm:p-12">
