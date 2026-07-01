@@ -1,7 +1,8 @@
 import React, { useContext, useEffect, useRef } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
-import { Btn, Help, Spinner } from '@/ds'
+import { Help, Spinner } from '@/ds'
 import { AuthLayout } from '../components/auth/AuthLayout'
+import { AuthButton } from '../components/auth/AuthButton'
 import { useVerifyEmail } from '../api/authQueries'
 import { AuthContext } from '../context/AuthContext'
 import { SUPPORT_EMAIL } from '../utils/support'
@@ -94,15 +95,13 @@ const VerifyEmail: React.FC = () => {
       )}
 
       {(verified || failed || !token) && (
-        <Btn
+        <AuthButton
           type="button"
-          variant="primary"
-          size="lg"
-          className="mt-6 w-full"
+          className="mt-6"
           onClick={() => navigate('/welcome')}
         >
           Ir para o início
-        </Btn>
+        </AuthButton>
       )}
     </AuthLayout>
   )

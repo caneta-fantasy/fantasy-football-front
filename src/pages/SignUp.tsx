@@ -1,7 +1,8 @@
 import React, { useContext, useState } from 'react'
 import { Link as RouterLink, useNavigate } from 'react-router-dom'
-import { Btn, DateInput, FieldGroup, Help, Spinner, TextInput } from '@/ds'
+import { DateInput, FieldGroup, Help, Spinner, TextInput } from '@/ds'
 import { AuthLayout } from '../components/auth/AuthLayout'
+import { AuthButton } from '../components/auth/AuthButton'
 import { PasswordField } from '../components/auth/PasswordField'
 import { useSignUp, useLogIn } from '../api/authQueries'
 import { AuthContext } from '../context/AuthContext'
@@ -313,9 +314,7 @@ const SignUp: React.FC = () => {
           />
         </FieldGroup>
 
-        <Btn type="submit" variant="primary" size="lg" className="w-full">
-          Criar conta
-        </Btn>
+        <AuthButton type="submit">Criar conta</AuthButton>
       </form>
 
       <p className="mt-8 text-center font-sans text-[13px] text-ink-muted">

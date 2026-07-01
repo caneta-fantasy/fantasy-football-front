@@ -1,7 +1,8 @@
 import React, { useState } from 'react'
 import { Link as RouterLink, useNavigate, useSearchParams } from 'react-router-dom'
-import { Btn, FieldGroup, Help } from '@/ds'
+import { FieldGroup, Help } from '@/ds'
 import { AuthLayout } from '../components/auth/AuthLayout'
+import { AuthButton } from '../components/auth/AuthButton'
 import { PasswordField } from '../components/auth/PasswordField'
 import { useResetPassword } from '../api/authQueries'
 import {
@@ -150,15 +151,9 @@ const ResetPassword: React.FC = () => {
           />
         </FieldGroup>
 
-        <Btn
-          type="submit"
-          variant="primary"
-          size="lg"
-          loading={isPending}
-          className="w-full"
-        >
+        <AuthButton type="submit" loading={isPending}>
           Redefinir senha
-        </Btn>
+        </AuthButton>
       </form>
     </AuthLayout>
   )

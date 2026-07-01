@@ -1,7 +1,8 @@
 import React, { useState } from 'react'
 import { Link as RouterLink } from 'react-router-dom'
-import { Btn, FieldGroup, Help, TextInput } from '@/ds'
+import { FieldGroup, Help, TextInput } from '@/ds'
 import { AuthLayout } from '../components/auth/AuthLayout'
+import { AuthButton } from '../components/auth/AuthButton'
 import { useForgotPassword } from '../api/authQueries'
 
 /**
@@ -81,15 +82,9 @@ const ForgotPassword: React.FC = () => {
               />
             </FieldGroup>
 
-            <Btn
-              type="submit"
-              variant="primary"
-              size="lg"
-              loading={isPending}
-              className="w-full"
-            >
+            <AuthButton type="submit" loading={isPending}>
               Enviar link
-            </Btn>
+            </AuthButton>
           </form>
 
           <p className="mt-8 text-center font-sans text-[13px] text-ink-muted">

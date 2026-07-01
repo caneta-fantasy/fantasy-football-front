@@ -3,8 +3,9 @@
 import { useEffect, useRef } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { useMutation } from '@tanstack/react-query'
-import { Btn, Help, Spinner } from '@/ds'
+import { Help, Spinner } from '@/ds'
 import { AuthLayout } from '../components/auth/AuthLayout'
+import { AuthButton } from '../components/auth/AuthButton'
 import { apiConfig } from '../api/config'
 import { getToken } from '../utils/session'
 import { isAuthenticated } from '../utils/auth'
@@ -96,15 +97,13 @@ const InviteAcceptPage = () => {
       )}
 
       {(isSuccess || isError || !token) && (
-        <Btn
+        <AuthButton
           type="button"
-          variant="primary"
-          size="lg"
-          className="mt-6 w-full"
+          className="mt-6"
           onClick={() => navigate('/welcome')}
         >
           Ir para o início
-        </Btn>
+        </AuthButton>
       )}
     </AuthLayout>
   )
