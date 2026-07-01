@@ -1,46 +1,50 @@
-import React, { useState } from 'react';
-import {
-  Box,
-  TextField,
-  Button,
-  Typography,
-  Link,
-  Alert,
-  CircularProgress,
-} from '@mui/material';
-import { Link as RouterLink, useNavigate, useSearchParams } from 'react-router-dom';
-import { useResetPassword } from '../api/authQueries';
+import React, { useState } from 'react'
+import { Link as RouterLink, useNavigate, useSearchParams } from 'react-router-dom'
+import { Btn, FieldGroup, Help } from '@/ds'
+import { AuthLayout } from '../components/auth/AuthLayout'
+import { PasswordField } from '../components/auth/PasswordField'
+import { useResetPassword } from '../api/authQueries'
 import {
   evaluatePassword,
   isPasswordAcceptable,
   passwordRulesEnforced,
-} from '../utils/passwordPolicy';
+} from '../utils/passwordPolicy'
 
+/**
+ * ResetPassword — modernista re-skin of the "set a new password" screen.
+ *
+ * View rebuilt on the shared `AuthLayout` + DS pieces, removing MUI. Data/flow
+ * preserved verbatim: token comes from the query string (missing → an
+ * invalid-link state linking back to /forgot-password); the password is gated
+ * by the shared `passwordPolicy` (with the live requirements checklist shown
+ * when rules are enforced) and must match its confirmation; on success we go to
+ * /signin carrying the success message the SignIn screen surfaces.
+ */
 const ResetPassword: React.FC = () => {
-  const [searchParams] = useSearchParams();
-  const token = searchParams.get('token') ?? '';
-  const navigate = useNavigate();
+  const [searchParams] = useSearchParams()
+  const token = searchParams.get('token') ?? ''
+  const navigate = useNavigate()
 
-  const [password, setPassword] = useState('');
-  const [confirm, setConfirm] = useState('');
-  const [localError, setLocalError] = useState('');
-  const { mutate: resetPassword, isPending, isError, error } = useResetPassword();
+  const [password, setPassword] = useState('')
+  const [confirm, setConfirm] = useState('')
+  const [localError, setLocalError] = useState('')
+  const { mutate: resetPassword, isPending, isError, error } = useResetPassword()
 
   const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    setLocalError('');
+    e.preventDefault()
+    setLocalError('')
 
     if (!isPasswordAcceptable(password)) {
       setLocalError(
         passwordRulesEnforced()
           ? 'A senha não atende aos requisitos.'
           : 'A senha é obrigatória.',
-      );
-      return;
+      )
+      return
     }
     if (password !== confirm) {
-      setLocalError('As senhas não coincidem.');
-      return;
+      setLocalError('As senhas não coincidem.')
+      return
     }
 
     resetPassword(
@@ -49,115 +53,115 @@ const ResetPassword: React.FC = () => {
         onSuccess: () => {
           navigate('/signin', {
             state: { message: 'Senha redefinida com sucesso. Faça login.' },
-          });
+          })
         },
       },
-    );
-  };
+    )
+  }
 
   if (!token) {
     return (
-      <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
-        <Box sx={{ flexGrow: 1, p: 3, maxWidth: 400, mx: 'auto', mt: 8 }}>
-          <Alert severity="error" sx={{ mb: 2 }}>
-            Link inválido ou expirado.
-          </Alert>
-          <Link component={RouterLink} to="/forgot-password" sx={{ fontWeight: 'bold' }}>
+      <AuthLayout
+        title={
+          <>
+            Link
+            <br />
+            inválido
+          </>
+        }
+      >
+        <Help tone="error">Link inválido ou expirado.</Help>
+        <p className="mt-6 font-sans text-[13px] text-ink-muted">
+          <RouterLink
+            to="/forgot-password"
+            className="font-bold text-signature underline underline-offset-[3px]"
+          >
             Solicitar um novo link
-          </Link>
-        </Box>
-      </Box>
-    );
+          </RouterLink>
+        </p>
+      </AuthLayout>
+    )
   }
 
+  const alertMessage =
+    localError ||
+    (isError ? (error instanceof Error ? error.message : 'Algo deu errado.') : '')
+
   return (
-    <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
-      <Box
-        sx={{
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          justifyContent: 'center',
-          flexGrow: 1,
-          p: 3,
-          maxWidth: 400,
-          mx: 'auto',
-        }}
-      >
-        <Typography variant="h4" component="h1" sx={{ mb: 4, fontWeight: 'bold' }}>
-          Criar nova senha
-        </Typography>
+    <AuthLayout
+      title={
+        <>
+          Criar nova
+          <br />
+          senha
+        </>
+      }
+      lead="Escolha uma senha forte para a sua conta."
+    >
+      {alertMessage && (
+        <Help tone="error" className="mb-4">
+          {alertMessage}
+        </Help>
+      )}
 
-        {(isError || localError) && (
-          <Typography color="error" sx={{ mb: 2 }}>
-            {localError ||
-              (error instanceof Error ? error.message : 'Algo deu errado.')}
-          </Typography>
-        )}
-
-        <Box component="form" sx={{ width: '100%' }} onSubmit={handleSubmit}>
-          <TextField
+      <form onSubmit={handleSubmit} noValidate>
+        <FieldGroup
+          label="Nova senha"
+          htmlFor="reset-password"
+          required
+          className="mb-2"
+        >
+          <PasswordField
             name="password"
-            label="Nova senha"
-            type="password"
-            variant="outlined"
-            fullWidth
-            margin="normal"
+            autoComplete="new-password"
+            placeholder="••••••••••"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            required
           />
+        </FieldGroup>
 
-          {passwordRulesEnforced() && password.length > 0 && (
-            <Box sx={{ mt: 0.5, mb: 0.5 }}>
-              {evaluatePassword(password).requirements.map((req) => (
-                <Typography
-                  key={req.key}
-                  variant="caption"
-                  component="div"
-                  sx={{ color: req.met ? 'success.main' : 'text.secondary' }}
-                >
-                  {req.met ? '✓' : '○'} {req.label}
-                </Typography>
-              ))}
-            </Box>
-          )}
+        {passwordRulesEnforced() && password.length > 0 && (
+          <ul className="mb-4 mt-1 space-y-1">
+            {evaluatePassword(password).requirements.map((req) => (
+              <li
+                key={req.key}
+                className={`font-sans text-[12px] ${
+                  req.met ? 'text-success' : 'text-ink-subtle'
+                }`}
+              >
+                {req.met ? '✓' : '○'} {req.label}
+              </li>
+            ))}
+          </ul>
+        )}
 
-          <TextField
+        <FieldGroup
+          label="Confirmar senha"
+          htmlFor="reset-confirm"
+          required
+          className="mb-6"
+        >
+          <PasswordField
             name="confirm"
-            label="Confirmar senha"
-            type="password"
-            variant="outlined"
-            fullWidth
-            margin="normal"
+            autoComplete="new-password"
+            placeholder="••••••••••"
             value={confirm}
             onChange={(e) => setConfirm(e.target.value)}
-            required
           />
+        </FieldGroup>
 
-          <Button
-            type="submit"
-            fullWidth
-            variant="contained"
-            disabled={isPending}
-            sx={{
-              mt: 3,
-              mb: 2,
-              py: 1.5,
-              backgroundColor: '#1a1a1a',
-              '&:hover': { backgroundColor: '#333' },
-            }}
-          >
-            {isPending ? (
-              <CircularProgress size={24} color="inherit" />
-            ) : (
-              'Redefinir senha'
-            )}
-          </Button>
-        </Box>
-      </Box>
-    </Box>
-  );
-};
+        <Btn
+          type="submit"
+          variant="primary"
+          size="lg"
+          loading={isPending}
+          className="w-full"
+        >
+          Redefinir senha
+        </Btn>
+      </form>
+    </AuthLayout>
+  )
+}
 
-export default ResetPassword;
+export default ResetPassword
