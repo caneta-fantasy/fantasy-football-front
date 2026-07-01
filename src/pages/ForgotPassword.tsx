@@ -1,115 +1,110 @@
-import React, { useState } from 'react';
-import {
-  Box,
-  TextField,
-  Button,
-  Typography,
-  Link,
-  Alert,
-  CircularProgress,
-} from '@mui/material';
-import { Link as RouterLink } from 'react-router-dom';
-import { useForgotPassword } from '../api/authQueries';
+import React, { useState } from 'react'
+import { Link as RouterLink } from 'react-router-dom'
+import { Btn, FieldGroup, Help, TextInput } from '@/ds'
+import { AuthLayout } from '../components/auth/AuthLayout'
+import { useForgotPassword } from '../api/authQueries'
 
+/**
+ * ForgotPassword — modernista re-skin of the "request a reset link" screen.
+ *
+ * View rebuilt on the shared `AuthLayout` + DS pieces, removing MUI. Data/flow
+ * preserved: a non-empty e-mail is posted via `useForgotPassword`, and on
+ * success the form is swapped for a neutral confirmation (which never reveals
+ * whether the address exists). Links back to /signin are kept.
+ */
 const ForgotPassword: React.FC = () => {
-  const [email, setEmail] = useState('');
-  const [submitted, setSubmitted] = useState(false);
-  const { mutate: forgotPassword, isPending, isError, error } = useForgotPassword();
+  const [email, setEmail] = useState('')
+  const [submitted, setSubmitted] = useState(false)
+  const { mutate: forgotPassword, isPending, isError, error } =
+    useForgotPassword()
 
   const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!email) return;
+    e.preventDefault()
+    if (!email) return
     forgotPassword(email, {
       onSuccess: () => setSubmitted(true),
-    });
-  };
+    })
+  }
 
   return (
-    <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
-      <Box
-        sx={{
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          justifyContent: 'center',
-          flexGrow: 1,
-          p: 3,
-          maxWidth: 400,
-          mx: 'auto',
-        }}
-      >
-        <Typography variant="h4" component="h1" sx={{ mb: 4, fontWeight: 'bold' }}>
-          Redefinir senha
-        </Typography>
-
-        {submitted ? (
-          <>
-            <Alert severity="success" sx={{ mb: 2, width: '100%' }}>
-              Se o email estiver cadastrado, você receberá instruções para
-              redefinir sua senha.
-            </Alert>
-            <Link component={RouterLink} to="/signin" sx={{ fontWeight: 'bold' }}>
+    <AuthLayout
+      title={
+        <>
+          Redefinir
+          <br />
+          senha
+        </>
+      }
+      lead={
+        submitted
+          ? undefined
+          : 'Enviaremos um link para você criar uma nova senha.'
+      }
+    >
+      {submitted ? (
+        <>
+          <Help tone="success">
+            Se o e-mail estiver cadastrado, você receberá instruções para
+            redefinir sua senha.
+          </Help>
+          <p className="mt-6 font-sans text-[13px] text-ink-muted">
+            <RouterLink
+              to="/signin"
+              className="font-bold text-signature underline underline-offset-[3px]"
+            >
               Voltar para o login
-            </Link>
-          </>
-        ) : (
-          <>
-            <Typography variant="body1" color="text.secondary" sx={{ mb: 3, textAlign: 'center' }}>
-              Digite seu email e enviaremos um link para criar uma nova senha.
-            </Typography>
+            </RouterLink>
+          </p>
+        </>
+      ) : (
+        <>
+          {isError && (
+            <Help tone="error" className="mb-4">
+              {error instanceof Error ? error.message : 'Algo deu errado.'}
+            </Help>
+          )}
 
-            {isError && (
-              <Typography color="error" sx={{ mb: 2 }}>
-                {error instanceof Error ? error.message : 'Algo deu errado.'}
-              </Typography>
-            )}
-
-            <Box component="form" sx={{ width: '100%' }} onSubmit={handleSubmit}>
-              <TextField
+          <form onSubmit={handleSubmit} noValidate>
+            <FieldGroup
+              label="E-mail"
+              htmlFor="forgot-email"
+              required
+              className="mb-6"
+            >
+              <TextInput
                 name="email"
-                label="Email"
                 type="email"
-                variant="outlined"
-                fullWidth
-                margin="normal"
-                placeholder="Digite seu email"
+                placeholder="pedro@caneta.fc"
+                autoComplete="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                required
               />
+            </FieldGroup>
 
-              <Button
-                type="submit"
-                fullWidth
-                variant="contained"
-                disabled={isPending}
-                sx={{
-                  mt: 3,
-                  mb: 2,
-                  py: 1.5,
-                  backgroundColor: '#1a1a1a',
-                  '&:hover': { backgroundColor: '#333' },
-                }}
-              >
-                {isPending ? (
-                  <CircularProgress size={24} color="inherit" />
-                ) : (
-                  'Enviar link'
-                )}
-              </Button>
-            </Box>
+            <Btn
+              type="submit"
+              variant="primary"
+              size="lg"
+              loading={isPending}
+              className="w-full"
+            >
+              Enviar link
+            </Btn>
+          </form>
 
-            <Typography variant="body1" sx={{ mt: 2 }}>
-              Lembrou da senha?{' '}
-              <Link component={RouterLink} to="/signin" sx={{ fontWeight: 'bold' }}>
-                Entrar
-              </Link>
-            </Typography>
-          </>
-        )}
-      </Box>
-    </Box>
-  );
-};
+          <p className="mt-8 text-center font-sans text-[13px] text-ink-muted">
+            Lembrou da senha?{' '}
+            <RouterLink
+              to="/signin"
+              className="font-bold text-signature underline underline-offset-[3px]"
+            >
+              Entrar
+            </RouterLink>
+          </p>
+        </>
+      )}
+    </AuthLayout>
+  )
+}
 
-export default ForgotPassword;
+export default ForgotPassword
