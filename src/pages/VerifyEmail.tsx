@@ -1,84 +1,111 @@
-import React, { useEffect, useRef } from 'react';
-import { Box, Typography, Alert, Button, CircularProgress, Link } from '@mui/material';
-import { Link as RouterLink, useSearchParams } from 'react-router-dom';
-import { useVerifyEmail } from '../api/authQueries';
-import { useAuth } from '../context/AuthContext';
-import { SUPPORT_EMAIL } from '../utils/support';
+import React, { useContext, useEffect, useRef } from 'react'
+import { useNavigate, useSearchParams } from 'react-router-dom'
+import { Btn, Help, Spinner } from '@/ds'
+import { AuthLayout } from '../components/auth/AuthLayout'
+import { useVerifyEmail } from '../api/authQueries'
+import { AuthContext } from '../context/AuthContext'
+import { SUPPORT_EMAIL } from '../utils/support'
 
+/**
+ * VerifyEmail — modernista re-skin of the e-mail confirmation screen.
+ *
+ * View rebuilt on the shared `AuthLayout` + DS pieces; the data/flow is
+ * unchanged. The `token` comes from the query string and is auto-submitted
+ * once (fire-once ref; the backend verify is idempotent so a StrictMode
+ * double-fire is harmless). The UI is driven off the mutation's own status so
+ * it can't get stuck. On success the local session is reconciled so the
+ * "verify your e-mail" banner clears; an "already verified" replay (error while
+ * the logged-in user is verified) is treated as success rather than an error.
+ * `AuthContext` is read defensively so the screen renders standalone.
+ */
 const VerifyEmail: React.FC = () => {
-  const [searchParams] = useSearchParams();
-  const token = searchParams.get('token') ?? '';
-  const { user, updateUser } = useAuth();
-  // Drive the UI off the mutation's own state (isPending/isSuccess/isError) so it
-  // can't get stuck: per-call mutate() callbacks are fragile under StrictMode's
-  // mount/unmount, but the hook's status is reliable.
+  const [searchParams] = useSearchParams()
+  const token = searchParams.get('token') ?? ''
+  const navigate = useNavigate()
+  const auth = useContext(AuthContext)
+  const user = auth?.user
   const { mutate: verify, isPending, isSuccess, isError, error } =
-    useVerifyEmail();
-  const fired = useRef(false);
+    useVerifyEmail()
+  const fired = useRef(false)
 
-  // Fire exactly once. A ref guard would reset on StrictMode's remount, so this
-  // also tolerates a double-fire because the backend verify is now idempotent.
+  // Fire exactly once.
   useEffect(() => {
-    if (!token || fired.current) return;
-    fired.current = true;
-    verify(token);
-  }, [token, verify]);
+    if (!token || fired.current) return
+    fired.current = true
+    verify(token)
+  }, [token, verify])
 
   // On success, reconcile the local session so the banner clears immediately.
   useEffect(() => {
     if (isSuccess && user && !user.emailVerifiedAt) {
-      updateUser({ emailVerifiedAt: new Date().toISOString() });
+      auth?.updateUser({ emailVerifiedAt: new Date().toISOString() })
     }
-  }, [isSuccess, user, updateUser]);
+  }, [isSuccess, user, auth])
 
   // Treat "already verified" (a consumed/replayed token while logged in as a
   // verified user) as success rather than a misleading error.
-  const verified = isSuccess || (isError && !!user?.emailVerifiedAt);
-  const failed = isError && !verified;
-  const showSpinner = !token ? false : isPending || (!verified && !failed);
+  const verified = isSuccess || (isError && !!user?.emailVerifiedAt)
+  const failed = isError && !verified
+  const showSpinner = !token ? false : isPending || (!verified && !failed)
 
   return (
-    <Box sx={{ maxWidth: 480, mx: 'auto', mt: 8, p: 3, textAlign: 'center' }}>
-      <Typography variant="h4" sx={{ mb: 3, fontWeight: 'bold' }}>
-        Verificação de email
-      </Typography>
+    <AuthLayout
+      title={
+        <>
+          Confirmar
+          <br />
+          e-mail
+        </>
+      }
+      lead="Estamos ativando o seu acesso à liga."
+    >
+      {!token && <Help tone="error">Link de verificação inválido.</Help>}
 
-      {!token && <Alert severity="error">Link de verificação inválido.</Alert>}
-
-      {showSpinner && <CircularProgress />}
+      {showSpinner && (
+        <div className="flex items-center gap-3 text-ink-muted">
+          <Spinner size={22} />
+          <span className="font-sans text-[14px]">
+            Verificando o seu e-mail…
+          </span>
+        </div>
+      )}
 
       {verified && (
-        <Alert severity="success" sx={{ mb: 2 }}>
-          Seu email foi verificado com sucesso!
-        </Alert>
+        <Help tone="success">Seu e-mail foi verificado com sucesso!</Help>
       )}
 
       {failed && (
         <>
-          <Alert severity="error" sx={{ mb: 2 }}>
+          <Help tone="error">
             {error instanceof Error
               ? error.message
-              : 'Não foi possível verificar o email.'}
-          </Alert>
-          <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+              : 'Não foi possível verificar o e-mail.'}
+          </Help>
+          <p className="mt-3 font-sans text-[13px] text-ink-muted">
             Problemas? Fale com a gente:{' '}
-            <Link href={`mailto:${SUPPORT_EMAIL}`}>{SUPPORT_EMAIL}</Link>
-          </Typography>
+            <a
+              href={`mailto:${SUPPORT_EMAIL}`}
+              className="font-semibold text-signature underline underline-offset-[3px]"
+            >
+              {SUPPORT_EMAIL}
+            </a>
+          </p>
         </>
       )}
 
       {(verified || failed || !token) && (
-        <Button
-          component={RouterLink}
-          to="/welcome"
-          variant="contained"
-          sx={{ mt: 2, backgroundColor: '#1a1a1a', '&:hover': { backgroundColor: '#333' } }}
+        <Btn
+          type="button"
+          variant="primary"
+          size="lg"
+          className="mt-6 w-full"
+          onClick={() => navigate('/welcome')}
         >
           Ir para o início
-        </Button>
+        </Btn>
       )}
-    </Box>
-  );
-};
+    </AuthLayout>
+  )
+}
 
-export default VerifyEmail;
+export default VerifyEmail
